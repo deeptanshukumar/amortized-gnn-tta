@@ -4,7 +4,7 @@ Research project for Advanced Foundations of Machine Learning (UE24AM342AA1), PE
 
 We investigate whether an offline-trained generator can predict small parameter updates for a pretrained GNN on an unlabeled shifted target graph, without target-time gradient optimization. This is a research objective; no adaptation result is available yet.
 
-Deeptanshu owns GCN experiments; teammates handle GAT and GraphSAGE. Data interfaces remain architecture-neutral.
+Deeptanshu owns GCN experiments; teammates handle GAT and GraphSAGE. At the owner's request, the shared codebase now implements all three architectures with the same data/training/bank interfaces.
 
 ## Implemented and verified
 
@@ -12,10 +12,12 @@ Deeptanshu owns GCN experiments; teammates handle GAT and GraphSAGE. Data interf
 - CPU PyG graphs, separate ground truth, named split indices, explicit source/meta-training/validation/target roles.
 - Stratified source splits, initially 60/20/20; held-out graphs expose an eval-only split. Full graph context is preserved; split indices select supervision, not induced subgraphs.
 - Allowlisted, cloned target inputs without labels or diagnostic metadata. Training-label access rejects held-out environments.
-- Data, model/training, bank execution, artifact validation, grouped holdouts, and diagnostic math: **104 tests passed** on the tested CPU stack.
+- Data, all three models, training/checkpoints, banks, grouped holdouts and diagnostics: **125 tests passed** on the tested CPU stack.
 - Small and paper-sized (5,000 nodes × 2,000 features per graph) data/interface examples executed successfully.
 
-**GCN/CSBM Phase 1 is complete:** loader, source training/evaluation, a full-budget 30-model bank, validated artifact loading, a saved 18/6/6 model partition, and weight/prediction/representation diagnostics. This is the GCN foundation through pretraining-bank preparation, not the entire team's research roadmap. Adaptation/generators and other datasets remain later work. These development runs are not final paper benchmarks.
+**The CSBM pretraining/bank foundation is verified for GCN, GAT and GraphSAGE:** shared loading/training/evaluation, a full-budget 30-model bank per architecture, validated artifact loading, saved 18/6/6 partitions, and weight/prediction/representation diagnostics. Adaptation/generators and other datasets remain later work. These development runs are not final paper benchmarks.
+
+GAT and GraphSAGE implementations now use those same entry points. Architecture-specific definitions and commands are below; matching hidden dimensions does not imply matching parameter budgets or optimal tuning for each model.
 
 ## Setup
 
@@ -52,16 +54,40 @@ Both generate independent source/target graphs, validate them, and run a random 
 
 The examples do not optimize a model or report adaptation accuracy. JSON outputs and generated artifacts are ignored by Git.
 
-## Train and evaluate a source GCN
+## Select an architecture
+
+| CLI name | Two-layer model | Total hidden width | Extra model behavior |
+| --- | --- | ---: | --- |
+| gcn (default) | GCNConv → ReLU → dropout → GCNConv | 32 | Layer-owned self-loops/symmetric normalization; cached=False |
+| gat | GATConv → ELU → dropout → GATConv | 32 = 4 heads × 8 channels | One output head, raw logits; layer-owned self-loops; attention dropout defaults to 0 |
+| graphsage | SAGEConv(mean) → ReLU → dropout → SAGEConv(mean) | 32 | Separate root/neighbor transforms; no embedding L2 normalization, neighbor sampling, or added self-loops |
+
+All models implement forward(x, edge_index) → raw [N,C] logits and encode(x, edge_index) → first hidden representations before feature dropout. GAT's representation is post-ELU; GCN/GraphSAGE use post-ReLU. The loader remains unchanged and unweighted. The current full-batch source-graph protocol also applies to GraphSAGE; its sampled original-paper training procedure is not reproduced.
+
+~~~python
+from amortized_gnn_tta.models import build_model, make_model_spec
+
+spec = make_model_spec("gat", in_channels=2000, out_channels=2,
+                       hidden_channels=32, heads=4, dropout=0.5, attention_dropout=0.0)
+model = build_model(spec)
+~~~
+
+GAT hidden_channels is the **total after concatenation** and must divide evenly across heads. --heads and --attention-dropout are GAT-only CLI options; other architectures reject them. Hidden-feature dropout and attention-coefficient dropout are separate. GAT uses classic GATConv, not GATv2Conv. The original two_layer_gcn checkpoint tag, configuration fields and state_dict keys remain supported.
+
+At F=2000/H=32/C=2, actual parameter counts are GCN 64,098, GAT 64,166 and GraphSAGE 128,162. They share a width and training protocol, not identical capacity. No input dropout, batch normalization, or architecture-specific hyperparameter search was added.
+
+## Train and evaluate a source model
 
 ~~~bash
 python examples/train_source.py --output-dir runs/source-gcn
 python examples/train_source.py --paper-scale --epochs 20 --patience 10 --device cpu --output-dir runs/source-gcn-paper
+python examples/train_source.py --architecture gat --output-dir runs/source-gat
+python examples/train_source.py --architecture graphsage --output-dir runs/source-graphsage
 ~~~
 
 Use a new output directory for each run; existing directories/checkpoints are never overwritten. The default small setting has 1,000 nodes and 64 features per graph. The paper-sized option has 5,000 × 2,000. Both retain the existing data convention/seeds and target attribute/homophily changes.
 
-The model is GCNConv → ReLU → dropout → GCNConv, with 32 hidden channels, dropout 0.5, and cached=False. Training uses full source graph context, source-training-label cross-entropy, Adam (lr=0.01, weight_decay=5e-4 on all parameters), and source-validation-only checkpoint selection. Default cap/patience are 200/30 epochs; strict improvement resets patience, ties keep the earlier epoch. Model seed 31 is separate from the loader's seeds.
+GCN remains the default. Training for all architectures uses full source graph context, source-training-label cross-entropy, Adam (lr=0.01, weight_decay=5e-4 on all parameters), and source-validation-only checkpoint selection. Default cap/patience are 200/30 epochs; strict improvement resets patience, ties keep the earlier epoch. Model seed 31 is separate from the loader's seeds; the same seed integer does not make differently shaped architectures share initial weights.
 
 The trainer's SourceTrainingData contains only source train/validation supervision. Source-test and target labels are absent. Target inference/scoring happens after restoration of the selected checkpoint. No adaptation, target tuning, or test-based early stopping occurs. The model-neutral loop currently handles unweighted graphs and raw [N,C] logits; unsupported edge attributes/weights are rejected explicitly.
 
@@ -69,12 +95,12 @@ Each run writes best_model.pt and metrics.json, including configs, versions, sou
 
 ~~~python
 from pathlib import Path
-from amortized_gnn_tta.models import GCN, GCNConfig
+from amortized_gnn_tta.models import build_model
 from amortized_gnn_tta.training import load_checkpoint
 
 model, metadata = load_checkpoint(
     Path("runs/source-gcn/best_model.pt"),
-    lambda spec: GCN(GCNConfig(**spec["config"])),
+    build_model,
     device="cpu",
 )
 ~~~
@@ -116,13 +142,15 @@ subset_view = source_subset_view(source_view, manifest, "source_subset_0")
 
 Subset views share the read-only source graph; the trainer clones it before execution. Checkpoints automatically retain the selected IDs and subset/manifest identity. Preparation itself does not train models; the runner below does. Those models use fewer labels than the earlier full-pool single-model baseline, so comparisons must account for the budget.
 
-## Train a source GCN weight bank
+## Train a source weight bank
 
 ~~~bash
 python examples/train_weight_bank.py --subsets runs/source-subsets.json --output-dir runs/gcn-bank
+python examples/train_weight_bank.py --architecture gat --subsets runs/source-subsets.json --output-dir runs/gat-bank
+python examples/train_weight_bank.py --architecture graphsage --subsets runs/source-subsets.json --output-dir runs/graphsage-bank
 ~~~
 
-The example reconstructs only the source from the saved subset provenance, validates its identity, and runs five subsets × six seeds sequentially. Defaults: model seeds 31–36, epoch cap/patience 200/30, the same two-layer GCN/Adam defaults as above, one CPU thread. Override --epochs/--patience/--device as needed. The same six seeds are reused across subsets to compare supervision changes with matched initializations; the thirty jobs are not thirty IID independent repetitions.
+The example reconstructs only the source from saved subset provenance, validates its identity, and runs five subsets × six seeds sequentially. Defaults: model seeds 31–36, epoch cap/patience 200/30, the selected architecture and shared Adam defaults above, one CPU thread. Override --epochs/--patience/--device as needed. The same six seeds are reused across subsets within each architecture to pair initializations; the thirty jobs are not thirty IID independent repetitions.
 
 Every job keeps its best source-validation checkpoint, scores selected source-training/source-validation nodes, and verifies source predictions after CPU reload. The runner receives no source-test/target supervision, creates no target graph, retains every job, and does not assign generator partitions or claim model diversity.
 
@@ -141,15 +169,21 @@ Two earlier development banks used 1,000×64 (cap/patience 100/20) and 5,000×2,
 
 The current reference settings are in [configs/phase1_csbm_gcn.json](configs/phase1_csbm_gcn.json). They freeze the CSBM/GCN development protocol for this phase, including the 50%-training-pool label budget. They are not an official CSBM split or a final paper experiment protocol.
 
+Matching architecture-specific references are [phase1_csbm_gat.json](configs/phase1_csbm_gat.json) and [phase1_csbm_graphsage.json](configs/phase1_csbm_graphsage.json). Supply the corresponding --config to the same audit command; wrong architecture/config combinations are rejected.
+
 ~~~bash
 python examples/prepare_source_subsets.py --label-fraction 0.5 --paper-scale --output runs/phase1-subsets.json
 python examples/train_weight_bank.py --subsets runs/phase1-subsets.json --epochs 200 --patience 30 --device cpu --output-dir runs/phase1-bank
 python examples/finalize_phase1.py --bank runs/phase1-bank --output-dir runs/phase1-review
+python examples/train_weight_bank.py --architecture gat --subsets runs/phase1-subsets.json --device cpu --output-dir runs/phase1-gat-bank
+python examples/finalize_phase1.py --config configs/phase1_csbm_gat.json --bank runs/phase1-gat-bank --output-dir runs/phase1-gat-review
+python examples/train_weight_bank.py --architecture graphsage --subsets runs/phase1-subsets.json --device cpu --output-dir runs/phase1-graphsage-bank
+python examples/finalize_phase1.py --config configs/phase1_csbm_graphsage.json --bank runs/phase1-graphsage-bank --output-dir runs/phase1-graphsage-review
 ~~~
 
 Each output must be new. Finalization checks the bank against the frozen configuration, validates all files/checksums and restored source-validation scores, assigns whole label subsets to 18 meta-train/6 validation/6 test models with seed 401, then measures diversity. Source-test labels enter only the final offline evaluator after the partition is saved. Target graphs/labels are absent. The phase protocol and subset memberships must match; a 20-epoch smoke bank is rejected by this command.
 
-Representation comparison uses first-layer post-ReLU values and centered linear CKA in feature space, based on the [original CKA work](https://proceedings.mlr.press/v97/kornblith19a.html). The fixed probe contains all 3,000 native training nodes, without their labels. Raw weight distance/cosine, prediction disagreement and probability RMSE complement CKA; none alone certifies useful adaptation diversity.
+Representation comparison uses first-layer post-activation values (ReLU for GCN/GraphSAGE, ELU for GAT) and centered linear CKA in feature space, based on the [original CKA work](https://proceedings.mlr.press/v97/kornblith19a.html). The fixed probe contains all 3,000 native training nodes, without their labels. Raw weight distance/cosine, prediction disagreement and probability RMSE complement CKA; none alone certifies useful adaptation diversity.
 
 Executed Phase 1 evidence:
 
@@ -165,6 +199,16 @@ Executed Phase 1 evidence:
 The split holds out label selections, not source graphs or initialization seed values. Individual source training labels can overlap between subsets. Accuracy spread is descriptive, not an IID confidence interval. This source graph/split was used in earlier development examples; viewed scores must not be relabeled as a sealed final benchmark. Validation-based stopping is observed, not a proof of optimization convergence.
 
 Finalization writes REVIEW.md, phase1_report.json, model_partition.json, diversity.json/diversity_pairs.csv, and source_test.json/source_test_models.csv. A hashed analysis-code snapshot is included separately from the bank's training Git state. All artifacts remain ignored by Git. Actual local outputs: runs/gcn-bank-phase1 and runs/phase1-complete; detailed evidence is in [project state](docs/PROJECT_STATE.md#phase-1-closure).
+
+The GAT and GraphSAGE reference banks also completed with cap/patience 200/30 and passed the same full audit. Their review directories are runs/gat-phase1-complete and runs/graphsage-phase1-complete. All three use the same source graph, 1,500 labels/model, subset memberships, six paired seed values and 18/6/6 grouping.
+
+| Architecture | Parameters | Mean source-test accuracy | Mean probe disagreement | Selected epochs |
+| --- | ---: | ---: | ---: | --- |
+| GCN | 64,098 | 88.37% | 7.32% | 24–98 |
+| GAT | 64,166 | 87.91% | 7.90% | 19–61 |
+| GraphSAGE (mean, full-neighborhood) | 128,162 | 88.69% | 6.90% | 20–98 |
+
+Each bank has 30 models/435 pairs, no selected checkpoint at its cap, and successful CPU reloads. The historical GCN bank was additionally re-audited through the shared factory without changing its results. These descriptive development values do not establish an architecture ranking: capacities/activations differ, defaults were not separately tuned, and the source test graph was previously viewed. Bank runs are source-only; no new target-label selection or adaptation was performed.
 
 ## Data API
 

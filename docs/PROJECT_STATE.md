@@ -1,6 +1,6 @@
 # Project state
 
-Last updated: 2026-10-25. Stage: **GCN/CSBM Phase 1 complete** — foundation, full-budget source bank, grouped model holdouts, diversity audit, and source-only review evaluation verified on CPU.
+Last updated: 2026-10-25. Stage: **CSBM source-pretraining/bank foundation verified for GCN, GAT and GraphSAGE** — all three have full-budget 30-model banks, grouped model holdouts, and completed audits through the common pipeline.
 
 ## Current scope and decision
 
@@ -14,6 +14,8 @@ The owner authorized committing that foundation and moving on. Local commit **30
 
 The owner then explicitly requested the remaining task list and completion of Phase 1. The list was provided before further implementation. [Decision D5](DECISIONS.md#implemented-decision-d5--gcncsbm-phase-1-closure-2026-10-25) fixes the phase's reference protocol and whole-subset partition, and records the completed audit. This completes roadmap steps 1–3 for our GCN/CSBM scope, not teammates' architectures, adaptation, or the final research paper.
 
+The owner then explicitly authorized pushing commits 30af4f9/3c7976e and requested shared GAT and GraphSAGE implementations. That expansion is implemented under [Decision D6](DECISIONS.md#implemented-decision-d6--shared-gat-and-graphsage-models-2026-10-25). After verification, the owner explicitly authorized committing and pushing this extension. Team experiment ownership is unchanged; later changes require separate Git authorization.
+
 Under that delegated authority, selected the released Matcha-code CSBM distribution, exposed through explicit p_in/p_out and a named degree_scale conversion. Exact finite-size expected degree is reported; no silent factor-of-two correction. Fixed-direction Gaussian feature scaling follows the released code. This is not full paper-result reproduction. Details and alternatives are in [DECISIONS.md](DECISIONS.md#implemented-decision-d1--initial-csbm-protocol-2026-10-25).
 
 ## Implemented
@@ -26,6 +28,8 @@ Under that delegated authority, selected the released Matcha-code CSBM distribut
 | Review example | examples/inspect_data.py | Independent source/target generation, offline diagnostics/JSON, real random GCN forward/backward |
 | Automated checks | tests/test_data.py | Sampling, boundaries, reproducibility, validation, GCN/GAT/GraphSAGE compatibility |
 | Source GCN | src/amortized_gnn_tta/models/gcn.py | Two uncached GCNConv layers, ReLU, hidden dropout, raw logits |
+| Additional source models | src/amortized_gnn_tta/models/{gat,graphsage}.py | GAT: total-width multihead attention/ELU; GraphSAGE: mean/root/ReLU; both expose logits and encode |
+| Shared model specification | src/amortized_gnn_tta/models/{config,factory}.py | Common dimension/dropout validation, architecture-specific settings, explicit construction/restoration, legacy GCN compatibility |
 | Shared training | src/amortized_gnn_tta/training.py | Model factory, source-only supervision view, Adam, validation-loss selection/early stopping, restored best weights |
 | Shared evaluation | src/amortized_gnn_tta/evaluation.py | Label-free inference; separate explicit-label cross-entropy/accuracy scoring |
 | Training example and checks | examples/train_source.py, tests/test_training.py | Reproducible run records, CPU checkpoint reload, learning/selection/leakage/device tests |
@@ -37,6 +41,7 @@ Under that delegated authority, selected the released Matcha-code CSBM distribut
 | Model diversity and explicit offline test evaluation | src/amortized_gnn_tta/bank_diagnostics.py | Label-free source-pool probes, weight/prediction/CKA comparisons, separate source-test scorer with grouped descriptive summaries |
 | Phase reference and review command | configs/phase1_csbm_gcn.json, examples/finalize_phase1.py | Frozen phase config, new review directory, persisted partition before scoring, JSON/CSV/Markdown evidence and analysis-code snapshot |
 | Phase verification | tests/test_bank_analysis.py | Corruption/mismatch/leak checks, independent CKA arithmetic, hidden-permutation and forward-compatibility tests, real finalization CLI |
+| Architecture verification | tests/test_models.py | Manual aggregation/attention semantics, gradients/learning, permutation/label invariance, empty graphs, checkpoints and shared CLI audit |
 
 Held-out graphs have eval-only indices; training_labels rejects validation/target roles. The loader preserves full graph context and does not add self-loops or model-specific normalization. A persistent cache and paired-shift generator are deliberately absent.
 
@@ -50,7 +55,7 @@ Earlier dataset/reference investigation and handbook work are preserved in the d
 
 ## Verification actually executed
 
-- OMP_NUM_THREADS=1 .venv/bin/python -m pytest -q: **104 passed** at Phase 1 closure (24 audit/partition/diagnostic cases added to the previous 80); upstream PyTorch/PyG deprecation warnings reported.
+- OMP_NUM_THREADS=1 .venv/bin/python -m pytest -q: **125 passed** after the model extension (21 new model cases; 104 prior checks retained); upstream PyTorch/PyG deprecation warnings reported.
 - New checks include finite GCN gradients/empty-edge execution, learning on a deliberately easy fixture, exact seeded CPU repeatability, best-checkpoint restoration after validation worsens, inference/checkpoint equality, and unchanged training after held-out labels are changed. A spy also verifies source-view extraction reads only permitted source validation labels.
 - Python compileall on src/tests/examples: passed.
 - Small example: 300 nodes × 32 features per graph; source splits 180/60/60; target eval 300; forward/backward and label-free target input passed.
@@ -128,9 +133,43 @@ The extra CKA reference is a sparse, separate Google Research checkout at ba728e
 
 The bank's training Git revision is 30af4f9 with dirty=true. The audit preserves its own code snapshot separately; it is not presented as the exact earlier training source. The owner explicitly authorized committing the completed Phase 1 implementation/config/tests/docs afterward. Historical training provenance remains unchanged; no push is authorized.
 
+## Architecture extension verification
+
+New model files use existing PyG APIs; no package/environment changes. CLI/factory support gcn/gat/graphsage for source training, banks, checkpoint reloads and finalization. configs/phase1_csbm_gat.json and configs/phase1_csbm_graphsage.json retain the GCN source/subset/optimizer/stopping settings with explicit model definitions. GCN's original config/spec fields/state keys remain compatible; runs/gcn-compatibility-after-models audited the original bank under the new code and reproduced its 88.37% mean source accuracy.
+
+Actual single-seed source runs (model31, all native source training labels, no adaptation):
+
+| Model/run | Nodes × features | Epoch cap/patience | Best / epochs run | Source-test | Target | CPU reload |
+| --- | --- | --- | --- | --- | --- | --- |
+| runs/source-gat-review | 1,000 × 64 | 100/20 | 16 / 36 | 64.5% | 53.4% | Passed |
+| runs/source-graphsage-review | 1,000 × 64 | 100/20 | 13 / 33 | 61.5% | 53.5% | Passed |
+| runs/source-gat-paper-smoke | 5,000 × 2,000 | 20/10 | 20 / 20 | 90.5% | 56.14% | Passed |
+| runs/source-graphsage-paper-smoke | 5,000 × 2,000 | 20/10 | 20 / 20 | 90.0% | 57.54% | Passed |
+
+Each command was examples/train_source.py with explicit --architecture, --device cpu, --epochs/--patience above and a new --output-dir (plus --paper-scale for the larger runs). The larger examples reached their cap. These full-pool single runs are not controlled size comparisons or the half-pool bank evaluation; target scores were computed after source-validation selection and did not change settings.
+
+Reference clones (separate, unchanged): GAT 5af87e7fce2b90ae1cbd621cd58059036a3c7436; GraphSAGE a0fdef95dca7b456dab01cb35034717c8b6dd017. MIT licenses and relevant TensorFlow source inspected. Runtime wrappers independently use PyG; no upstream source/environment was copied.
+
+### Additional architecture banks and audits
+
+Executed examples/train_weight_bank.py with --architecture gat / graphsage, --subsets runs/source-subsets-paper.json, --epochs 200 --patience 30 --device cpu and separate outputs runs/gat-bank-phase1 / runs/graphsage-bank-phase1. Executed examples/finalize_phase1.py with each matching configs/phase1_csbm_<architecture>.json and a new runs/<architecture>-phase1-complete directory. Both reports are complete with empty issue lists.
+
+| Architecture | Models / groups | Parameters | Selected / run epoch ranges | Mean source accuracy / population SD | Mean disagreement / hidden CKA |
+| --- | --- | ---: | --- | --- | --- |
+| GAT | 30; 18/6/6 | 64,166 | 19–61 / 49–91 | 87.9067% / 1.0139 pp | 7.9007% / 0.853525 |
+| GraphSAGE | 30; 18/6/6 | 128,162 | 20–98 / 50–128 | 88.6933% / 0.8485 pp | 6.8962% / 0.815166 |
+
+Both banks use exactly the saved source graph/subsets (1,500 training labels per model) and paired seeds 31–36. All 60 new checkpoint CPU reloads passed; each audit verified complete metadata/artifact consistency, native source supervision, restored validation metrics, the 18/6/6 whole-subset split and 435 pairs. Both have 30 distinct hard prediction patterns, no exact parameter duplicates or undefined CKA, and zero selected checkpoints at the cap. No model was filtered by score or diagnostic distance.
+
+Sum of fitting times: GAT156.69 seconds, GraphSAGE945.51 seconds. These exclude reconstruction/I/O/reloading/final audit; runs overlapped and epoch counts differ, so they are not a controlled architecture-latency benchmark. The slower full-neighborhood SAGE implementation aggregates 2,000-dimensional input features before projection and uses separate root/neighbor maps. No unverified cache, sparse-backend change or sampled approximation was introduced to alter the result.
+
+The historical GCN bank was re-audited at runs/gcn-compatibility-after-models, preserving 88.37% mean source-test accuracy and 7.3217% disagreement. All original GCN settings/checkpoints were retained. New banks record revision 3c7976e with dirty=true; the audit snapshots record the later shared implementation separately. The owner explicitly authorized the subsequent implementation/config/test/doc commit and push. All generated artifacts remain ignored, and historical training provenance is preserved.
+
+These are descriptive initial-model results on a reused development graph. GraphSAGE has about twice the parameters; activation functions and model definitions differ and no architecture-specific search was performed. Do not infer a statistically significant ranking, natural-shift robustness, or adaptation improvement from these values.
+
 ## Limits and next work
 
-- Phase 1 implementation and its full-budget audited bank are complete for GCN/CSBM. No adaptation or generator exists. Final research evaluation and estimates accounting for the paired design remain outstanding.
+- The source-pretraining/bank foundation is verified across all three architectures on CSBM. No adaptation or generator exists. Final research evaluation and estimates accounting for the paired design remain outstanding.
 - CPU verified only. Clean-isolated installation, macOS, Colab, CUDA, and MPS remain unverified.
 - Generation pair-scanning is O(N²), although no dense adjacency is allocated. Do not scale blindly to huge N.
 - Independent-draw development examples are not paired attribute-only interventions. Later scientific shift families/severities and holdout lineage require an explicit protocol.

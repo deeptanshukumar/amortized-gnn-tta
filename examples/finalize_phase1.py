@@ -18,7 +18,7 @@ from amortized_gnn_tta.bank_artifacts import (
 )
 from amortized_gnn_tta.bank_diagnostics import analyze_bank_diversity, evaluate_source_test
 from amortized_gnn_tta.data import CSBMConfig, CSBMEnvironment, load_dataset
-from amortized_gnn_tta.models import GCN, GCNConfig
+from amortized_gnn_tta.models import ARCHITECTURES, build_model, make_model_spec
 from amortized_gnn_tta.training import source_training_data
 
 
@@ -47,21 +47,17 @@ def main() -> None:
         parser.error("Use a new output directory and positive thread count")
     torch.set_num_threads(args.threads)
     protocol = json.loads(args.config.read_text(encoding="utf-8"))
-    if protocol.get("protocol") != "phase1-csbm-gcn-v1":
+    architecture = protocol.get("architecture", "gcn")  # Preserve the original GCN configuration.
+    if architecture not in ARCHITECTURES or protocol.get("protocol") != f"phase1-csbm-{architecture}-v1":
         parser.error("Unsupported phase protocol")
     source_config = dict(protocol["source"])
     source_config["split_ratios"] = tuple(source_config["split_ratios"])
     bundle = load_dataset([CSBMEnvironment("source", "source_train", CSBMConfig.from_matcha(**source_config))])
     source = source_training_data(bundle, "source")
 
-    def factory(spec):
-        if spec["architecture"] != "two_layer_gcn":
-            raise ValueError("This example audits two_layer_gcn only")
-        return GCN(GCNConfig(**spec["config"]))
-
-    bank = load_verified_bank(args.bank, source, factory)
-    expected_model = {"architecture": "two_layer_gcn", "config": {
-        "in_channels": source_config["num_features"], "out_channels": len(source.class_names), **protocol["model"]}}
+    bank = load_verified_bank(args.bank, source, build_model)
+    expected_model = make_model_spec(architecture, source_config["num_features"], len(source.class_names),
+                                    **protocol["model"])
     if (bank.manifest["model_spec"] != expected_model or bank.manifest["model_seeds"] != protocol["model_seeds"]
             or bank.manifest["training_config_without_seed"] != protocol["training"]
             or bank.subsets["label_fraction"] != protocol["label_fraction_of_training_pool"]
@@ -75,7 +71,7 @@ def main() -> None:
     save_model_partition(args.output_dir / "model_partition.json", bank, partition)
     assert load_model_partition(args.output_dir / "model_partition.json", bank) == partition
     # This file is saved before any source-test label access or source-test score.
-    diversity = analyze_bank_diversity(bank, source, factory,
+    diversity = analyze_bank_diversity(bank, source, build_model,
                                        lambda model, graph: model.encode(graph.x, graph.edge_index))
     write_json(args.output_dir / "diversity.json", diversity)
     write_csv(args.output_dir / "diversity_pairs.csv", diversity["pairs"])
@@ -89,7 +85,7 @@ def main() -> None:
         issues.append("Constant/degenerate representations made some CKA comparisons undefined")
     if not issues:
         evaluation = evaluate_source_test(
-            bank, source, partition, factory, test_indices=bundle.select("source", "test"),
+            bank, source, partition, build_model, test_indices=bundle.select("source", "test"),
             test_labels=bundle.evaluation_labels("source", "test"))
         write_json(args.output_dir / "source_test.json", evaluation)
         write_csv(args.output_dir / "source_test_models.csv", evaluation["models"])
@@ -104,9 +100,12 @@ def main() -> None:
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(path.read_bytes())
         snapshots[str(relative)] = file_sha256(target)
+    display_name = "GraphSAGE" if architecture == "graphsage" else architecture.upper()
     report = {
         "protocol": protocol["protocol"], "status": "complete" if not issues else "needs_review",
-        "scope": "GCN/CSBM engineering phase 1; not adaptation or final-paper research completion",
+        "scope": f"{display_name}/CSBM engineering phase 1; not adaptation or final-paper research completion",
+        "architecture": architecture,
+        "num_parameters": sum(parameter.numel() for parameter in build_model(expected_model).parameters()),
         "bank_sha256": bank.sha256, "protocol_sha256": file_sha256(args.output_dir / "protocol.json"),
         "partition_sha256": file_sha256(args.output_dir / "model_partition.json"),
         "models": len(bank.manifest["models"]), "partition_counts": {role: len(ids) for role, ids in partition["model_ids"].items()},
@@ -123,7 +122,7 @@ def main() -> None:
                         "Bank training used an uncommitted working tree; audit snapshot is distinct from training provenance"],
     }
     write_json(args.output_dir / "phase1_report.json", report)
-    lines = ["# Phase 1 GCN/CSBM review", "", f"Status: **{report['status']}**. Models: {report['models']}.",
+    lines = [f"# Phase 1 {display_name}/CSBM review", "", f"Status: **{report['status']}**. Models: {report['models']}.",
              "", "## Model partition", "", "| Role | Models | Whole label subsets |", "| --- | ---: | --- |"]
     for role, ids in partition["model_ids"].items():
         lines.append(f"| {role} | {len(ids)} | {', '.join(partition['groups'][role])} |")

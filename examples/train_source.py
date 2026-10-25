@@ -1,4 +1,4 @@
-"""Train one source GCN, restore source-val selection, then evaluate once.
+"""Train one source GNN, restore source-val selection, then evaluate once.
 
     python examples/train_source.py --output-dir runs/source-gcn
 
@@ -16,7 +16,7 @@ import torch
 
 from amortized_gnn_tta.data import CSBMConfig, CSBMEnvironment, load_dataset
 from amortized_gnn_tta.evaluation import predict, score_logits
-from amortized_gnn_tta.models import GCN, GCNConfig
+from amortized_gnn_tta.models import ARCHITECTURES, build_model, make_model_spec
 from amortized_gnn_tta.training import (
     TrainingConfig, fit_source, load_checkpoint, save_checkpoint,
     software_versions, source_training_data,
@@ -25,12 +25,15 @@ from amortized_gnn_tta.training import (
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--output-dir", type=Path, default=Path("runs/source-gcn"))
+    parser.add_argument("--architecture", choices=ARCHITECTURES, default="gcn")
+    parser.add_argument("--output-dir", type=Path)
     parser.add_argument("--paper-scale", action="store_true", help="5000 nodes × 2000 features per graph")
     parser.add_argument("--epochs", type=int, default=200)
     parser.add_argument("--patience", type=int, default=30)
     parser.add_argument("--hidden-channels", type=int, default=32)
     parser.add_argument("--dropout", type=float, default=0.5)
+    parser.add_argument("--heads", type=int, help="GAT only: hidden width must be divisible by this head count")
+    parser.add_argument("--attention-dropout", type=float, help="GAT only: attention-coefficient dropout")
     parser.add_argument("--learning-rate", type=float, default=0.01)
     parser.add_argument("--weight-decay", type=float, default=5e-4)
     parser.add_argument("--model-seed", type=int, default=31)
@@ -41,9 +44,11 @@ def main() -> None:
         parser.error("--threads must be positive")
     torch.set_num_threads(args.threads)
     n, f = (5000, 2000) if args.paper_scale else (1000, 64)
-    model_config = GCNConfig(f, 2, args.hidden_channels, args.dropout)
+    model_spec = make_model_spec(args.architecture, f, 2, hidden_channels=args.hidden_channels,
+                                dropout=args.dropout, heads=args.heads, attention_dropout=args.attention_dropout)
     train_config = TrainingConfig(args.epochs, args.patience, args.learning_rate,
                                   args.weight_decay, args.model_seed)
+    args.output_dir = args.output_dir or Path(f"runs/source-{args.architecture}")
     # Reject existing runs before training; never overwrite earlier evidence.
     args.output_dir.mkdir(parents=True, exist_ok=False)
     environments = [
@@ -58,19 +63,13 @@ def main() -> None:
     bundle = load_dataset(environments)
     view = source_training_data(bundle, "source")
     start = time.perf_counter()
-    result = fit_source(lambda: GCN(model_config), view, train_config, device=args.device)
+    result = fit_source(lambda: build_model(model_spec), view, train_config, device=args.device)
     training_seconds = time.perf_counter() - start
-    model_spec = {"architecture": "two_layer_gcn", "config": asdict(model_config)}
     checkpoint_path = args.output_dir / "best_model.pt"
     save_checkpoint(checkpoint_path, result, model_spec)
 
-    def factory(spec):
-        if spec["architecture"] != "two_layer_gcn":
-            raise ValueError("Example only restores two_layer_gcn")
-        return GCN(GCNConfig(**spec["config"]))
-
     # CPU restoration is deliberate: validate portability of the saved tensors.
-    restored, _ = load_checkpoint(checkpoint_path, factory, device="cpu")
+    restored, _ = load_checkpoint(checkpoint_path, build_model, device="cpu")
     source_logits = predict(result.model, bundle.unlabeled_input("source"))
     restored_logits = predict(restored, bundle.unlabeled_input("source"))
     torch.testing.assert_close(source_logits, restored_logits, rtol=1e-4, atol=1e-5)
@@ -84,7 +83,8 @@ def main() -> None:
     target_metrics = asdict(score_logits(target_logits, bundle.select("target", "eval"),
                                         bundle.evaluation_labels("target", "eval")))
     report = {
-        "purpose": "single-run source-only GCN baseline; no adaptation or target selection",
+        "purpose": f"single-run source-only {args.architecture} baseline; no adaptation or target selection",
+        "num_parameters": sum(parameter.numel() for parameter in result.model.parameters()),
         "versions": software_versions(), "model": model_spec,
         "training": asdict(train_config), "device": result.device, "cpu_threads": args.threads,
         "training_seconds": training_seconds, "epochs_run": len(result.history),

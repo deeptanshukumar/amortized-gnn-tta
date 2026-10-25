@@ -1,29 +1,10 @@
 """A small, standard two-layer GCN; no adaptation or benchmark-specific logic."""
 
-from dataclasses import dataclass
-import math
-
 from torch import Tensor, nn
 from torch.nn import functional as F
 from torch_geometric.nn import GCNConv
 
-
-@dataclass(frozen=True)
-class GCNConfig:
-    in_channels: int
-    out_channels: int
-    hidden_channels: int = 32
-    dropout: float = 0.5
-
-    def __post_init__(self) -> None:
-        for name in ("in_channels", "out_channels", "hidden_channels"):
-            value = getattr(self, name)
-            if isinstance(value, bool) or not isinstance(value, int) or value < 1:
-                raise ValueError(f"{name} must be a positive integer")
-        if self.out_channels < 2:
-            raise ValueError("This single-label classifier requires at least two logits")
-        if not math.isfinite(self.dropout) or not 0 <= self.dropout < 1:
-            raise ValueError("dropout must be finite and in [0,1)")
+from .config import GCNConfig
 
 
 class GCN(nn.Module):

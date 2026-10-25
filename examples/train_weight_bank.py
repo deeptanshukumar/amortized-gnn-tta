@@ -7,7 +7,6 @@ source-test labels are read. All outputs are development artifacts ignored by Gi
 """
 
 import argparse
-from dataclasses import asdict
 import hashlib
 import json
 import logging
@@ -17,7 +16,7 @@ import subprocess
 import torch
 
 from amortized_gnn_tta.data import CSBMConfig, CSBMEnvironment, load_dataset
-from amortized_gnn_tta.models import GCN, GCNConfig
+from amortized_gnn_tta.models import ARCHITECTURES, build_model, make_model_spec
 from amortized_gnn_tta.source_subsets import load_source_subsets
 from amortized_gnn_tta.training import TrainingConfig, source_training_data
 from amortized_gnn_tta.weight_bank import train_weight_bank
@@ -40,11 +39,14 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--subsets", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument("--architecture", choices=ARCHITECTURES, default="gcn")
     parser.add_argument("--model-seeds", type=int, nargs=6, default=[31, 32, 33, 34, 35, 36])
     parser.add_argument("--epochs", type=int, default=200)
     parser.add_argument("--patience", type=int, default=30)
     parser.add_argument("--hidden-channels", type=int, default=32)
     parser.add_argument("--dropout", type=float, default=0.5)
+    parser.add_argument("--heads", type=int, help="GAT only; total hidden width is divided across these heads")
+    parser.add_argument("--attention-dropout", type=float, help="GAT only: coefficient dropout, default 0")
     parser.add_argument("--learning-rate", type=float, default=0.01)
     parser.add_argument("--weight-decay", type=float, default=5e-4)
     parser.add_argument("--device", default="auto")
@@ -67,12 +69,12 @@ def main() -> None:
     bundle = load_dataset([CSBMEnvironment(raw["source"]["graph_id"], "source_train", CSBMConfig(**config_values))])
     source = source_training_data(bundle, raw["source"]["graph_id"])
     subsets = load_source_subsets(args.subsets, source)  # Validate actual regenerated graph/pool identity.
-    model_config = GCNConfig(source.graph.x.shape[1], len(source.class_names),
-                             args.hidden_channels, args.dropout)
+    model_spec = make_model_spec(args.architecture, source.graph.x.shape[1], len(source.class_names),
+                                hidden_channels=args.hidden_channels, dropout=args.dropout,
+                                heads=args.heads, attention_dropout=args.attention_dropout)
     training = TrainingConfig(args.epochs, args.patience, args.learning_rate, args.weight_decay)
     manifest = train_weight_bank(
-        lambda: GCN(model_config), source, subsets, training,
-        model_spec={"architecture": "two_layer_gcn", "config": asdict(model_config)},
+        lambda: build_model(model_spec), source, subsets, training, model_spec=model_spec,
         model_seeds=args.model_seeds, output_dir=args.output_dir, device=args.device,
         run_metadata={"git": git_state(), "subset_input_sha256": hashlib.sha256(args.subsets.read_bytes()).hexdigest()},
     )

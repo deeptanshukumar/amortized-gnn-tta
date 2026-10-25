@@ -1,0 +1,25 @@
+{
+  "protocol": "phase1-csbm-graphsage-v1",
+  "architecture": "graphsage",
+  "scope": "GraphSAGE source pretraining and bank audit; CSBM only; no adaptation claim",
+  "source": {
+    "num_nodes": 5000, "num_features": 2000,
+    "degree_scale": 5, "homophily_parameter": 0.8,
+    "negative_mean": -0.03, "positive_mean": 0.03, "noise_scale": 1.0,
+    "edge_seed": 11, "feature_seed": 12, "split_seed": 13,
+    "split_ratios": [0.6, 0.2, 0.2]
+  },
+  "label_fraction_of_training_pool": 0.5,
+  "subset_seeds": [101, 102, 103, 104, 105],
+  "model": {"hidden_channels": 32, "dropout": 0.5},
+  "training": {"max_epochs": 200, "patience": 30, "learning_rate": 0.01, "weight_decay": 0.0005},
+  "model_seeds": [31, 32, 33, 34, 35, 36],
+  "partition": {"policy": "whole_source_subset", "seed": 401, "group_counts": [3, 1, 1]},
+  "diagnostics": {
+    "probe": "all native source training nodes; labels unused",
+    "representation": "first-layer post-ReLU, before dropout",
+    "similarity": "biased centered linear CKA in feature space"
+  },
+  "evaluation": "source-test labels scored only after protocol and model partition are frozen",
+  "limitations": "Full-neighborhood mean variant with root weights, no L2 normalization or neighbor sampling; not parameter matched"
+}

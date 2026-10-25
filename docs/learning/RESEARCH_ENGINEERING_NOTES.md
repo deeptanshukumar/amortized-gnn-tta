@@ -4,7 +4,7 @@
 
 This handbook is for learning, explaining the project to a research committee, and preparing for interviews. Start with the examples; return to the formulas after the ideas make sense. It covers our current questions and likely follow-ups, and will grow when the work exposes new ones.
 
-**Status, 2026-10-25:** GCN/CSBM Phase 1 is complete, with 104 CPU tests passed. The full-budget thirty-model bank is trained, artifact-audited, split 18/6/6, and compared in weight/prediction/representation space. Source-only evaluation is recorded. Adaptation and the generator remain future work. We retain the explicit Matcha-code sampling convention. Sections 24–27 explain the milestones; numerical teaching examples are illustrations unless identified as executed checks.
+**Status, 2026-10-25:** GCN, GAT, and GraphSAGE share our CSBM training/bank/audit pipeline; 125 CPU tests passed. All three full-budget banks have passed their audits, with 30 models/18–6–6 groups each. Adaptation and the generator remain future work. We retain the explicit Matcha-code sampling convention. Sections 24–28 explain the milestones; numerical teaching examples are illustrations unless identified as executed checks.
 
 The assistant previously recorded “real benchmark first” as your preference. That was a misinterpretation and has been corrected. Your instruction is to use CSBM now.
 
@@ -28,6 +28,7 @@ The assistant previously recorded “real benchmark first” as your preference.
 | Five source-label subsets: what changes, what stays fixed, and why | Section 25 |
 | Our thirty-model bank: model identities, files, failures, and remaining limits | Section 26 |
 | Phase 1 closure: grouped holdouts, CKA, bank audit, and what the actual results mean | Section 27 |
+| GCN versus GAT versus GraphSAGE: attention, heads, root features, sampling, and shared code | Section 28 |
 
 You do not need to memorize everything at once. After each section, explain the main idea without looking. An explanation in your own words is more useful than repeating a prepared paragraph.
 
@@ -66,12 +67,13 @@ A broken data pipeline could produce an apparently successful adaptation method 
 
 **GNN** means *Graph Neural Network*: a neural network that uses connections between objects. **GCN** means *Graph Convolutional Network*: one particular way to combine a node's information with its neighbors' information.
 
-You own GCN implementation and experiments. Teammates handle GAT and GraphSAGE. The data representation should be shared.
+You own GCN experiments; teammates handle GAT and GraphSAGE. You later asked for all three shared model implementations, which are now present. This coding extension does not silently reassign team experiment ownership. The data representation remains shared.
 
 | Stage | What it means | Current status |
 | --- | --- | --- |
 | Data pipeline | Generate/load graphs and keep labels, splits, and environments organized | Implemented and CPU-tested; CSBM only |
 | Source GCN | Train a GCN using permitted source labels | Implemented and CPU-tested; Section 24 |
+| Other source architectures | Use the same pipeline with GAT or GraphSAGE | Implemented and CPU-tested; Section 28 |
 | Weight bank | Save multiple source-trained GCN parameter sets | Full-budget thirty-model bank audited, grouped, and compared; Sections 26–27 |
 | Small adaptations | Change only the classifier or a small structured part of the weights | Later |
 | Adaptation generator | Learn to predict those changes | Later |
@@ -1002,7 +1004,7 @@ This table summarizes the important project records in plain English. It does no
 | Dataset now | CSBM only | Explicit owner instruction |
 | Other datasets | Background only | Not current implementation work; the roadmap's later natural-shift goal is not erased |
 | Task | Node classification | Predict labels for nodes |
-| Your architecture | GCN | Teammates handle GAT/GraphSAGE |
+| Team responsibility / shared code | You own GCN experiments; all three models now implemented | Owner explicitly expanded the shared coding task; Section 28 |
 | Common graph/label interface | Implemented and tested | Separate labels, named splits, allowlisted cloned inputs |
 | Initial source development split | Configurable stratified 60/20/20 approved | A project convention, not an official benchmark rule |
 | Independent development source/target graphs | Approved | Initial loader exercise; not a final paired-shift protocol |
@@ -1016,7 +1018,7 @@ This table summarizes the important project records in plain English. It does no
 | Source training and scoring | Implemented and CPU-tested | Select minimum source-validation loss; score held-out labels afterward |
 | Sequential weight bank | Implemented and CPU-tested | Thirty subset/seed jobs retained; 18/6/6 assignment and diversity audit executed |
 | Adaptation/generators | Not implemented | Separate milestones and protocols |
-| Commits/pushes | Foundation committed as 30af4f9; Phase 1 completion commit explicitly authorized | Later commits need approval; push not authorized |
+| Commits/pushes | Prior Phase 1 commits pushed; verified architecture-extension commit/push explicitly authorized | Later changes still need approval; historical training dirty flags remain accurate |
 
 **Next:** discuss exact parameter-efficient adaptation methods and shift/environment holdouts before Phase 2. Phase 1's budget and model grouping are fixed; later paper-level protocols remain open. Dataset choice and the approved interface do not need reopening.
 
@@ -1438,7 +1440,7 @@ Choose a new output directory each time; the script refuses to overwrite an exis
 | `best_model.pt` | Best weights as CPU tensors, model/training configuration, selected epoch, source provenance/indices, history, software versions |
 | `metrics.json` | Human-readable run record with configurations, seeds, splits, data identity, history, source/target scores, device, and reload verification |
 
-A **checkpoint** is saved model state. A **state dictionary** maps parameter names to tensor values. We save this dictionary and plain metadata instead of a pickled whole model object; loading constructs the architecture explicitly and maps tensors to CPU first. The example checks that predictions agree after reloading. See the [README reload example](../../README.md#train-and-evaluate-a-source-gcn).
+A **checkpoint** is saved model state. A **state dictionary** maps parameter names to tensor values. We save this dictionary and plain metadata instead of a pickled whole model object; loading constructs the architecture explicitly and maps tensors to CPU first. The example checks that predictions agree after reloading. See the [README reload example](../../README.md#train-and-evaluate-a-source-model).
 
 This is an inference checkpoint, not a complete training-resumption checkpoint. It does not store Adam's internal state or all random-generator states needed to resume the interrupted optimization trajectory. Checkpoint files and run outputs are ignored by Git. No new dependency was needed for this milestone.
 
@@ -1791,3 +1793,138 @@ Explain the entire phase from zero with clear tables and worked examples. Critiq
 ~~~
 
 **Learning check:** explain why keeping an entire label selection in one model partition still does not mean that individual source-training node labels are disjoint across partitions. Then explain why 88.37% source accuracy says nothing yet about adaptation accuracy.
+
+## 28. GCN, GAT and GraphSAGE: shared data, different computations
+
+### Why add these models to the same codebase?
+
+You asked us to implement GAT and GraphSAGE too. They now use the same loader, label boundaries, trainer, checkpoint format, model-bank orchestration and diagnostic functions as GCN. This avoids three scripts gradually developing incompatible experimental rules.
+
+Shared interfaces do not mean shared weights. Each architecture has its own model configuration and parameter tensors. Our explicit factory chooses one known model from plain metadata; it does not dynamically import code named by a checkpoint. GAT and GraphSAGE are separate neural-network classes, not subclasses inheriting GCN's aggregation. Their configuration classes share basic dimension/dropout validation only.
+
+### What does each model do with neighbors?
+
+| Model | Neighbor combination | Own-node information | Hidden activation |
+| --- | --- | --- | --- |
+| GCN | Shared feature transform plus symmetric degree-weighted aggregation | Layer-added self-loop, sharing the feature transform | ReLU |
+| GAT | Learned attention weights over neighbors, calculated from features | Layer-added self-loop participates in attention | ELU |
+| GraphSAGE, our mean variant | Arithmetic mean of neighbor features, with a learned neighbor transform | Separate learned root-node transform | ReLU |
+
+A **root node** is the node currently receiving an updated representation. A **transform** multiplies features by learned weights, with a bias where specified. An **arithmetic mean** adds values and divides by their count.
+
+Our GraphSAGE layer has the form:
+
+~~~text
+new_value_i = W_root * own_value_i
+              + W_neighbor * mean(neighbor_values_i)
+              + bias
+~~~
+
+The neighbor mean excludes an extra self-loop because our CSBM generator has none and this model adds none. An isolated node still has its root transform. For example, if the root value is 2, the neighbor values are 4 and 8, W_root=2, W_neighbor=1 and bias=0, the layer gives 2×2 + (4+8)/2 = 10. This is a hand-worked illustration before activation.
+
+Tests use explicit matrices and a directed graph to check the mean/root calculation. Another test sets GAT attention scores to zero: softmax then assigns equal weights, so we can check the exact neighbor-plus-self average. These mathematical checks test meanings as well as shapes.
+
+### GAT: what is an attention head?
+
+An **attention head** is one learned way of transforming and weighting neighborhood information. It is not the same as the final classification head discussed for adaptation.
+
+For each node and head, GAT transforms node features, calculates scores for connected neighbors including itself, and applies a neighborhood softmax. Before attention dropout, these weights sum to 1 within that node's neighborhood/head. It uses them to combine transformed neighbor values.
+
+The learned projection matrices and attention vectors are model parameters. The attention coefficients for particular edges are computed values that change with the features, graph and parameters. Do not confuse these two meanings of “weights.”
+
+Our first layer uses four heads, each producing eight numbers. **Concatenation** means joining their vectors end to end:
+
+~~~text
+[head1: 8 values | head2: 8 | head3: 8 | head4: 8] = 32 values
+~~~
+
+In our configuration, hidden_channels=32 means the total joined width. PyG GATConv's out_channels means width per head when concatenating. We therefore pass 32/4=8 to that layer. Asking for three heads with total width 32 is rejected; silently rounding would produce the wrong dimension.
+
+The output layer has one head and returns C raw class scores. It does not concatenate four copies of the class scores. We use classic GATConv, not the distinct GATv2Conv operator.
+
+### ReLU, ELU and the two dropout settings
+
+**ReLU** keeps positive values and replaces negative ones with zero. **ELU**, the exponential linear unit with its default scale 1, keeps positive values and maps negative z to exp(z)−1. ELU therefore retains a bounded negative response. GAT's hidden ELU follows its established model family; it is a deliberate model-definition difference, not a loader transformation.
+
+GAT also uses **LeakyReLU** internally for attention scores: negative scores are multiplied by 0.2. That is a different operation from the hidden ELU. All three models end with raw logits for cross-entropy, without a final hidden activation or output softmax.
+
+| Setting | What is randomly removed during training? | Our default |
+| --- | --- | --- |
+| Hidden-feature dropout | Some hidden node coordinates | 0.5 for all three models |
+| GAT attention-coefficient dropout | Some calculated neighborhood attention coefficients | 0, separately configurable |
+
+Attention dropout happens after neighborhood softmax in PyG. At a nonzero setting, the retained coefficients are rescaled and their realized sum need not be 1 during training. Evaluation mode disables it and feature dropout. A positive-setting test confirms stochastic training outputs and repeatable evaluation outputs. We do not silently use the hidden dropout value for both settings.
+
+We add no input dropout or residual module. A **residual connection** adds an earlier representation to a later one. These are small explicit baselines, not reproductions of original-paper tuning.
+
+### Is GraphSAGE still GraphSAGE without neighbor sampling?
+
+Our model uses the PyG mean/root GraphSAGE aggregation rule on all available neighbors. **Neighbor sampling** is a strategy that uses a selected number of neighbors to reduce training work on large graphs. The aggregation rule and the sampling/training strategy are related but separate choices.
+
+For the current small-CSBM full-graph protocol we do not sample. We also disable PyG's optional embedding L2 normalization and neighbor projection. **L2 normalization** divides a vector by its length; **projection** here would add an extra learned transformation before neighbor aggregation. Both would change the model and must be explicit.
+
+The original GraphSAGE TensorFlow supervised pipeline samples supports, can concatenate root/neighbor outputs, normalizes its final embedding, and applies a separate classifier. Our two-layer PyG mean variant is explicitly different. Neither original environment was installed or copied into our project.
+
+An **inductive evaluation** tests new nodes/graphs under specified visibility rules. GraphSAGE's design supports that use, but choosing SAGEConv does not automatically turn our full-source-graph node split into an inductive experiment. Current source message passing includes all source nodes; its withheld labels stay protected.
+
+### Same output width does not mean the same model size
+
+Every architecture follows this shape trace in the reference setting:
+
+~~~text
+x: [5000,2000] → hidden: [5000,32] → logits: [5000,2]
+~~~
+
+| Architecture | Actual learned parameters | Important difference |
+| --- | ---: | --- |
+| GCN | 64,098 | One feature transform per graph layer |
+| GAT | 64,166 | Adds learned attention vectors to its feature transforms |
+| GraphSAGE | 128,162 | Separate root and neighbor transforms |
+
+The source graph, selected labels, training/validation rule and seed lists match; parameter budgets and activation functions do not. Equal seed integers also do not make different architectures start with identical weights: their tensor shapes and initialization calls differ. Within one architecture, reusing each seed across label subsets still pairs its initializations.
+
+These are default, width-matched experiments. They are not a controlled test of aggregation alone, a parameter-matched comparison, or proof that every architecture is optimally tuned. Results on this development graph cannot establish a general architecture ranking.
+
+### Why is GraphSAGE slower in our current CPU run?
+
+PyG's standard SAGEConv first aggregates input-neighbor features and then projects the result, while separately transforming root features. With 2,000 input coordinates this does substantial work in the wide feature space. GCN/GAT project before their main message aggregation in the current operators. This helps explain why a simple-looking mean aggregator can still be expensive.
+
+This is an implementation/shape observation, not a controlled latency benchmark. Our runs can overlap and include different training lengths. We kept the model/protocol stable rather than introducing an unverified cache or changing aggregation to speed up a reported result. Larger-scale optimization or sampled training needs a separate implementation and verification step.
+
+### How do I select, save and restore a model?
+
+~~~python
+from amortized_gnn_tta.models import build_model, make_model_spec
+
+spec = make_model_spec("gat", in_channels=2000, out_channels=2,
+                       hidden_channels=32, heads=4,
+                       dropout=0.5, attention_dropout=0.0)
+model = build_model(spec)
+~~~
+
+The **specification**, abbreviated spec, is a plain dictionary containing the known architecture name and explicit configuration. Checkpoints store it with a state dictionary. The factory reconstructs the right model; strict restoration rejects incompatible parameter shapes. The old GCN tag and state keys remain supported, and the real previous GCN bank reproduced its 88.37% mean source-test accuracy through the new audit code.
+
+~~~bash
+.venv/bin/python examples/train_source.py --architecture gat --output-dir runs/my-gat
+.venv/bin/python examples/train_source.py --architecture graphsage --output-dir runs/my-graphsage
+~~~
+
+Bank training uses the same --architecture switch. Finalization uses the matching configs/phase1_csbm_gat.json or configs/phase1_csbm_graphsage.json via --config. Other architectures reject GAT-only options rather than silently ignoring them. The default architecture remains GCN, preserving older commands.
+
+All 125 CPU tests passed. New tests cover real learning on a deliberately easy fixture, finite gradients, node-permutation behavior, empty-edge graphs, coefficient dropout, held-out-label invariance, checkpoint restoration and the shared bank/audit CLI. The easy fixture's accuracy is a correctness check, not our research result. Experiment evidence and final bank statuses are maintained in [project state](../PROJECT_STATE.md#architecture-extension-verification).
+
+Both new full-budget banks also completed with 30 models each. GAT selected epochs 19–61; GraphSAGE selected 20–98; no selected checkpoint reached the 200-epoch cap. Their source-test means were 87.91% and 88.69%, with mean probe disagreement 7.90% and 6.90%. The preserved GCN bank still scored 88.37% with 7.32% disagreement through the new loader. These are development observations under width-matched defaults, not proof that one architecture is generally better. The slower GraphSAGE run and parameter-count difference are practical reasons to measure computation rather than infer speed from the model name.
+
+For future adaptation, “head-only” must be precise: GAT's last graph layer includes attention vectors; GraphSAGE's includes root and neighbor matrices. Sharing a training interface does not make one architecture's weights or an architecture-specific adaptation generator interchangeable with another's.
+
+Primary references: [GAT official repository](https://github.com/PetarV-/GAT), [GraphSAGE official repository](https://github.com/williamleif/GraphSAGE), [PyG GATConv](https://pytorch-geometric.readthedocs.io/en/stable/generated/torch_geometric.nn.conv.GATConv.html), and [PyG SAGEConv](https://pytorch-geometric.readthedocs.io/en/stable/generated/torch_geometric.nn.conv.SAGEConv.html). The historical TensorFlow references and their MIT licenses were inspected separately; our wrappers use the maintained PyG API and independent project orchestration.
+
+### Prompt Q — explain and critique our three model implementations
+
+~~~text
+I am a beginner working on an AFML project about amortized GNN weight adaptation under graph distribution shift. Our shared PyTorch/PyG code now implements GCN, GAT and GraphSAGE for the same CSBM loader, full-source-graph training, source-validation checkpoint selection, model banks and offline evaluation. Adaptation is not implemented. 125 CPU tests passed; other backends are unverified.
+
+All models have two graph layers, total hidden width 32, feature dropout 0.5 and raw C-class logits. GCN uses GCNConv/ReLU, self-loops and symmetric degree normalization with no cache. GAT uses classic GATConv/ELU, four hidden heads × eight channels, one output head with concat=False, layer-owned self-loops, internal attention-score slope 0.2 and separate attention dropout default 0. GraphSAGE uses full-neighborhood PyG SAGEConv(mean), separate root/neighbor transforms, ReLU, normalize=False/project=False/root_weight=True, no added self-loops and no sampled minibatches. There is no input dropout or added residual module. At F=2000/H=32/C=2 parameter counts are 64,098/64,166/128,162. Same seed integers are not identical initializations across architectures. These are explicit initial baselines, not original-paper reproductions or parameter-matched/tuned comparisons.
+
+Teach the tensor flow and calculations from zero. Use a tiny directed graph and isolated node to compare the models. Explain attention coefficients versus learned parameters, total width versus per-head width, ELU versus internal LeakyReLU, coefficient versus feature dropout, root transforms versus self-loops, and neighbor sampling versus aggregation/inductive evaluation. Explain why GraphSAGE can be slower with wide input features, why the loader must not bake in GCN normalization, how checkpoints select the correct model, and what a future head-only/low-rank update must specify. Define unfamiliar terms, cite primary papers/official documentation, distinguish verified behavior from hypotheses, and do not invent research results. Ask one reasoning question at a time afterward.
+~~~
