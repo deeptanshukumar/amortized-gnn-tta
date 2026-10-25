@@ -98,7 +98,7 @@ def create_source_subsets(source: SourceTrainingData, *, label_fraction: float,
     }
 
 
-def _validate_manifest(manifest: dict[str, Any], source: SourceTrainingData) -> None:
+def validate_source_subsets(manifest: dict[str, Any], source: SourceTrainingData) -> None:
     """Check stored membership against its source; never redraw on loading."""
     validate_source_training_data(source)
     if (not isinstance(manifest, dict) or type(manifest.get("format_version")) is not int
@@ -144,7 +144,7 @@ def source_subset_view(source: SourceTrainingData, manifest: dict[str, Any],
     Views share the source graph, which callers must treat as read-only. fit_source
     clones it before execution. Native bundle splits are never mutated.
     """
-    _validate_manifest(manifest, source)
+    validate_source_subsets(manifest, source)
     item = next((item for item in manifest["subsets"] if item["id"] == subset_id), None)
     if item is None:
         raise ValueError(f"Unknown source subset: {subset_id}")
@@ -164,7 +164,7 @@ def source_subset_view(source: SourceTrainingData, manifest: dict[str, Any],
 
 def save_source_subsets(path: Path, manifest: dict[str, Any], source: SourceTrainingData) -> None:
     """Write an audited JSON manifest; never overwrite an existing file."""
-    _validate_manifest(manifest, source)
+    validate_source_subsets(manifest, source)
     encoded = json.dumps(manifest, indent=2, allow_nan=False) + "\n"
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -175,5 +175,5 @@ def save_source_subsets(path: Path, manifest: dict[str, Any], source: SourceTrai
 def load_source_subsets(path: Path, source: SourceTrainingData) -> dict[str, Any]:
     """Load saved node memberships, rejecting a different source or invalid budget."""
     manifest = json.loads(Path(path).read_text(encoding="utf-8"))
-    _validate_manifest(manifest, source)
+    validate_source_subsets(manifest, source)
     return manifest

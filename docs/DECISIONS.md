@@ -56,6 +56,36 @@ Authority: after the remaining weight-bank tasks were explained, the owner reque
 
 Reference investigation: inspected the existing GPRGNN per-class random split utility and the separate PyG checkout's RandomNodeSplit implementation. Both illustrate class-aware splitting but rebuild validation/test masks in their relevant modes. We instead sample inside the existing permitted training pool. This is independently implemented with NumPy's maintained RNG API, not copied benchmark code or a claim to reproduce its label budget. Primary sources: [PyG dataset splitting](https://pytorch-geometric.readthedocs.io/en/latest/tutorial/dataset_splitting.html), [NumPy independent random streams](https://numpy.org/doc/stable/reference/random/parallel.html).
 
+## Implemented decision D4 — sequential source-only bank runner (2026-10-25)
+
+Authority: owner requested the foundation commit and continuation to the next step after five source-label subsets. Foundation is committed locally as 30af4f9. The runner was initially uncommitted; the owner subsequently approved it as part of the separate Phase 1 completion commit.
+
+- **Scope:** model-neutral sequential runner over the Cartesian product of saved label subsets and explicit model seeds. The GCN example enforces five subsets and six seeds, reconstructing only the CSBM source and validating graph/pool identity before training. No new dependency or change to data/training formulas.
+- **Seeds:** defaults 31–36, reused across subsets. This deliberately pairs initialization/training streams for supervision comparisons; thirty model instances are not thirty IID independent initializations. Each job constructs a fresh model and optimizer, with its actual seed recorded. Tests verify identical weights/histories when job order changes.
+- **Supervision/selection:** the runner receives only SourceTrainingData. Each job selects minimum source-validation CE using its existing early-stopping rule, then scores selected source train and source validation rows. No source-test/target scores, bank-wide score filtering, or target-driven selection.
+- **Evidence:** each model gets a CPU inference checkpoint, JSON history/metrics, subset identity, and CPU reload prediction check (rtol=1e-4, atol=1e-5). The bank stores copied subsets, all planned IDs/pairs, configs, versions, device/threads, hashes and progress. The example records Git revision plus dirty status honestly; an uncommitted runner cannot be reconstructed from the foundation commit alone.
+- **Failure policy:** existing output directories are rejected. Update only the new run's own bank.json using a same-directory temporary file and rename. A failed job preserves prior artifacts and marks failure when possible; abrupt termination can leave running status. No silent skipping, resumption, deletion, or overwriting of earlier runs. Do not treat a partial bank as complete.
+- **Memory:** sequential fitting/reloading, shared read-only source view, execution clones, released per-job model references. No speculative parallel scheduling or new graph cache.
+- **Verification:** 80 CPU tests passed, including ten new bank cases for membership/provenance/hashes, source-only metrics, job-order reproducibility, injected partial failure, invalid inputs, and no-overwrite behavior. Both small (1000×64, cap/patience 100/20) and paper-sized (5000×2000, 20/10) development banks completed all thirty jobs with CPU reloads verified; checkpoint/metric hashes were checked after execution. All paper-sized models selected epoch 20, so convergence is unestablished. Final generator grouping and diversity claims are not implemented.
+
+Reference basis: the existing separate OGB PyG example resets model weights and constructs a fresh optimizer per run; we instead construct fresh seeded models through the shared factory. Its per-epoch source-test scoring and fixed-graph assumptions are not adopted. [PyTorch checkpoint guidance](https://docs.pytorch.org/tutorials/beginner/saving_loading_models.html) supports state-dict restoration and distinguishes inference checkpoints from optimizer-containing resumption snapshots. No upstream code was copied.
+
+## Implemented decision D5 — GCN/CSBM Phase 1 closure (2026-10-25)
+
+Authority: owner explicitly requested the remaining task list and completion of Phase 1. The task list and protocol/partition recommendation were stated before implementation. Scope is roadmap steps 1–3 for GCN/CSBM, not teammates' architectures, adaptation, or final-paper completion. After reviewing the results, the owner explicitly approved the Phase 1 completion commit. No push or future commit authority is inferred.
+
+- **Reference protocol:** configs/phase1_csbm_gcn.json freezes N=5000/F=2000, Matcha-code CSBM convention, source seeds 11/12/13, native 60/20/20, 50% of each training class, subset seeds 101–105, paired model seeds 31–36, H32/dropout0.5, Adam0.01/0.0005, cap200/patience30. The previously open budget is now fixed for this engineering phase; final-paper protocols/holdouts remain future work.
+- **Artifact loading:** complete bank status and exact Cartesian membership, contained relative paths, artifact hashes, checkpoint tensor schema/finiteness, model spec/config, source/subset/train/validation identity, histories/earliest minimum selection, and reproduced source-validation metrics must agree. Loading is CPU/weights_only. Invalid/partial/mismatched banks fail visibly; no source-test/target labels are needed for the loader.
+- **Partition choice:** hold out whole label-subset groups as 3/1/1 (18/6/6 models). Deterministic PCG64 seed401 assigns meta-train subsets [1,0,3], validation [4], test [2], without inspecting scores. Alternative random model-instance splitting can put the identical labeled selection into multiple roles. The chosen split tests new label selections on the same source graph, not new graphs or unseen initialization seeds. Individual node labels still overlap across those selections; do not claim disjoint labeled-data domains. Saved partitions bind the exact bank.json hash and require complete, disjoint model/group coverage.
+- **Diversity probe:** all native source-training nodes in canonical ID order, labels unused. Measure raw/symmetric-relative weight L2, raw weight cosine, argmax disagreement, class-probability RMSE, and biased centered linear CKA on first-layer post-ReLU/pre-dropout representations. GCN.encode exposes that existing calculation without changing weights, state keys, or forward behavior (tested against the original formula with identical dropout RNG). The core accepts a representation callback for other architectures.
+- **CKA basis:** independently implemented PyTorch feature-space formula from Kornblith et al. (ICML2019). Inspected the official Google Research README and Demo.ipynb, including feature_space_linear_cka, Gram comparison, biased/debiased distinction, and Apache2 terms. No notebook source was copied or installed; feature-space H×H products avoid dense N×N storage. Constant centered representations give undefined/None explicitly. Tests independently compare with centered Gram arithmetic and column permutation/scaling invariances.
+- **Readiness:** require complete artifacts, observed probability variation, no exact parameter duplicates, and defined representation comparisons for the phase review. These are engineering diagnostics, not a universal scientific sufficiency threshold. Report pair categories (same subset, same seed across subsets, different both) and expose observed ranges. Useful adaptation diversity remains an experimental question; never insert arbitrary weight noise just to increase distance.
+- **Training/evaluation:** preserved the earlier 20-epoch smoke bank and trained a fresh 200/30 bank. All thirty selected epochs24–98, stopping before the cap. Freeze/save the model partition before explicit source-test label access. Final source-only evaluation uses the native test complement and reports per-subset/per-seed descriptive spread, not thirty IID trials, confidence intervals, target selection, or adaptation results. This source graph/test split has earlier viewed development scores, so it is not a sealed final benchmark.
+- **Provenance:** report configuration/partition/bank hashes and preserve an analysis-code snapshot separately from the training Git revision/dirty flag. Training took place in an uncommitted working tree; the analysis snapshot is not retroactively asserted to be the training implementation. No paper-level frozen-code claim.
+- **Verification:** full-bank execution, complete artifact audit, 18/6/6 coverage, 435 diagnostic pairs, final source scoring, and 104 CPU tests. Test cases include resealed corrupted checkpoints, weight/metadata/selection mismatches, model-partition leakage, label-free diagnostic invariance, hidden permutation symmetry, exact forward compatibility, and the actual finalization CLI.
+
+Primary CKA source: [Similarity of Neural Network Representations Revisited](https://proceedings.mlr.press/v97/kornblith19a.html). Separate reference checkout: references/google-research at ba728e288c51126eac25e316b11dfee94d68c301, sparse representation_similarity/{README.md,Demo.ipynb} plus root LICENSE. Initial sandbox DNS failure during sparse fetching was resolved with an approved retry; the upstream worktree remains unmodified. This is a reference only, not a project dependency.
+
 ## Established instructions
 
 The owner approved investigation, separate reference clones, and Markdown project context in the initial request. Loader implementation and dependency changes require discussion and approval. On 2026-10-25 the owner authorized a checkpoint commit of the completed foundation and continuation to the next implementation step. Future commits still require approval; no push is authorized. These are owner instructions, not new research decisions.
@@ -121,7 +151,7 @@ Status: implemented and CPU-verified under the owner's 2026-10-25 authorization.
 
 Rationale for CSBM first: small configurable graphs make edge/split/seed/leakage assertions practical and exercise separate source/target environments without archive dependencies. Disadvantage: we must specify and validate the sampling mathematics ourselves. Matcha is a reference from the owner's proposal/resource index, not an automatic methodological choice.
 
-Current order: fixed-holdout subsets are implemented → build the sequential bank runner → explicitly settle bank grouping and validate diversity. Final label budget/holdout claims still need agreement. Other datasets remain background only; the roadmap's eventual natural-shift evaluation needs a separate future discussion.
+Current order: Phase 1 GCN/CSBM foundation through audited bank preparation is complete under D5. Phase 2 adaptation requires its own method/protocol discussion. The final-paper holdout protocol remains future work; the phase's reference label budget is fixed. Other datasets remain background only; the roadmap's eventual natural-shift evaluation needs a separate future discussion.
 
 ### Minimal implemented structure
 
@@ -144,12 +174,15 @@ src/amortized_gnn_tta/
     training.py                   # shared source-only loop and checkpoints
     evaluation.py                 # label-free inference, explicit-label scoring
     source_subsets.py             # fixed-holdout source-label selections/manifests
+    weight_bank.py                # sequential model-neutral bank execution/evidence
 tests/test_data.py
 tests/test_training.py
 tests/test_source_subsets.py
+tests/test_weight_bank.py
 examples/inspect_data.py
 examples/train_source.py
 examples/prepare_source_subsets.py
+examples/train_weight_bank.py
 ```
 
 Use dataclasses and a short explicit dispatch, not a plugin registry or large base-class hierarchy. Only `csbm.py` is in the current dataset implementation scope. The source milestone adds one GCN module and shared training/evaluation; no adaptation-generator directory is needed. Direct runtime dependencies: torch, torch-geometric, NumPy; pytest as development dependency. Version constraints are in pyproject.toml and the executed stack is in README.md. Local .venv reuses the existing CPU torch/NumPy site packages; new dependencies are project-local. Do not adopt moving upstream HEAD as an experiment dependency.

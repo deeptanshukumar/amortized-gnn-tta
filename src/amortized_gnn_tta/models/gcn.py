@@ -39,7 +39,11 @@ class GCN(nn.Module):
         self.conv1 = GCNConv(config.in_channels, config.hidden_channels, cached=False)
         self.conv2 = GCNConv(config.hidden_channels, config.out_channels, cached=False)
 
+    def encode(self, x: Tensor, edge_index: Tensor) -> Tensor:
+        """First-layer post-ReLU representations, before training dropout."""
+        return F.relu(self.conv1(x, edge_index))
+
     def forward(self, x: Tensor, edge_index: Tensor) -> Tensor:
-        x = F.relu(self.conv1(x, edge_index))
+        x = self.encode(x, edge_index)
         x = F.dropout(x, p=self.config.dropout, training=self.training)
         return self.conv2(x, edge_index)

@@ -1,6 +1,6 @@
 # Project state
 
-Last updated: 2026-10-25. Stage: CSBM loader, source GCN, and fixed-holdout source-label subset preparation implemented and CPU-verified.
+Last updated: 2026-10-25. Stage: **GCN/CSBM Phase 1 complete** — foundation, full-budget source bank, grouped model holdouts, diversity audit, and source-only review evaluation verified on CPU.
 
 ## Current scope and decision
 
@@ -9,6 +9,10 @@ The owner authorized implementation and routine methodological/dependency choice
 The owner subsequently requested the small source-GCN training and evaluation pipeline using this loader. That milestone is now implemented without new dependencies. Source-validation cross-entropy selects the checkpoint; source-test and target labels are scored only after fitting. See [Decision D2](DECISIONS.md#implemented-decision-d2--small-source-gcn-baseline-2026-10-25).
 
 The owner then requested the remaining work one step at a time. First implemented the five source-label subsets needed before a bank runner. Label fraction is an explicit required argument; 50% of the native training pool was used for development execution only. The final scientific budget and model-bank grouping remain to be settled. See [Decision D3](DECISIONS.md#implemented-decision-d3--fixed-holdout-source-label-subsets-2026-10-25).
+
+The owner authorized committing that foundation and moving on. Local commit **30af4f9** contains it; nothing was pushed. The owner later explicitly approved the separate Phase 1 completion commit covering the bank runner, audit, configuration, tests and docs. See [Decision D4](DECISIONS.md#implemented-decision-d4--sequential-source-only-bank-runner-2026-10-25).
+
+The owner then explicitly requested the remaining task list and completion of Phase 1. The list was provided before further implementation. [Decision D5](DECISIONS.md#implemented-decision-d5--gcncsbm-phase-1-closure-2026-10-25) fixes the phase's reference protocol and whole-subset partition, and records the completed audit. This completes roadmap steps 1–3 for our GCN/CSBM scope, not teammates' architectures, adaptation, or the final research paper.
 
 Under that delegated authority, selected the released Matcha-code CSBM distribution, exposed through explicit p_in/p_out and a named degree_scale conversion. Exact finite-size expected degree is reported; no silent factor-of-two correction. Fixed-direction Gaussian feature scaling follows the released code. This is not full paper-result reproduction. Details and alternatives are in [DECISIONS.md](DECISIONS.md#implemented-decision-d1--initial-csbm-protocol-2026-10-25).
 
@@ -27,6 +31,12 @@ Under that delegated authority, selected the released Matcha-code CSBM distribut
 | Training example and checks | examples/train_source.py, tests/test_training.py | Reproducible run records, CPU checkpoint reload, learning/selection/leakage/device tests |
 | Source-label subset preparation | src/amortized_gnn_tta/source_subsets.py | Stratified selections inside native training pool; saved membership/identity, fixed validation/test, compatible training views |
 | Subset example and checks | examples/prepare_source_subsets.py, tests/test_source_subsets.py | Five distinct subsets; persistence, leakage/invariance, budget, and real trainer/checkpoint integration |
+| Sequential bank runner | src/amortized_gnn_tta/weight_bank.py | Fresh seeded model/optimizer per subset/seed pair, copied supervision manifest, per-model checkpoints/metrics, hashes, CPU reload checks, progress/failure status |
+| Bank example and checks | examples/train_weight_bank.py, tests/test_weight_bank.py | Five subsets × six model seeds, source-only reconstruction, Git state recording, job-order reproducibility, partial-failure/no-overwrite verification |
+| Artifact audit and model partitions | src/amortized_gnn_tta/bank_artifacts.py | Verified complete-bank loading, restored validation metrics, exact source/config identity, deterministic whole-subset partitions and reload checks |
+| Model diversity and explicit offline test evaluation | src/amortized_gnn_tta/bank_diagnostics.py | Label-free source-pool probes, weight/prediction/CKA comparisons, separate source-test scorer with grouped descriptive summaries |
+| Phase reference and review command | configs/phase1_csbm_gcn.json, examples/finalize_phase1.py | Frozen phase config, new review directory, persisted partition before scoring, JSON/CSV/Markdown evidence and analysis-code snapshot |
+| Phase verification | tests/test_bank_analysis.py | Corruption/mismatch/leak checks, independent CKA arithmetic, hidden-permutation and forward-compatibility tests, real finalization CLI |
 
 Held-out graphs have eval-only indices; training_labels rejects validation/target roles. The loader preserves full graph context and does not add self-loops or model-specific normalization. A persistent cache and paired-shift generator are deliberately absent.
 
@@ -40,7 +50,7 @@ Earlier dataset/reference investigation and handbook work are preserved in the d
 
 ## Verification actually executed
 
-- OMP_NUM_THREADS=1 .venv/bin/python -m pytest -q: **70 passed** after subset preparation (26 new cases; 44 existing checks retained); upstream PyTorch/PyG deprecation warnings reported.
+- OMP_NUM_THREADS=1 .venv/bin/python -m pytest -q: **104 passed** at Phase 1 closure (24 audit/partition/diagnostic cases added to the previous 80); upstream PyTorch/PyG deprecation warnings reported.
 - New checks include finite GCN gradients/empty-edge execution, learning on a deliberately easy fixture, exact seeded CPU repeatability, best-checkpoint restoration after validation worsens, inference/checkpoint equality, and unchanged training after held-out labels are changed. A spy also verifies source-view extraction reads only permitted source validation labels.
 - Python compileall on src/tests/examples: passed.
 - Small example: 300 nodes × 32 features per graph; source splits 180/60/60; target eval 300; forward/backward and label-free target input passed.
@@ -48,7 +58,7 @@ Earlier dataset/reference investigation and handbook work are preserved in the d
 - Paper-scale generation plus bundle validation took approximately 1.50 seconds in this local CPU run, excluding Python import/startup and the GCN operation. This is a smoke timing, not a benchmark comparison.
 - Reports were written outside Git to /tmp/afml_csbm_smoke.json and /tmp/afml_csbm_paper_scale.json; regenerate via the example commands in the README.
 - Direct project dependency requirement checks passed. Whole-environment pip check failed on unrelated inherited packages (e.g. AutoGluon/Pandas/Transformers/TensorBoard constraints), not on the selected project dependencies.
-- Git diff/whitespace, documentation consistency, and ignored-artifact checks passed. The owner authorized a checkpoint commit of the completed foundation before the next step; runtime outputs/checkpoints remain excluded and no push is authorized.
+- Git diff/whitespace, documentation consistency, and ignored-artifact checks passed for the foundation and completed phase. Runtime outputs/checkpoints remain excluded from the explicitly authorized Phase 1 completion commit. No push is authorized.
 
 Tested: Python 3.13.13, PyTorch 2.13.0+cpu, PyG 2.8.1, NumPy 2.3.5, pytest 9.1.1 on local Linux CPU. .venv inherits system site packages to reuse CPU PyTorch; new dependencies were installed into .venv only. Sandbox network failure was resolved by a permitted install retry. No global environment modifications.
 
@@ -75,11 +85,54 @@ These are single seeded development runs with different sizes and epoch caps, no
 - An initial round-trip test failed because tuple-valued provenance became lists in JSON. Normalizing provenance to JSON-compatible values at manifest creation resolved the cause; the complete suite then passed. Existing loader and training behavior were preserved.
 - Runtime manifests remain ignored. No 30-model bank, generator partitions, or diversity result is claimed.
 
+### Sequential banks actually executed
+
+The line above describes the earlier subset-only milestone. Bank construction is now implemented, using model seeds 31–36 for every subset and the same architecture/optimizer/selection rules as the source baseline. Every model uses the saved 50%-pool subset (300/1,500 labels depending on graph size), not the full-pool baseline's budget.
+
+| Development bank | Nodes × features | Epoch cap / patience | Completed models | Selected epochs | CPU reload checks |
+| --- | --- | --- | --- | --- | --- |
+| runs/gcn-bank-small-review | 1,000 × 64 | 100 / 20 | 30 / 30 | 15–25; ran 35–45 epochs | 30 passed |
+| runs/gcn-bank-paper-smoke | 5,000 × 2,000 | 20 / 10 | 30 / 30 | All 20; cap reached | 30 passed |
+
+Commands: `.venv/bin/python examples/train_weight_bank.py --subsets runs/source-subsets-small.json --epochs 100 --patience 20 --device cpu --output-dir runs/gcn-bank-small-review` and the equivalent paper manifest/run with `--epochs 20 --patience 10`.
+
+Each bank has bank.json, a copy of source_subsets.json, and 30 model directories containing best_model.pt/metrics.json. All 60 checkpoint hashes and 60 metric-file hashes were checked against their bank manifests after execution. Both bank statuses are complete, all expected model pairs are present, and all CPU reload verifications succeeded. No target graph was created or source-test/target scores computed by the runner.
+
+The sum of fitting times was approximately 6.41 seconds (small) and 45.71 seconds (paper-sized). These sums exclude reconstruction, checkpoint I/O/reloading, and final scoring, so they are not total wall-clock times or comparative performance benchmarks. The paper-sized bank is deliberately short and does not establish convergence.
+
+Both earlier examples record foundation revision 30af4f9 with dirty=true because the runner had not yet been committed. This is development execution evidence, not a fully frozen paper experiment. Same seeds are reused across subsets as a paired design; thirty models are not thirty independent IID trials. The next closure milestone below fixes the phase's label budget/partition and measures diversity; final-paper evaluation and scientific sufficiency remain separate.
+
+## Phase 1 closure
+
+Reference: configs/phase1_csbm_gcn.json. CSBM source 5,000×2,000 with existing generation seeds/convention; 50% of native training labels (1,500 per model), five subsets, six paired seeds, H32/dropout0.5, Adam0.01/0.0005, 200 epochs maximum/patience30. No new dataset or dependency.
+
+Executed `.venv/bin/python examples/train_weight_bank.py --subsets runs/source-subsets-paper.json --epochs 200 --patience 30 --device cpu --output-dir runs/gcn-bank-phase1`. All 30 jobs completed and CPU reloads passed. Selected epochs were 24–98, training ran 54–128 epochs, and every job stopped after thirty epochs without strict source-validation improvement. Sum of fitting times: approximately 198.73 seconds, excluding reconstruction/checkpoint I/O/reloading/final scoring. The earlier smoke banks were preserved.
+
+Executed `.venv/bin/python examples/finalize_phase1.py --bank runs/gcn-bank-phase1 --output-dir runs/phase1-complete`. Report status complete, issues empty, 30 models, 435 pairs, zero selected checkpoints at the cap. Earlier review directories were preserved during final audit hardening. No training/protocol choices were changed using source-test results.
+
+| Closure check | Observed evidence |
+| --- | --- |
+| Artifact loader | Complete Cartesian membership, copied-subset/checkpoint/metric hashes, finite/schema-compatible weights, source/config/subset/supervision identity, minimum-CE history selection, and reproduced source-validation metrics all verified |
+| 18/6/6 model partition | Seed401; meta_train subsets [1,0,3], validation [4], test [2]; complete/disjoint model coverage, no subset group crossing roles; exact partition reload passed |
+| Label-free probe | All 3,000 native source-training nodes, canonical order, no labels used |
+| Model variation | 30 distinct hard prediction patterns, zero exact parameter duplicates, zero undefined CKA pairs |
+| Pairwise disagreement | Mean 7.3217%, range 0.4333–9.8333%; same-subset mean 1.1867%, same-seed/different-subset mean 8.6000% |
+| Probability RMSE / hidden linear CKA | Means 0.141192 / 0.861357; CKA range 0.804388–0.998894 |
+| Final source-test accuracy | Mean 88.37%; population SD 0.7091 percentage points; range 86.4–89.5%, on the same 1,000 test nodes |
+
+Per-subset source-test means for subsets 0–4: 89.15%, 88.08%, 88.88%, 87.75%, 87.98%. Those are six-seed descriptive averages, not independent dataset replications or confidence intervals. All settings and model-group assignment were frozen before the final evaluator read test labels; this development source graph/split also has scores viewed in earlier examples, so it is not a sealed paper benchmark.
+
+Review artifacts under runs/phase1-complete: REVIEW.md, phase1_report.json, protocol.json, model_partition.json, diversity.json/diversity_pairs.csv, source_test.json/source_test_models.csv, and hashed analysis_code_snapshot files. They bind the exact bank/config/partition hashes. All generated artifacts are ignored by Git. GCN.encode leaves state keys/weights/forward arithmetic unchanged; automatic tests demonstrate the original dropout formula still gives identical outputs.
+
+The extra CKA reference is a sparse, separate Google Research checkout at ba728e288c51126eac25e316b11dfee94d68c301; README/notebook/Apache2 license inspected, upstream clean. PyTorch feature-space CKA was independently implemented and checked against centered Gram arithmetic. No source copy, dependency installation, or global environment change.
+
+The bank's training Git revision is 30af4f9 with dirty=true. The audit preserves its own code snapshot separately; it is not presented as the exact earlier training source. The owner explicitly authorized committing the completed Phase 1 implementation/config/tests/docs afterward. Historical training provenance remains unchanged; no push is authorized.
+
 ## Limits and next work
 
-- A trained source baseline exists; no weight bank, adaptation, or generator exists. Repeated-seed estimates and final research evaluation remain outstanding.
+- Phase 1 implementation and its full-budget audited bank are complete for GCN/CSBM. No adaptation or generator exists. Final research evaluation and estimates accounting for the paired design remain outstanding.
 - CPU verified only. Clean-isolated installation, macOS, Colab, CUDA, and MPS remain unverified.
 - Generation pair-scanning is O(N²), although no dense adjacency is allocated. Do not scale blindly to huge N.
 - Independent-draw development examples are not paired attribute-only interventions. Later scientific shift families/severities and holdout lineage require an explicit protocol.
-- Source full-graph visibility and fixed-holdout label subsets are implemented. Final label budget, generator meta-training allocation, and model-bank grouping remain scientific decisions.
-- Next implementation step: a sequential six-model-seed runner for each of the five subsets, with a bank manifest/checkpoints. Then explicitly choose 18/6/6 grouping and inspect prediction/representation/weight diversity before generator training. These later steps are not yet implemented.
+- Phase 1 fixes a 50%-pool reference budget and whole-subset model grouping. Future paper-level label budgets, environment allocation/holdouts, and natural-shift evaluation remain scientific decisions; do not reinterpret this model split as disjoint node labels, new graphs, or unseen initialization seeds.
+- Next milestone is parameter-efficient adaptation: discuss exact head/low-rank parameterization, supervised development oracles versus label-free baselines, controlled shift construction, and environment holdouts before implementing it. Diversity is measured, not proof that adaptation will help; no automatic bank redesign or arbitrary weight noise was introduced.

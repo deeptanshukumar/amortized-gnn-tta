@@ -4,7 +4,7 @@
 
 This handbook is for learning, explaining the project to a research committee, and preparing for interviews. Start with the examples; return to the formulas after the ideas make sense. It covers our current questions and likely follow-ups, and will grow when the work exposes new ones.
 
-**Status, 2026-10-25:** the CSBM loader, source-GCN pipeline, and fixed-holdout source-label subsets are implemented and CPU-verified: 70 tests passed. Two source-only training runs completed with saved/reloaded checkpoints; five-subset preparation also ran at both graph sizes. We use the released Matcha-code sampling distribution with explicit probability/degree meanings. The 30-model bank and adaptation are not implemented. Sections 24–25 explain these milestones; other numerical teaching examples are illustrations unless explicitly identified as executed checks.
+**Status, 2026-10-25:** GCN/CSBM Phase 1 is complete, with 104 CPU tests passed. The full-budget thirty-model bank is trained, artifact-audited, split 18/6/6, and compared in weight/prediction/representation space. Source-only evaluation is recorded. Adaptation and the generator remain future work. We retain the explicit Matcha-code sampling convention. Sections 24–27 explain the milestones; numerical teaching examples are illustrations unless identified as executed checks.
 
 The assistant previously recorded “real benchmark first” as your preference. That was a misinterpretation and has been corrected. Your instruction is to use CSBM now.
 
@@ -26,6 +26,8 @@ The assistant previously recorded “real benchmark first” as your preference.
 | Meanings of unfamiliar words and primary references | Sections 22–23 |
 | Our working source GCN: every training/evaluation step, results, and saved files | Section 24 |
 | Five source-label subsets: what changes, what stays fixed, and why | Section 25 |
+| Our thirty-model bank: model identities, files, failures, and remaining limits | Section 26 |
+| Phase 1 closure: grouped holdouts, CKA, bank audit, and what the actual results mean | Section 27 |
 
 You do not need to memorize everything at once. After each section, explain the main idea without looking. An explanation in your own words is more useful than repeating a prepared paragraph.
 
@@ -70,12 +72,12 @@ You own GCN implementation and experiments. Teammates handle GAT and GraphSAGE. 
 | --- | --- | --- |
 | Data pipeline | Generate/load graphs and keep labels, splits, and environments organized | Implemented and CPU-tested; CSBM only |
 | Source GCN | Train a GCN using permitted source labels | Implemented and CPU-tested; Section 24 |
-| Weight bank | Save several independently trained GCN parameter sets | Five-label-subset preparation implemented; 30-model training remains next |
+| Weight bank | Save multiple source-trained GCN parameter sets | Full-budget thirty-model bank audited, grouped, and compared; Sections 26–27 |
 | Small adaptations | Change only the classifier or a small structured part of the weights | Later |
 | Adaptation generator | Learn to predict those changes | Later |
 | Evaluation | Score a frozen model on source-test and target labels | Basic baseline scoring implemented; research-wide holdouts remain to be designed |
 
-The plan suggests 5 labeled-source splits × 6 model seeds = 30 models, then 18/6/6 models for generator training/validation/testing. Five supervision subsets can now be saved in a manifest. The six-seed training runner and generator's model partitions remain future steps; do not confuse the subset manifest with a completed model bank.
+The plan suggests 5 labeled-source splits × 6 model seeds = 30 models, then 18/6/6 models for generator training/validation/testing. This bank preparation and model partition are now implemented and verified for GCN/CSBM. The generator has not been trained. A subset manifest alone still does not contain trained models.
 
 **Do not confuse two generators:**
 
@@ -1008,13 +1010,15 @@ This table summarizes the important project records in plain English. It does no
 | Matcha compatibility | Sampling distribution only | Different RNGs/splits, not exact artifacts or paper-result reproduction |
 | Source graph visibility | Initial policy selected | Full source graph, training-label loss; separate target graph |
 | Five source-label subsets | Implemented inside fixed training pool | Explicit budget/seeds; validation/test unchanged; Section 25 |
-| Final label budget and model-bank grouping | Still open | 50% is a development example; define the intended holdout claim |
+| Phase 1 budget/model grouping | Fixed in phase configuration | 50% of native training pool; whole label subsets grouped 3/1/1; Section 27 |
+| Final-paper protocol | Still open | Development graph/scores do not establish a sealed final benchmark |
 | Dependencies/environment | CPU stack installed/tested in .venv | Reuses existing torch/NumPy; clean install and other backends unverified |
 | Source training and scoring | Implemented and CPU-tested | Select minimum source-validation loss; score held-out labels afterward |
-| Adaptation/generators/weight bank | Not implemented | Separate milestones and protocols |
-| Commits/pushes | Foundation checkpoint commit authorized | Subsequent commits need approval; push not authorized |
+| Sequential weight bank | Implemented and CPU-tested | Thirty subset/seed jobs retained; 18/6/6 assignment and diversity audit executed |
+| Adaptation/generators | Not implemented | Separate milestones and protocols |
+| Commits/pushes | Foundation committed as 30af4f9; Phase 1 completion commit explicitly authorized | Later commits need approval; push not authorized |
 
-**Next:** build the six-model-seed runner for each subset, then settle 18/6/6 grouping and inspect model diversity. The final label budget remains to be agreed. Adaptation is a later stage; dataset choice and the approved interface do not need reopening.
+**Next:** discuss exact parameter-efficient adaptation methods and shift/environment holdouts before Phase 2. Phase 1's budget and model grouping are fixed; later paper-level protocols remain open. Dataset choice and the approved interface do not need reopening.
 
 Project records: [DECISIONS.md](../DECISIONS.md), [PROJECT_STATE.md](../PROJECT_STATE.md), and [AGENTS.md](../../AGENTS.md).
 
@@ -1057,7 +1061,7 @@ Each prompt is self-contained. Paste one at a time. Ask the other assistant to c
 ### Prompt A — teach the whole project from zero
 
 ~~~text
-I am a college student working on “Amortized Weight Adaptation for Graph Neural Networks under Distribution Shift.” I own GCN experiments. Our CSBM PyG loader, source-only two-layer GCN training/evaluation, and fixed-holdout source-label subset preparation are CPU-tested with 70 checks. Two single-run baseline experiments completed; no adaptation results exist.
+I am a college student working on “Amortized Weight Adaptation for Graph Neural Networks under Distribution Shift.” I own GCN experiments. GCN/CSBM Phase 1 is complete with 104 CPU tests: loader, source training/evaluation, a thirty-model bank, artifact validation, a whole-label-subset 18/6/6 model partition, and weight/prediction/representation diagnostics. No adaptation/generator results exist. The graph and paired seeds are shared; this is development engineering evidence, not a final-paper benchmark.
 
 Teach me what a graph, node, edge, feature, label, GCN, source environment, target environment, and distribution shift mean. Explain how an offline-trained adaptation generator differs from a CSBM data generator. Then explain how one generated graph reaches a GCN and how labels are used separately for loss/evaluation. Use a tiny numerical graph and define unfamiliar terms. Ask me one reasoning question at a time. Do not invent experimental results or imply adaptation has been implemented.
 ~~~
@@ -1139,7 +1143,7 @@ Explain which decisions remain unresolved. Separate node splits, graph-environme
 ### Prompt J — randomness and statistical validation
 
 ~~~text
-We independently implemented the released Matcha-code CSBM distribution, with explicit probabilities, degree_scale conversion, and tagged RNG streams. Seventy CPU tests cover data, source training, evaluation, checkpoints, and fixed-holdout source-label subsets; two single-run baseline executions completed, with no adaptation. Explain how to separate edge, feature, split, shift, subset-selection, and model RNG streams. Distinguish reproducibility within a tested software environment from bitwise reproducibility across hardware/versions.
+We independently implemented the released Matcha-code CSBM distribution, with explicit probabilities, degree_scale conversion, and tagged RNG streams. One hundred four CPU tests cover the pipeline through audited/grouped bank preparation. The full-budget thirty-model source bank completed, with no adaptation. Explain how to separate edge, feature, split, shift, subset-selection, partition, and model RNG streams. Distinguish reproducibility within a tested software environment from bitwise reproducibility across hardware/versions. Explain why reusing six model seeds across five subsets is a paired design, not thirty independent repetitions.
 
 Design meaningful tests for a generator/loader: shapes, label alignment, empty edges, isolated nodes, probability validity, exact split membership, deterministic seed behavior, target-label isolation, and repeated-sample degree/feature statistics. Explain how to choose statistical tolerances without requiring one random graph to equal its expectation. Distinguish stated executed checks from additional proposed tests; do not invent results.
 ~~~
@@ -1310,7 +1314,7 @@ Understanding check: not yet discussed. Reading this handbook is progress; we wi
 
 We can now generate CSBM graphs, train one GCN on source training labels, select its best saved weights using source validation labels, and score those fixed weights on source-test and target nodes. This is a **source-only baseline**: a model learned from the source, then used directly on the target without any target-specific update.
 
-We need this baseline before adaptation. Otherwise, we would have nothing reliable to compare an adaptation method against. A successful training run also tests whether data, model, supervision, metrics, and saved files agree with each other.
+We need this baseline before adaptation. Otherwise, we would have nothing reliable to compare an adaptation method against. A successful training run also tests whether data, model, supervision, metrics, and saved files agree with each other. Section 26 builds a model bank on this trainer with a smaller explicit label budget.
 
 This is our documented small baseline, not a reproduction of Matcha's architecture or the original GCN paper's full experiment protocol. No adaptation generator has been trained.
 
@@ -1469,7 +1473,7 @@ Explain the tensor flow, why raw logits enter CE, gradient versus selection boun
 
 ### Why not just train the same model thirty times?
 
-The roadmap proposes two kinds of variation: which source labels a model learns from, and its random initialization/training seed. Five label selections × six model seeds would give thirty models. A **weight bank** is the saved collection of those trained models. At this step, we prepared only the five label selections; thirty models have not been trained.
+The roadmap proposes two kinds of variation: which source labels a model learns from, and its random initialization/training seed. Five label selections × six model seeds give thirty models. A **weight bank** is the saved collection of those trained models. This section explains the label-preparation step; Section 26 describes the subsequently implemented runner and executed banks.
 
 A **training pool** is the set of node labels already permitted for source learning. A **subset** contains some members of that pool. Our subsets change the supervised training examples; they do not generate new graphs or change the validation/test split.
 
@@ -1487,7 +1491,7 @@ The existing source graph has 1,000 nodes. Its original split stays 600 training
 
 The second row is part of the first row, not an extra group of 300 nodes. Nothing was moved into testing. The label budget is **50% of the training pool**, which is **30% of the entire graph**: 0.5 × 0.6 = 0.3.
 
-The fraction is required in our API/command, not a hidden default. We demonstrated 0.5; this is not an official CSBM budget or a finalized research decision. On a 5,000-node source, the same example selects 1,500 of its 3,000 training labels.
+The fraction is required in our API/command, not a hidden default. We first demonstrated 0.5, then fixed it for the Phase 1 reference configuration. It is not an official CSBM budget or a finalized paper protocol. On a 5,000-node source, it selects 1,500 of its 3,000 training labels.
 
 ### What does stratified sampling mean here?
 
@@ -1545,9 +1549,9 @@ Use a new output filename; existing manifests are not overwritten. Both the 1,00
 
 ### What remains before calling the weight bank complete?
 
-1. Train six fixed model seeds per subset and record all thirty model identities/configurations.
-2. Decide how the generator's 18/6/6 model partition should work. Randomly separating model instances can leave the same label subset in multiple partitions; grouping whole label subsets as 3/1/1 tests transfer to a new selected subset on the same graph. Those are different claims, and neither proves transfer to new graphs.
-3. Measure whether models differ meaningfully in predictions and hidden representations, as well as weights. Hidden units can be reordered without changing model behavior, so raw weight distance alone is insufficient.
+1. Train six fixed model seeds per subset and record all thirty model identities/configurations. This is now implemented and development-tested; see Section 26. A converged final scientific bank still needs an agreed protocol.
+2. Decide how the generator's 18/6/6 model partition should work. Phase 1 now groups whole label subsets as 3/1/1 (Section 27). Randomly separating instances could put the same selection into multiple roles. The chosen grouping tests a new selected subset on the same graph; it does not prove new-graph transfer.
+3. Measure predictions and hidden representations, as well as weights. This audit is now implemented (Section 27). Hidden units can be reordered without changing model behavior, so raw weight distance alone is insufficient; useful diversity for adaptation still requires experiments.
 
 The earlier baseline used all 600 source training labels; the development subsets use 300. If new bank models score differently, the supervision budget is one possible cause. A fair adaptation comparison must keep the underlying pretrained model and permitted information consistent.
 
@@ -1558,7 +1562,232 @@ References: [PyG dataset splitting](https://pytorch-geometric.readthedocs.io/en/
 ~~~text
 I am building a CSBM GCN weight bank. A fixed 1,000-node source graph has a native stratified 600/200/200 train/validation/test split. We prepare five distinct training-label subsets. In a development example, each independently samples 50% of each class inside the existing training pool, without replacement within a subset. That gives 300 labels per subset, 150 per class. Different subsets may overlap. Unselected training labels stay unused; they do not become test labels. The full source graph remains visible for message passing.
 
-The fraction is required/configurable, with floor rounding per class and rejection of empty classes. Local subset seeds 101–105 are separate from graph, native-split, and model seeds. Exact node memberships, source fingerprints, budgets, provenance and versions are saved in JSON and validated on reload. No source-test or target labels are needed. The subset machinery is CPU-tested; the thirty-model bank is not trained yet. The final scientific budget remains open.
+The fraction is required/configurable, with floor rounding per class and rejection of empty classes. Local subset seeds 101–105 are separate from graph, native-split, and model seeds. Exact node memberships, source fingerprints, budgets, provenance and versions are saved in JSON and validated on reload. No source-test or target labels are needed for construction. Phase 1 fixes 50% for its full-budget bank, groups whole subsets as 3/1/1 for 18/6/6 models, and measures diversity. Final-paper protocols remain future work.
 
 Teach and critique this protocol in simple English. Explain the difference between a label subset, graph split, cross-validation fold, graph realization, and model seed. Derive expected overlap of two subsets. Discuss fairness when comparing these models with an earlier baseline trained on all 600 labels. Explain thirty-model construction from five subsets × six seeds, and compare random model-instance 18/6/6 partitions with holding out whole label subsets as 3/1/1. Explain why neither automatically demonstrates new-graph generalization or useful model diversity. Use original papers/official documentation for factual claims and do not invent experiment results. Finish with five questions to check my understanding.
 ~~~
+
+## 26. The working thirty-model runner: what does a bank actually contain?
+
+### Thirty jobs, built from two factors
+
+A **factor** is a setting we deliberately vary. Here the factors are the label subset and model seed. Their **Cartesian product** means every combination: five subsets, each trained with all six seeds, gives thirty jobs.
+
+| Factor | Current development settings | What stays fixed |
+| --- | --- | --- |
+| Labeled subset | source_subset_0 through source_subset_4 | Graph, source validation/test membership, requested label budget |
+| Model seed | 31 through 36 for every subset | Architecture, optimizer settings, epoch cap/patience |
+
+Each job constructs a fresh GCN and Adam optimizer. It does not continue training the previous model. Each also gets its own minimum-source-validation-loss checkpoint. We retain every planned subset/seed pair rather than discarding models with lower validation accuracy.
+
+**Why reuse the same six seed values across subsets?** This pairs starting points: for example, seed 31 starts with the same GCN initialization when the architecture is unchanged. That makes supervision comparisons easier to interpret. It also means we must not describe the bank as thirty independent initializations. These are thirty trained instances in a paired design. Distinct source subsets can still produce very similar behavior.
+
+The tests run the same jobs in a different seed order and compare their histories and weights. They matched exactly on the tested CPU stack. Per-job reseeding before construction prevents previous jobs, including checkpoint reloads, from changing the next initialization.
+
+### From one saved subset to one saved model
+
+~~~text
+saved subset manifest
+    → reconstruct and validate the fixed CSBM source
+    → select source subset A
+    → construct fresh GCN with model seed 31
+    → fit using A's labels; select using fixed source validation
+    → save selected weights/configuration/history
+    → reload on CPU and compare source predictions
+    → record artifact hashes and mark this job complete
+    → repeat for seed 32, and so on
+~~~
+
+The runner accepts only a source view, not the label-bearing full dataset bundle. Source-test/target labels are absent from that interface. Its example creates no target graph. Selected-training and source-validation scores are execution evidence; validation has already influenced checkpoint selection, so it is not an untouched final test.
+
+**Two meanings of validation:** source validation nodes select an epoch while pretraining each GCN. Generator validation models, the later six-model partition, will assess a different learner that predicts adaptations. They are different levels of the experiment; the word “validation” alone does not tell you which one is meant.
+
+### Files, in plain English
+
+~~~text
+runs/gcn-bank/
+    bank.json
+    source_subsets.json
+    models/
+        source_subset_0_seed_31/
+            best_model.pt
+            metrics.json
+        ... 29 other model directories ...
+~~~
+
+| File or field | Meaning |
+| --- | --- |
+| bank.json | Index of planned model IDs, configurations, progress, file locations/hashes, and per-model summaries |
+| source_subsets.json | Exact label membership that produced this bank |
+| best_model.pt | Named weight tensors and checkpoint metadata, not a JSON list of weights |
+| metrics.json | Training history, selected epoch, selected-training/validation scores, fit time, reload check |
+| SHA-256 artifact hash | Content identity used to check that a referenced file has not changed |
+| Git revision plus dirty flag | Which commit the checkout started from, and whether uncommitted changes were present |
+
+Model IDs are unique within a bank. To identify a model across experiments, also retain the bank/source identity and its architecture/training configuration. “seed 31” alone is not a complete experimental identity.
+
+We do not flatten all weights into one giant array yet. Named tensors preserve layer meanings and let a future adaptation method specify which parameters it changes. The existing trainer/checkpoint interface stays reusable for GAT or GraphSAGE factories with the same input/output contract.
+
+### What if the fourth model fails?
+
+Completed jobs keep their files. The progress record marks the failed job/bank as failed when possible and leaves unstarted jobs pending. A deliberately injected failure test verified this behavior. A process killed abruptly may leave status running; that must not be interpreted as completion.
+
+The runner refuses existing output directories, so another attempt cannot silently overwrite earlier evidence. It currently has no automatic resume/skip logic. Choose a new directory and retain the partial run for diagnosis. Also remember that inference checkpoints do not contain the optimizer/random states needed to resume an interrupted epoch trajectory exactly.
+
+Sequential training keeps memory use modest: we keep the source graph and current job's models rather than thirty active models on the device. The runner saves each result before moving on.
+
+### What actually completed on our CPU?
+
+| Development bank | Nodes × features | Labels per model | Cap/patience | Completed jobs | Reloads |
+| --- | --- | --- | --- | --- | --- |
+| Small | 1,000 × 64 | 300 | 100/20 | 30/30 | All passed |
+| Paper-sized execution check | 5,000 × 2,000 | 1,500 | 20/10 | 30/30 | All passed |
+
+Small models selected epochs 15–25 and ran 35–45 epochs. Every paper-sized model selected epoch 20, its cap. That tells us the larger run executed, not that further training was unnecessary. Both banks' checkpoint/metric hashes were verified after execution. The complete automated suite passed 80 tests.
+
+The sums of model-fitting times were approximately 6.41 and 45.71 seconds. They exclude data reconstruction, checkpoint saving/reloading and final scoring, so these are not total script runtimes. The shallow GCN, sparse graphs and sequential jobs keep these development checks manageable on CPU. Other backends remain unverified.
+
+The foundation was committed as 30af4f9. Bank runs correctly recorded dirty=true because their new runner was still uncommitted. We cannot claim that checking out the foundation commit alone recreates this later bank implementation. Final research runs should use an agreed frozen code/configuration state.
+
+Run it using an existing subset file:
+
+~~~bash
+.venv/bin/python examples/train_weight_bank.py --subsets runs/source-subsets-small.json --epochs 100 --patience 20 --device cpu --output-dir runs/my-gcn-bank
+~~~
+
+Those were the runner milestone's limits. Section 27 records the subsequently completed 200/30 bank, phase reference budget, model partition and diversity audit. A directory with thirty successful checkpoints alone still proves only artifact construction; useful adaptation supervision and research generalization require further evidence.
+
+Reference: [PyTorch saving/loading guidance](https://docs.pytorch.org/tutorials/beginner/saving_loading_models.html) explains state dictionaries, inference mode, and the extra states needed for training resumption. Our orchestration and experimental policies are documented project choices, not an official benchmark protocol.
+
+### Prompt O — critique our implemented model-bank runner
+
+~~~text
+I am learning a CSBM GCN research project. We have implemented a sequential source-only bank runner: five saved class-stratified label subsets × six model seeds (31–36 reused across every subset), thirty jobs. Source graph and validation/test membership stay fixed. Each job constructs a fresh two-layer GCN/Adam optimizer, trains on that subset only, selects minimum source-validation CE, retains the selected checkpoint, reloads it on CPU, and compares predictions. All thirty pairs are retained, regardless of validation score. Source-test and target labels are absent from the runner input.
+
+Each job saves a CPU state_dict checkpoint and JSON history/metrics. bank.json records planned IDs, progress/status, configs, software/device, artifact hashes and Git revision/dirty status. Existing output directories are rejected. Errors preserve completed jobs and mark failure when possible; automatic resumption is not implemented. Phase 1 closure passed 104 CPU tests. A full-budget N5000/F2000 bank with 1500 labels/model, cap200/patience30 completed; selected epochs24–98, all CPU reloads passed. Model partitions and diversity diagnostics are implemented; adaptation is not. Earlier short smoke banks are preserved separately.
+
+Explain from zero: Cartesian products, paired seeds versus independent repetitions, source-node validation versus generator-model validation, artifact identity, and partial versus complete banks. Critique what these checks establish. Explain why epoch-cap selection does not establish convergence, how to partition models honestly, why raw weight distance alone can mislead, and what must be measured before training a useful adaptation generator. Use primary references where verifying facts, define unfamiliar terms, and do not invent experimental results. Ask five reasoning questions afterward.
+~~~
+
+## 27. Phase 1 is complete: how to explain and defend the bank audit
+
+### What exactly does “Phase 1 complete” mean?
+
+It means our **GCN/CSBM engineering foundation** works through pretraining-bank preparation: data, source training, saved models, validated loading, model holdouts, diversity checks, and source-only evaluation. It covers the first three roadmap steps for your architecture/current dataset. It does not mean that adaptation works, that teammates' architectures are trained, or that the final research study is complete.
+
+A **reference protocol** is the exact procedure/settings that define this phase's example. Our [phase configuration](../../configs/phase1_csbm_gcn.json) fixes the existing sampling convention, 5,000 nodes, 2,000 features, source split 60/20/20, half of the training pool per subset, five subsets, six paired model seeds, and source-validation stopping with a maximum of 200 epochs and patience 30. We did not invent an official CSBM benchmark split.
+
+### Two different splits: nodes versus models
+
+| Split | What is divided? | Current purpose |
+| --- | --- | --- |
+| Source train/validation/test | Labels for nodes inside one graph | Train each GCN, select its epoch, then score held-out source predictions |
+| Model meta-train/validation/test | Saved trained GCN instances | Reserve models for later adaptation-generator learning/selection/testing |
+
+We group the five label selections as three for meta-training, one for validation, one for testing. Each selection has six trained models, so the counts are 18/6/6. A fixed partition seed, 401, produces:
+
+| Model role | Whole source-label subsets | Models |
+| --- | --- | ---: |
+| Meta-training | 1, 0, 3 | 18 |
+| Validation | 4 | 6 |
+| Test | 2 | 6 |
+
+No performance score chooses this assignment. The file is saved before final source-test scoring. Keeping a whole labeled selection in one role prevents that exact selection from being shared across model roles.
+
+**What does it not prevent?** Individual training nodes can belong to several label selections, because the subsets overlap. The graph is the same, and seed values 31–36 are reused in each role. The claim is “new label selections/trained instances on this source graph.” It does not establish new graphs, disjoint source labels, or unseen initialization seeds. These stronger claims require different experiments.
+
+### What does the bank loader audit?
+
+An **audit** is a systematic consistency check. We check more than whether a file opens:
+
+- All intended subset/seed pairs exist exactly once and have complete status.
+- Files stay inside their bank directory, exist, and match stored hashes.
+- Checkpoint tensors are finite, have the model's expected names/shapes/types, and restore correctly.
+- Training configuration, source/subset identity, selected training IDs, and validation IDs agree.
+- History is finite and the saved epoch is the earliest minimum source-validation loss.
+- Restored source-validation loss/accuracy reproduce the stored metrics.
+- Model partitions cover every model exactly once and keep each labeled subset together.
+
+A hash detects a content mismatch; it is not an authentication guarantee against someone deliberately rewriting both data and hashes. Tests deliberately updated corrupted files' hashes and still caught inconsistent seeds, supervision, shapes, NaNs, and selected epochs. This demonstrates why checks must agree across artifacts, not rely on a checksum alone.
+
+### Why compare weights, predictions, and representations separately?
+
+A hidden unit is a learned coordinate. Suppose a model's hidden coordinates are `[a,b]`. We could reorder them to `[b,a]` and reorder the next layer's matching weights. Predictions can stay identical even though the flattened parameter vector changes.
+
+An executed test performs this hidden-unit permutation on a GCN: raw weights differ, predictions agree, and representation CKA stays approximately 1. Therefore raw weight distance is not a sufficient measure of functional diversity.
+
+**Functional** here means the behavior of the model—its outputs for supplied inputs. **Representation** means the hidden numerical description of a node, before the final prediction layer.
+
+| Diagnostic | Plain-English question | Main limit |
+| --- | --- | --- |
+| Weight L2 / cosine | How far apart/aligned are the parameter vectors? | Hidden-coordinate symmetries can make distance misleading |
+| Prediction disagreement | On what fraction of probe nodes do the predicted classes differ? | Ignores confidence changes when the class stays the same |
+| Probability RMSE | How different are the complete class-probability vectors? | Differences are not automatically improvements |
+| Hidden linear CKA | Do the hidden representations have similar centered geometry? | Depends on the chosen nodes and cannot certify useful adaptation diversity |
+
+**L2 norm** is square root of the sum of squared values. The symmetric relative weight distance divides the distance by the average norm of the two vectors. **Cosine similarity** measures their directional alignment.
+
+**RMSE** means root mean squared error/difference: square coordinate differences, average them, then take the square root. Here it compares one model's probabilities with another's; neither is treated as ground truth. It is not classification error or calibration error.
+
+### CKA without hiding the mathematics
+
+**CKA** means *Centered Kernel Alignment*. A **probe** is the fixed set of nodes used to compare model behavior. A **kernel** compares pairs of representations; the linear kernel uses their dot product, which multiplies matching coordinates and sums the products. Start with X and Y, the two models' hidden matrices on the same probe nodes. Subtract each column's mean to obtain Xc and Yc. Then:
+
+~~~text
+linear_CKA(X,Y) = || Xc.T @ Yc ||_F²
+                  / ( || Xc.T @ Xc ||_F * || Yc.T @ Yc ||_F )
+~~~
+
+`.T` means transpose; `@` means matrix multiplication; the **Frobenius norm**, written `||M||_F`, is square root of the sum of all squared matrix entries. An **orthogonal transformation** rotates, reflects, or reorders coordinates while preserving lengths and angles. The score is unchanged by those transformations or by multiplying all values by a nonzero constant. It is not invariant to every arbitrary transformation.
+
+For us, the probe has 3,000 native source-training nodes and each hidden vector has 32 coordinates. The products above are 32×32. We do not create a 3,000×3,000 matrix in the normal diagnostic path. This is feature-space calculation, based on the original paper and official reference notebook. We use the ordinary **biased** finite-sample version, rather than the notebook's optional debiasing correction; “biased” here concerns statistical estimation, not fairness or source sampling.
+
+If centering leaves a representation entirely zero, the denominator is zero and CKA is undefined. We report `None`/JSON `null` and flag it, rather than replacing it with a fake similarity score. The current bank had no such pairs. A small independent test checks the formula using centered Gram matrices; another checks permutation/scaling invariance.
+
+### What actually changed when we used the full training budget?
+
+The earlier 5,000-node bank stopped at its 20-epoch cap. We preserved it, then trained a new bank with a 200-epoch cap and patience 30. All thirty models selected epochs 24–98 and stopped after 54–128 epochs. None selected the cap. This establishes validation-based stopping in this run; it does not prove that optimization converged to an ideal solution.
+
+The sum of fitting times was about 198.73 seconds, excluding reconstruction, checkpoint I/O/reloading and final scoring. The original tiny runs were fast because they performed much less work; this longer bank is the proper full-budget phase check.
+
+### What did the diversity checks and source evaluation show?
+
+There are 30×29/2 = 435 unordered pairs. The source probe uses features/connectivity and native training-node IDs. It does not use their labels. A test flips training/validation labels passed alongside that graph and confirms the diversity report is unchanged.
+
+| Executed observation | Interpretation |
+| --- | --- |
+| 30 distinct hard prediction patterns; no exact parameter duplicates | The saved models are not collapsed to identical probe outputs/weights |
+| Mean disagreement 7.32%, range 0.43–9.83% | Models have measurable prediction variation on this probe |
+| Same-subset mean disagreement 1.19%; same-seed/different-subset 8.60% | In this bank, label selection varied behavior more than changing only the seed |
+| Mean probability RMSE 0.1412; mean hidden CKA 0.8614 | Confidence and hidden representations also vary; neither is an improvement metric |
+| Source-test mean accuracy 88.37%, range 86.4–89.5% | Descriptive source performance of the frozen bank, with no adaptation |
+
+The population standard deviation across model accuracies is 0.71 **percentage points**. A percentage point is an absolute difference between percentages: 88% to 89% is one percentage point. This is spread across paired models, not an uncertainty interval for future graphs. The report also provides per-subset and per-seed summaries rather than treating 30 jobs as independent datasets.
+
+**Are these good numbers?** They are a useful starting point: 88.37% is well above the 50% chance baseline for our balanced two-class source task, and the bank has measurable variation. They do not establish superiority over matched baselines or successful distribution-shift adaptation. The 7.32% disagreement is measured between model pairs on source-training probe nodes, not against true test labels. Its complement, 92.68%, is agreement between two models, not classification accuracy: two models can agree and both be wrong. Higher disagreement alone is not better; inaccurate models can disagree too. Most observed variation here comes from changing the label selection rather than changing only the model seed, which controls initialization and intended training randomness.
+
+Important qualification: this source graph/split was used in earlier development examples, where source-test scores were already viewed. The final audit freezes settings and model partition before its own test scoring, but it does not turn the historically viewed data into a sealed paper benchmark. Future research claims need an agreed final holdout/tuning protocol.
+
+### What can I claim now, and what should I avoid claiming?
+
+> “We completed the GCN/CSBM data-to-bank engineering phase. Thirty source-trained models are validated, grouped 18/6/6 by their label selections, and audited for weight, prediction, and representation differences. We observed measurable diversity and recorded source performance. Adaptation effectiveness and broader generalization remain untested.”
+
+Do not claim that the bank guarantees a useful generator, that high/low CKA alone proves good/bad diversity, or that the results reproduce Matcha. We did not add arbitrary weight noise to manufacture bigger distances. The next test is whether the proposed adaptation mechanism learns useful, generalizable updates under an agreed protocol.
+
+The final review is [documented in project state](../PROJECT_STATE.md#phase-1-closure), with local artifacts under runs/phase1-complete. It includes JSON, CSV, a readable Markdown report, the frozen configuration and partition, and hashed analysis source files. The snapshot identifies the audit implementation; it is not retroactively called the earlier training code. Training's Git dirty flag remains explicit. The owner authorized the Phase 1 completion commit; later commits and any push need separate approval.
+
+Primary reference: [Kornblith et al., Similarity of Neural Network Representations Revisited](https://proceedings.mlr.press/v97/kornblith19a.html). Its official Google Research demonstration notebook was inspected separately; our PyTorch metric was independently implemented. CKA is a useful comparison tool with limits, not a novelty claim for this project.
+
+### Prompt P — audit and defend our completed Phase 1
+
+~~~text
+I am a beginner preparing to defend the GCN part of an AFML research project on amortized weight adaptation under graph distribution shift. GCN/CSBM engineering Phase 1 is complete; adaptation and the generator are NOT implemented.
+
+Protocol: one source graph with 5,000 nodes and 2,000 features per node from the released Matcha-code CSBM distribution, fixed source train/validation/test 60/20/20, five distinct class-stratified subsets using 50% of the existing training pool (1,500 labels per model), and six model seeds 31–36 reused across subsets. Thirty two-layer GCNs use 32 hidden channels, dropout 0.5, Adam learning rate 0.01/weight decay 0.0005, source-validation CE selection, maximum 200 epochs/patience 30. All selected epochs 24–98 and stopped after 54–128. Model partitions hold out whole source-label selections as 3/1/1 for 18/6/6 models, seed 401, with no score-based assignment. Individual node labels overlap across selections, and the graph/seed values are shared across roles.
+
+Artifact validation checks completeness, hashes, model/tensor/source/config identities, supervision membership, histories/selection, and restored source-validation scores. A label-free probe uses all 3,000 native training nodes. Metrics: raw/relative weight L2 and cosine, class disagreement, probability RMSE, and biased centered feature-space linear CKA on first-layer post-ReLU/pre-dropout representations. There are 435 pairs, 30 unique hard prediction patterns, no exact parameter duplicates or undefined CKA. Mean disagreement 7.32%, same-subset 1.19%, same-seed/different-subset 8.60%, probability RMSE 0.1412, hidden CKA 0.8614. Source-test accuracy mean 88.37%, population SD 0.71 percentage points, range 86.4–89.5%, on the same 1,000 nodes. These are descriptive paired-model results, not an IID uncertainty estimate. This development graph/split has earlier viewed source-test scores and is not a sealed final benchmark. 104 CPU tests passed; other backends are unverified. Training used an uncommitted working tree, while the later audit saves its own separate source snapshot.
+
+Explain the entire phase from zero with clear tables and worked examples. Critique the holdout claim, show why a hidden-unit permutation can change raw weights while preserving predictions, derive centered linear CKA and its degenerate case, distinguish stopping from proven convergence, and explain source-node versus model-level validation. Separate artifact correctness, observed diversity, adaptation usefulness, and research novelty. Cite primary sources, do not invent results, and ask me one reasoning question at a time. Also identify what Phase 2 must decide before implementing head-only or low-rank adaptation.
+~~~
+
+**Learning check:** explain why keeping an entire label selection in one model partition still does not mean that individual source-training node labels are disjoint across partitions. Then explain why 88.37% source accuracy says nothing yet about adaptation accuracy.

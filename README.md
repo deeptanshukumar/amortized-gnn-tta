@@ -12,10 +12,10 @@ Deeptanshu owns GCN experiments; teammates handle GAT and GraphSAGE. Data interf
 - CPU PyG graphs, separate ground truth, named split indices, explicit source/meta-training/validation/target roles.
 - Stratified source splits, initially 60/20/20; held-out graphs expose an eval-only split. Full graph context is preserved; split indices select supervision, not induced subgraphs.
 - Allowlisted, cloned target inputs without labels or diagnostic metadata. Training-label access rejects held-out environments.
-- Structural/statistical tests, layer checks, source-training/checkpoint tests, and fixed-holdout source-subset tests: **70 tests passed** on the tested CPU stack.
+- Data, model/training, bank execution, artifact validation, grouped holdouts, and diagnostic math: **104 tests passed** on the tested CPU stack.
 - Small and paper-sized (5,000 nodes × 2,000 features per graph) data/interface examples executed successfully.
 
-The two-layer source GCN now trains end to end, selects the minimum source-validation loss checkpoint, and evaluates source-test/target performance afterward. Five source-label subsets can be prepared and reloaded for the upcoming weight bank. The 30-model bank and adaptation generator are not implemented yet. Single-run development results are not paper benchmarks.
+**GCN/CSBM Phase 1 is complete:** loader, source training/evaluation, a full-budget 30-model bank, validated artifact loading, a saved 18/6/6 model partition, and weight/prediction/representation diagnostics. This is the GCN foundation through pretraining-bank preparation, not the entire team's research roadmap. Adaptation/generators and other datasets remain later work. These development runs are not final paper benchmarks.
 
 ## Setup
 
@@ -97,7 +97,7 @@ python examples/prepare_source_subsets.py --label-fraction 0.5 --output runs/sou
 python examples/prepare_source_subsets.py --label-fraction 0.5 --paper-scale --output runs/source-subsets-paper.json
 ~~~
 
-The label fraction is required and applies **within the existing training pool**, independently per class, rounding down. At 0.5, the 1,000-node example retains its original 600/200/200 split and selects 300 training labels per subset (150 per class). The 5,000-node example selects 1,500 from its 3,000 training nodes. The 50% budget is a development example, not an official CSBM convention or finalized research choice.
+The label fraction is required and applies **within the existing training pool**, independently per class, rounding down. At 0.5, the 1,000-node example retains its original 600/200/200 split and selects 300 training labels per subset (150 per class). The 5,000-node example selects 1,500 from its 3,000 training nodes. This 50% reference budget is now fixed for Phase 1; it is not an official CSBM convention or a finalized paper protocol.
 
 Five seeds (101–105 by default) produce distinct selections. Subsets can overlap; no node is sampled twice within one subset. Validation/test membership, graph features, and connectivity stay fixed. Unselected training labels do not move into validation/test. Global/model RNG streams are untouched.
 
@@ -114,7 +114,57 @@ subset_view = source_subset_view(source_view, manifest, "source_subset_0")
 # Pass subset_view to fit_source instead of the full source_view.
 ~~~
 
-Subset views share the read-only source graph; the trainer clones it before execution. Checkpoints automatically retain the selected IDs and subset/manifest identity. This step prepares supervision only: it does not train 30 models or assign generator partitions. Those models will use fewer labels than the earlier full-pool single-model baseline, so comparisons must account for the budget.
+Subset views share the read-only source graph; the trainer clones it before execution. Checkpoints automatically retain the selected IDs and subset/manifest identity. Preparation itself does not train models; the runner below does. Those models use fewer labels than the earlier full-pool single-model baseline, so comparisons must account for the budget.
+
+## Train a source GCN weight bank
+
+~~~bash
+python examples/train_weight_bank.py --subsets runs/source-subsets.json --output-dir runs/gcn-bank
+~~~
+
+The example reconstructs only the source from the saved subset provenance, validates its identity, and runs five subsets × six seeds sequentially. Defaults: model seeds 31–36, epoch cap/patience 200/30, the same two-layer GCN/Adam defaults as above, one CPU thread. Override --epochs/--patience/--device as needed. The same six seeds are reused across subsets to compare supervision changes with matched initializations; the thirty jobs are not thirty IID independent repetitions.
+
+Every job keeps its best source-validation checkpoint, scores selected source-training/source-validation nodes, and verifies source predictions after CPU reload. The runner receives no source-test/target supervision, creates no target graph, retains every job, and does not assign generator partitions or claim model diversity.
+
+| Output | Contents |
+| --- | --- |
+| bank.json | All planned model IDs, subset/seed pairs, progress/status, configs, versions, device/threads, Git revision/dirty state from the example, artifact hashes, per-model summaries |
+| source_subsets.json | Copy of the exact validated supervision manifest |
+| models/<model_id>/best_model.pt | CPU state dictionary plus selected-epoch/config/source/subset evidence |
+| models/<model_id>/metrics.json | Source-train/validation scores, training history, fit time, CPU reload verification |
+
+Use a new output directory. Ordinary job errors mark the bank failed and preserve completed artifacts; abrupt termination may leave status running. Only a fully finished bank is marked complete. Automatic restart/resumption is not implemented: keep partial evidence and choose a new directory for another run. Checkpoints support inference, not exact optimizer/RNG resumption. Run outputs remain ignored by Git.
+
+Two earlier development banks used 1,000×64 (cap/patience 100/20) and 5,000×2,000 (20/10), each with 50% of the native training pool and 30 checkpoints. All 60 CPU reload checks and saved checkpoint/metric hashes passed. The 20-epoch paper-sized run was a smoke check; the full-budget Phase 1 bank below supersedes it for review.
+
+## Complete Phase 1: audited bank and review report
+
+The current reference settings are in [configs/phase1_csbm_gcn.json](configs/phase1_csbm_gcn.json). They freeze the CSBM/GCN development protocol for this phase, including the 50%-training-pool label budget. They are not an official CSBM split or a final paper experiment protocol.
+
+~~~bash
+python examples/prepare_source_subsets.py --label-fraction 0.5 --paper-scale --output runs/phase1-subsets.json
+python examples/train_weight_bank.py --subsets runs/phase1-subsets.json --epochs 200 --patience 30 --device cpu --output-dir runs/phase1-bank
+python examples/finalize_phase1.py --bank runs/phase1-bank --output-dir runs/phase1-review
+~~~
+
+Each output must be new. Finalization checks the bank against the frozen configuration, validates all files/checksums and restored source-validation scores, assigns whole label subsets to 18 meta-train/6 validation/6 test models with seed 401, then measures diversity. Source-test labels enter only the final offline evaluator after the partition is saved. Target graphs/labels are absent. The phase protocol and subset memberships must match; a 20-epoch smoke bank is rejected by this command.
+
+Representation comparison uses first-layer post-ReLU values and centered linear CKA in feature space, based on the [original CKA work](https://proceedings.mlr.press/v97/kornblith19a.html). The fixed probe contains all 3,000 native training nodes, without their labels. Raw weight distance/cosine, prediction disagreement and probability RMSE complement CKA; none alone certifies useful adaptation diversity.
+
+Executed Phase 1 evidence:
+
+| Check | Actual result |
+| --- | --- |
+| Bank | 30/30 models at 5,000 nodes × 2,000 features; 1,500 labels/model |
+| Selected epochs | 24–98; no model selected at the 200-epoch cap |
+| Model partition | Meta-train subsets 1/0/3; validation 4; test 2; 18/6/6 models |
+| Source probe | 435 pairs; 30 distinct hard-prediction patterns; no exact parameter duplicates or undefined CKA |
+| Mean disagreement / hidden CKA | 7.32% / 0.8614 |
+| Source-test accuracy | Mean 88.37%; population SD 0.71 percentage points across paired models |
+
+The split holds out label selections, not source graphs or initialization seed values. Individual source training labels can overlap between subsets. Accuracy spread is descriptive, not an IID confidence interval. This source graph/split was used in earlier development examples; viewed scores must not be relabeled as a sealed final benchmark. Validation-based stopping is observed, not a proof of optimization convergence.
+
+Finalization writes REVIEW.md, phase1_report.json, model_partition.json, diversity.json/diversity_pairs.csv, and source_test.json/source_test_models.csv. A hashed analysis-code snapshot is included separately from the bank's training Git state. All artifacts remain ignored by Git. Actual local outputs: runs/gcn-bank-phase1 and runs/phase1-complete; detailed evidence is in [project state](docs/PROJECT_STATE.md#phase-1-closure).
 
 ## Data API
 
