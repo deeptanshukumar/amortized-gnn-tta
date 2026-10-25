@@ -4,7 +4,7 @@
 
 This handbook is for learning, explaining the project to a research committee, and preparing for interviews. Start with the examples; return to the formulas after the ideas make sense. It covers our current questions and likely follow-ups, and will grow when the work exposes new ones.
 
-**Status, 2026-10-25:** GCN, GAT, and GraphSAGE share our CSBM training/bank/audit pipeline; 125 CPU tests passed. All three full-budget banks have passed their audits, with 30 models/18–6–6 groups each. Adaptation and the generator remain future work. We retain the explicit Matcha-code sampling convention. Sections 24–28 explain the milestones; numerical teaching examples are illustrations unless identified as executed checks.
+**Status, 2026-10-25:** GCN, GAT, and GraphSAGE share our CSBM training/bank/audit pipeline; 158 CPU tests passed. All three full-budget banks have passed their audits, with 30 models/18–6–6 groups each. Controlled attribute/structural/combined shifts now have explicit environment partitions and exact paired checks. Adaptation and the generator remain future work. We retain the explicit Matcha-code sampling convention. Sections 24–29 explain the milestones; numerical teaching examples are illustrations unless identified as executed checks.
 
 The assistant previously recorded “real benchmark first” as your preference. That was a misinterpretation and has been corrected. Your instruction is to use CSBM now.
 
@@ -29,6 +29,7 @@ The assistant previously recorded “real benchmark first” as your preference.
 | Our thirty-model bank: model identities, files, failures, and remaining limits | Section 26 |
 | Phase 1 closure: grouped holdouts, CKA, bank audit, and what the actual results mean | Section 27 |
 | GCN versus GAT versus GraphSAGE: attention, heads, root features, sampling, and shared code | Section 28 |
+| Controlled shifts: what changes, what stays identical, how targets are held out and fed to models | Section 29 |
 
 You do not need to memorize everything at once. After each section, explain the main idea without looking. An explanation in your own words is more useful than repeating a prepared paragraph.
 
@@ -75,9 +76,10 @@ You own GCN experiments; teammates handle GAT and GraphSAGE. You later asked for
 | Source GCN | Train a GCN using permitted source labels | Implemented and CPU-tested; Section 24 |
 | Other source architectures | Use the same pipeline with GAT or GraphSAGE | Implemented and CPU-tested; Section 28 |
 | Weight bank | Save multiple source-trained GCN parameter sets | Full-budget thirty-model bank audited, grouped, and compared; Sections 26–27 |
+| Controlled environments | Make related shifted graphs and separate their uses | Implemented and CPU-audited; Section 29 |
 | Small adaptations | Change only the classifier or a small structured part of the weights | Later |
 | Adaptation generator | Learn to predict those changes | Later |
-| Evaluation | Score a frozen model on source-test and target labels | Basic baseline scoring implemented; research-wide holdouts remain to be designed |
+| Evaluation | Score a frozen model on source-test and target labels | Basic scoring and development model/environment holdouts implemented; final research evaluation remains |
 
 The plan suggests 5 labeled-source splits × 6 model seeds = 30 models, then 18/6/6 models for generator training/validation/testing. This bank preparation and model partition are now implemented and verified for GCN/CSBM. The generator has not been trained. A subset manifest alone still does not contain trained models.
 
@@ -711,7 +713,7 @@ If one base graph is reused across generator training and target testing through
 
 This relationship is **lineage**: a record of which examples were derived from the same parent graph/features.
 
-Our approved independent development graphs are sufficient for initial loader tests. They do not settle the later paired-versus-independent shift experiment. A different seed is also not proof that every meaningful property is new.
+Our initial development examples remain independent draws. The separate controlled-shift API now implements paired interventions with whole-lineage partitions; Section 29 explains the exact protocol. A different seed is still not proof that every meaningful property is new, so its construction audit also checks actual graph fingerprints.
 
 ## 14. What exactly will the unified loader return?
 
@@ -1008,6 +1010,7 @@ This table summarizes the important project records in plain English. It does no
 | Common graph/label interface | Implemented and tested | Separate labels, named splits, allowlisted cloned inputs |
 | Initial source development split | Configurable stratified 60/20/20 approved | A project convention, not an official benchmark rule |
 | Independent development source/target graphs | Approved | Initial loader exercise; not a final paired-shift protocol |
+| Paired controlled shifts / environment holdouts | Implemented development protocol | Exact fixed components; whole base lineages stay together; Section 29 |
 | CSBM probability and feature formulas | Released Matcha-code distribution selected | Explicit p_in/p_out, fixed-direction Gaussian features |
 | Matcha compatibility | Sampling distribution only | Different RNGs/splits, not exact artifacts or paper-result reproduction |
 | Source graph visibility | Initial policy selected | Full source graph, training-label loss; separate target graph |
@@ -1018,9 +1021,9 @@ This table summarizes the important project records in plain English. It does no
 | Source training and scoring | Implemented and CPU-tested | Select minimum source-validation loss; score held-out labels afterward |
 | Sequential weight bank | Implemented and CPU-tested | Thirty subset/seed jobs retained; 18/6/6 assignment and diversity audit executed |
 | Adaptation/generators | Not implemented | Separate milestones and protocols |
-| Commits/pushes | Prior Phase 1 commits pushed; verified architecture-extension commit/push explicitly authorized | Later changes still need approval; historical training dirty flags remain accurate |
+| Commits/pushes | Phase 1 and architecture extension pushed with approval; controlled-shift commit/push separately approved | Later Git actions still need approval; historical training dirty flags remain accurate |
 
-**Next:** discuss exact parameter-efficient adaptation methods and shift/environment holdouts before Phase 2. Phase 1's budget and model grouping are fixed; later paper-level protocols remain open. Dataset choice and the approved interface do not need reopening.
+**Next:** discuss exact parameter-efficient adaptation methods and permitted objectives. Controlled development shifts/environment holdouts now exist. Phase 1's budget and model grouping are fixed; final-paper protocols remain open. Dataset choice and the approved interface do not need reopening.
 
 Project records: [DECISIONS.md](../DECISIONS.md), [PROJECT_STATE.md](../PROJECT_STATE.md), and [AGENTS.md](../../AGENTS.md).
 
@@ -1927,4 +1930,184 @@ I am a beginner working on an AFML project about amortized GNN weight adaptation
 All models have two graph layers, total hidden width 32, feature dropout 0.5 and raw C-class logits. GCN uses GCNConv/ReLU, self-loops and symmetric degree normalization with no cache. GAT uses classic GATConv/ELU, four hidden heads × eight channels, one output head with concat=False, layer-owned self-loops, internal attention-score slope 0.2 and separate attention dropout default 0. GraphSAGE uses full-neighborhood PyG SAGEConv(mean), separate root/neighbor transforms, ReLU, normalize=False/project=False/root_weight=True, no added self-loops and no sampled minibatches. There is no input dropout or added residual module. At F=2000/H=32/C=2 parameter counts are 64,098/64,166/128,162. Same seed integers are not identical initializations across architectures. These are explicit initial baselines, not original-paper reproductions or parameter-matched/tuned comparisons.
 
 Teach the tensor flow and calculations from zero. Use a tiny directed graph and isolated node to compare the models. Explain attention coefficients versus learned parameters, total width versus per-head width, ELU versus internal LeakyReLU, coefficient versus feature dropout, root transforms versus self-loops, and neighbor sampling versus aggregation/inductive evaluation. Explain why GraphSAGE can be slower with wide input features, why the loader must not bake in GCN normalization, how checkpoints select the correct model, and what a future head-only/low-rank update must specify. Define unfamiliar terms, cite primary papers/official documentation, distinguish verified behavior from hypotheses, and do not invent research results. Ask one reasoning question at a time afterward.
+~~~
+
+## 29. Controlled shifts: our working laboratory for adaptation
+
+### What did we actually build, and why?
+
+We can now generate graphs with deliberately changed features, connections, or both. We also record which graphs may be used for future learning, which may guide model selection, and which must be reserved for testing. No adaptation method has been implemented yet.
+
+Think of a laboratory experiment: compare the same material under different treatments. Here, the material is a fresh random graph and the treatment is a precisely recorded change. A **control** is its unmodified version, used as a comparison.
+
+An **environment** is one complete graph with a declared experimental role. A **base draw** is one new random example from the reference source distribution. A **lineage** contains that base and every shifted version made from its random ingredients. A **variant** is one such version.
+
+These words describe experimental relationships. They are not extra features that the classifier receives.
+
+### Which shifts are implemented?
+
+| Broad family | Specific change | What must remain identical? |
+| --- | --- | --- |
+| Attribute | Translate both class centers together | Edges, labels, node identities, class separation and feature-noise realization |
+| Structural | Change homophily parameter h | Feature tensor and labels; degree_scale stays fixed if not also varied |
+| Structural | Decrease or increase degree_scale | Feature tensor and labels; h stays fixed if not also varied |
+| Structural | Change h and degree_scale together | Feature tensor and labels |
+| Combined | Attribute + h | Labels/node identities; other declared parameters stay fixed |
+| Combined | Attribute + degree_scale | Labels/node identities; h stays fixed |
+| Combined | Attribute + h + degree_scale | Labels/node identities |
+
+**Attributes** are node features, such as the numbers stored in a row of x. A **class center** is the mean feature vector for nodes of a class. **Translate** means move every class center by the same vector. **Class separation** is the distance between the two centers; translating both together preserves that distance.
+
+**Homophily** means a tendency to connect nodes from the same class. Our parameter h controls the probabilities for same-class versus different-class pairs. **Degree** is a node's number of neighbors. Our degree_scale parameter controls connection probabilities, but is approximately twice the expected degree under the preserved Matcha-code convention.
+
+The lower and higher degree branches give eleven named nonzero shift definitions. There is also one unshifted control for each base. We did not add feature-noise shifts, change class separation, shuffle labels, or create class imbalance. These would be different experiments, not automatic consequences of supporting attribute shifts.
+
+We use “attribute shift” in the graph-literature sense of changing features. This does not assert the strict statistical condition that P(label | features) remains unchanged. Keeping class names/labels fixed and keeping a posterior probability fixed are different claims.
+
+### What does severity mean? A worked example
+
+**Severity** is a number from 0 to 1 telling us how far we move along a declared parameter path. An **endpoint** is the setting at severity 1. **Linear interpolation** means moving a proportional distance from the start to the endpoint.
+
+Our reference has class-center coefficients −0.03/+0.03, h=0.8 and degree_scale=5. The endpoints are a +0.02 feature translation, h=0.2, and degree_scale=2 OR 10.
+
+| Severity | Class-center coefficients when attribute shift is active | h when its shift is active | Lower-degree branch | Higher-degree branch |
+| ---: | --- | ---: | ---: | ---: |
+| 0 | −0.03 / +0.03 | 0.80 | 5.00 | 5.00 |
+| 0.25 | −0.025 / +0.035 | 0.65 | 4.25 | 6.25 |
+| 0.50 | −0.02 / +0.04 | 0.50 | 3.50 | 7.50 |
+| 0.75 | −0.015 / +0.045 | 0.35 | 2.75 | 8.75 |
+| 1 | −0.01 / +0.05 | 0.20 | 2.00 | 10.00 |
+
+Only active controls change. An attribute-only variant uses the translated centers while retaining h=0.8 and degree_scale=5. A combined variant can use several columns together.
+
+One formula explains the table: `value = start + severity × (endpoint − start)`.
+
+The feature coefficients are used before division by sqrt(F), where F is the feature count and sqrt means square root. At F=2000, a coefficient translation of 0.02 moves each coordinate by approximately 0.000447. The total translation-vector length is 0.02. Small individual coordinates do not mean that no feature shift occurred.
+
+**Does higher severity guarantee worse accuracy?** No. It only means farther along this path. Some changes may help a model; some small probability changes may leave the sampled edges unchanged. We must measure model behavior later instead of defining difficulty through an assumed accuracy drop.
+
+### How can random graphs still be paired exactly?
+
+For each possible unordered node pair, imagine drawing a number u uniformly between 0 and 1. Keep the edge if `u < its connection probability`. Every variant in a lineage reuses the same random-number stream; only declared probabilities change.
+
+For features, reuse the same Gaussian noise. **Gaussian noise** means random numbers drawn from the familiar bell-shaped distribution. Translating class centers moves the existing noisy features rather than replacing them with unrelated noise.
+
+This is called **common random numbers**: related experimental conditions reuse underlying random ingredients. Each individual graph still follows its declared sampling distribution, but the pair is deliberately dependent.
+
+Our existing sampler has separate edge, feature and split streams, so reusing its seeds preserves the unchanged component exactly. The construction audit checks actual tensors, not just seed equality. The original independent load_dataset API still rejects seed reuse; pairing is an explicit separate API.
+
+With h fixed, higher degree_scale raises both edge probabilities. Because the same u values are reused, lower-degree edges are a subset of higher-degree edges. This is useful for an interpretable density intervention.
+
+**Do homophily-only shifts preserve degree?** They preserve degree_scale, not exact degree. At N nodes, expected degree is `degree_scale/2 − degree_scale*h/N`. With N=5000 and degree_scale=5, changing h from 0.8 to 0.2 changes the expectation from 2.4992 to 2.4998. The observed sample can fluctuate too. We report expected and observed degree instead of calling this an exactly degree-preserving intervention.
+
+### Three different kinds of partition: do not mix them up
+
+A **partition** assigns examples to groups. A **holdout** is a group excluded from some learning or selection activity so it can test generalization later.
+
+| Partition | What gets assigned? | Current development setting |
+| --- | --- | --- |
+| Node split | Labeled nodes inside one training graph | 60% train / 20% validation / 20% test |
+| Pretrained-model split | Source-trained model instances | Whole source-label subsets produce 18/6/6 models per architecture |
+| Environment split | Fresh graph lineages and all their variants | 3 meta-training / 1 validation / 1 test base lineages |
+
+**Meta-training** means training the future adaptation generator using permitted labeled shifted examples. It is not the earlier source pretraining. **Validation** means selecting settings without fitting against final test labels. An **unseen** example was not available to the relevant training process.
+
+Every variant of one base stays in the same environment role. Putting a mild corruption of a base in training and a severe corruption of that SAME base in testing would not test a genuinely new base graph.
+
+Fresh bases are drawn from the source distribution, but they are not the original source graph used by our weight banks. Their edge/feature/split seeds differ from the reference source seeds. Separate generation and partition seeds control the random data and assignment of its roles. No test accuracy is consulted to choose these assignments.
+
+### What is held out in the default suite?
+
+| Role | Independent bases | Nonzero severities | Environments including controls |
+| --- | ---: | --- | ---: |
+| Meta-training | 3 | 0.25 / 0.50 | 3 × (11 × 2 + 1) = 69 |
+| Validation | 1 | 0.25 / 0.50 | 23 |
+| Test | 1 | 0.50 / 0.75 / 1.00 | 34 |
+
+Total: **126 environments derived from five base draws**. They are not 126 independent experimental repetitions. There is only one test base in this execution check; convincing research estimates will require more independent bases.
+
+For the test lineage:
+
+- Severity 0.50 asks whether the system handles a new realization at a familiar severity.
+- Severities 0.75 and 1.00 ask whether it handles unseen, farther endpoint-path positions. This is **extrapolation** beyond the training maximum of 0.50.
+- All three broad shift families are seen during default meta-training. We cannot claim an unseen-family experiment from this default configuration.
+
+Optional held_out_families supports a separate experiment. For example, holding out combined removes combined shifts from BOTH meta-training and validation. They appear only in test. The implementation tracks family exposure and severity exposure separately because both can be unseen at once. Such a test studies an unseen combination family even though its individual controls may be familiar; it does not establish generalization to every new graph-shift mechanism.
+
+Validation matches the training severity support on different bases. We did not use validation at severity 1.00 while advertising that severity as entirely withheld for testing.
+
+### What is the data, and how is it fed to a GNN?
+
+The **manifest** is the saved experiment recipe: configurations, IDs, seeds, lineage roles and shift settings. It is for orchestration, meaning the code that organizes experiments. It is not a neural-network input.
+
+~~~text
+config file → frozen environment manifest → choose permitted environment ID
+    → generate one DatasetBundle
+    → unlabeled_input(ID) → x, edge_index, num_nodes → GCN / GAT / GraphSAGE
+
+labels and offline shift metadata stay in the orchestration/evaluation branch
+~~~
+
+| Object at paper size | Shape / meaning | Model receives it? |
+| --- | --- | --- |
+| x | [5000, 2000], one feature row per node | Yes |
+| edge_index | [2, E], source/destination IDs for sparse edge entries | Yes |
+| num_nodes | 5000, retaining isolated nodes too | Yes |
+| Labels | [5000], separate ground truth | Never through the model-input graph |
+| Native split indices | Which nodes permit supervision or scoring | Used explicitly by training/evaluation |
+| Severity, family, generating h/d and class centers | Known offline construction settings | No |
+| GNN output | [5000, 2], raw scores for two classes per node | Produced by the model |
+
+Loading is **lazy**: generate a requested graph when needed, instead of storing every graph simultaneously. At paper size, each feature matrix alone is about 40 MB in float32. Holding all 126 would require roughly 5 GB just for features. Lazy materialization keeps ordinary loading to one graph; auditing also keeps its base for comparisons. Generation still scans node pairs, so sparse storage does not mean generation time is linear.
+
+Meta-training bundles provide explicit train/val/test label access. Validation/test bundles provide eval-only labels and reject training_labels. The source-training helper deliberately rejects meta_train as well: using labeled shifted data must be an explicit future meta-training action, not a hidden change to source pretraining.
+
+### Is offline construction using labels a leak?
+
+Synthetic classes are latent ingredients used to generate within-class and between-class edges. **Latent** means part of the underlying data-generating process rather than an observed model input. We know them because we are constructing the artificial benchmark.
+
+This is allowed offline. It does not justify choosing real target edges using unknown class labels during deployment. Once a graph is constructed, its labels and true-label homophily stay outside the model/adaptation input. Future adaptation receives only the allowlisted unlabeled graph.
+
+Construction reports can contain true-label homophily for offline inspection. Feeding that statistic, the generating parameters, or the severity label to the generator would give it information unavailable on an ordinary unlabeled target graph. That would define a different, privileged-information experiment.
+
+### What did we verify, and what difficulty did we encounter?
+
+**Executed:** all 158 CPU tests passed. Full small 300×32 and paper-sized 5000×2000 suites completed with 126 environments each, the expected 69/23/34 role counts, exact required paired invariants and no duplicate variants. No model accuracy was measured by this preparation command.
+
+An integration test initially tried to use the source-only trainer's extraction helper on a meta_train environment. Its rejection was correct. We corrected the test to preserve that boundary. The lesson: sharing graph tensor formats does not give every training stage permission to use every label store.
+
+Another important edge case is a noiseless graph with no edges: different seeds can produce identical inputs. The audit detects duplicate inputs across lineages and fails explicitly. It does not quietly choose new seeds until a desirable outcome appears. Within one lineage, coincident variants are reported because a finite sample may not change at a small severity step.
+
+The manifest has a **checksum**, a content-derived fingerprint that detects changed bytes/values. Its recipes and partition assignments are also recomputed and checked: changing a role and recalculating the checksum does not make an inconsistent manifest valid. This is error detection, not proof of who authored a file.
+
+Each run saves the manifest before the audit, plus a report, versions/Git state and a hashed copy of the construction implementation. That records uncommitted code honestly. Exact regeneration across different versions/hardware is not promised. Recheck fingerprints on a new stack.
+
+### How can I explain this milestone in a review?
+
+> “We implemented paired CSBM interventions for feature-center translation, homophily changes, degree changes and their combinations. We preserve the untouched graph component exactly and assign all variants of a fresh base to one environment role. The development suite separates unseen realizations from unseen severity values, and supports a separate family-holdout setting. The loader keeps target labels and generation parameters outside model inputs. We have verified construction and partition correctness, but have not yet measured adaptation performance.”
+
+If asked why Matcha was used: its released CSBM controls give us a concrete reference for graph-shift generation. We retain the existing named probability convention. Our pairing, factorial combinations and environment partition are explicit project choices; we are not claiming to have reproduced its complete experiment or adaptation method.
+
+**Try explaining these before looking back:**
+
+1. Why does severity 1.00 not guarantee the worst accuracy?
+2. Why can 126 environments still mean only five independent base draws?
+3. Why must a family held out for test also stay out of validation?
+4. Which tensors must remain exactly equal for a structural-only shift?
+5. Why can the benchmark constructor use latent classes while deployment cannot use target labels?
+
+### Prompt R — second opinion on our implemented controlled-shift protocol
+
+~~~text
+I am a beginner implementing “Amortized Weight Adaptation for GNNs under Distribution Shift.” Our code already has CSBM loading, GCN/GAT/GraphSAGE source training and audited 30-model source banks per architecture. No adaptation or generator exists yet.
+
+We now have a development paired-shift protocol. Base CSBM: balanced binary classes, N5000/F2000, fixed-direction Gaussian features x=(class_mean[y]+z)/sqrt(F), class-center coefficients -0.03/+0.03, noise scale1, p_in=d*h/N and p_out=d*(1-h)/N. d is named degree_scale: exact expected degree is d/2-d*h/N. This preserves Matcha released-code distributional conventions, not a complete paper reproduction.
+
+Shift controls: translate BOTH centers by +0.02, change h0.8→0.2, change degree_scale5→2 OR10. Eleven nonempty combinations cover attribute-only, structural-only and combined families. Severity linearly interpolates declared parameters. Noise, class separation, labels, node identities and dimensions remain fixed. Variants reuse base edge uniforms and Gaussian noise through separate RNG streams; attribute-only preserves exact edges and structural-only preserves exact features. h shifts preserve degree_scale, not exact expected/observed degree. Positive severity need not change a finite edge sample or worsen accuracy.
+
+Five fresh base lineages use seeds different from the original source. Whole lineages are assigned3/1/1 to meta-training/validation/test before model scoring, using generation_seed601 independently of partition_seed501. Train/validation severities.25/.50; test.50/.75/1.00. One canonical control per lineage. This makes69/23/34 environments,126 total, but only five independent bases. Default families are seen; optional broad-family holdout excludes that family from BOTH training and validation and marks family/severity exposure independently. Model18/6/6 and node60/20/20 partitions are separate.
+
+Manifest recipes/checksum are saved before audit, graphs load one at a time, and audit verifies tensor invariants, graph fingerprints, expected/observed degrees and duplicate inputs across lineages. Meta-training labels are explicitly accessible; validation/test roles are eval-only. The original source trainer rejects meta_train. Models receive ONLY x/edge_index/num_nodes, never labels, severity, family, generation parameters or diagnostic metadata. Offline synthetic construction uses latent classes; deployment cannot use held-out labels. Both small and paper-sized construction audits passed;158 CPU tests passed. No adaptation accuracy or final-paper generalization is claimed. Only one validation/test base is a development limitation.
+
+Explain this from zero using examples and define unfamiliar terms. Critique the pairing, factorial paths, severity extrapolation, holdout independence, finite-size effects, label access and the distinction between attribute shifts and strict statistical covariate/concept-shift definitions. Identify what is established by our tests versus what requires experiments. Suggest the minimum additional independent environments and evaluation design needed before paper claims, without inventing results or silently replacing the protocol. Cite primary sources for external facts. Then ask one reasoning question at a time.
 ~~~

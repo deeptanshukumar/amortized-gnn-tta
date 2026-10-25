@@ -1,0 +1,30 @@
+{
+  "protocol": "csbm-environment-partitions-v1",
+  "scope": "Development paired CSBM shifts and whole-lineage environment holdouts; no adaptation",
+  "reference": {
+    "num_nodes": 5000, "num_features": 2000,
+    "degree_scale": 5.0, "homophily_parameter": 0.8,
+    "negative_mean": -0.03, "positive_mean": 0.03, "noise_scale": 1.0,
+    "edge_seed": 11, "feature_seed": 12, "split_seed": 13,
+    "split_ratios": [0.6, 0.2, 0.2]
+  },
+  "lineage_counts": [3, 1, 1],
+  "train_severities": [0.25, 0.5],
+  "test_severities": [0.5, 0.75, 1.0],
+  "generation_seed": 601,
+  "partition_seed": 501,
+  "held_out_families": [],
+  "shifts": [
+    {"name": "degree_low", "degree_scale": 2.0},
+    {"name": "degree_high", "degree_scale": 10.0},
+    {"name": "homophily", "homophily_parameter": 0.2},
+    {"name": "homophily_degree_low", "homophily_parameter": 0.2, "degree_scale": 2.0},
+    {"name": "homophily_degree_high", "homophily_parameter": 0.2, "degree_scale": 10.0},
+    {"name": "attribute", "attribute_offset": 0.02},
+    {"name": "attribute_degree_low", "attribute_offset": 0.02, "degree_scale": 2.0},
+    {"name": "attribute_degree_high", "attribute_offset": 0.02, "degree_scale": 10.0},
+    {"name": "attribute_homophily", "attribute_offset": 0.02, "homophily_parameter": 0.2},
+    {"name": "attribute_homophily_degree_low", "attribute_offset": 0.02, "homophily_parameter": 0.2, "degree_scale": 2.0},
+    {"name": "attribute_homophily_degree_high", "attribute_offset": 0.02, "homophily_parameter": 0.2, "degree_scale": 10.0}
+  ]
+}

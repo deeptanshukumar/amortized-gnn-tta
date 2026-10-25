@@ -12,7 +12,8 @@ Deeptanshu owns GCN experiments; teammates handle GAT and GraphSAGE. At the owne
 - CPU PyG graphs, separate ground truth, named split indices, explicit source/meta-training/validation/target roles.
 - Stratified source splits, initially 60/20/20; held-out graphs expose an eval-only split. Full graph context is preserved; split indices select supervision, not induced subgraphs.
 - Allowlisted, cloned target inputs without labels or diagnostic metadata. Training-label access rejects held-out environments.
-- Data, all three models, training/checkpoints, banks, grouped holdouts and diagnostics: **125 tests passed** on the tested CPU stack.
+- Paired attribute, structural and combined CSBM shifts; saved whole-lineage environment partitions, severity holdouts, optional family holdouts, and sequential construction audits.
+- Data, controlled shifts, all three models, training/checkpoints, banks, grouped holdouts and diagnostics: **158 tests passed** on the tested CPU stack.
 - Small and paper-sized (5,000 nodes × 2,000 features per graph) data/interface examples executed successfully.
 
 **The CSBM pretraining/bank foundation is verified for GCN, GAT and GraphSAGE:** shared loading/training/evaluation, a full-budget 30-model bank per architecture, validated artifact loading, saved 18/6/6 partitions, and weight/prediction/representation diagnostics. Adaptation/generators and other datasets remain later work. These development runs are not final paper benchmarks.
@@ -53,6 +54,43 @@ python examples/inspect_data.py --paper-scale --output runs/csbm-paper-scale.jso
 Both generate independent source/target graphs, validate them, and run a random GCN layer with a source-label backward pass. The target's true labels are used only in the offline inspection report. Reports include graph counts, edge homophily, split counts, fingerprints, configurations, versions, and finite-gradient checks.
 
 The examples do not optimize a model or report adaptation accuracy. JSON outputs and generated artifacts are ignored by Git.
+
+## Prepare controlled shifts and environment partitions
+
+~~~bash
+python examples/prepare_shift_environments.py --output-dir runs/controlled-shifts-small
+python examples/prepare_shift_environments.py --paper-scale --output-dir runs/controlled-shifts-paper
+~~~
+
+Use a new output directory. Defaults: 300 nodes × 32 features; --paper-scale uses 5,000 × 2,000 from [controlled_csbm_v1.json](configs/controlled_csbm_v1.json). This is a versioned development protocol, not an official benchmark split or a complete Matcha reproduction. No model is trained or scored.
+
+| Control | Endpoint at severity 1 | Preserved |
+| --- | --- | --- |
+| Attribute | Add +0.02 to both class-center coefficients | Exact edges; class separation, feature noise and labels |
+| Homophily | h: 0.8 → 0.2 | Exact features; degree_scale=5 when used alone |
+| Degree decrease / increase | degree_scale: 5 → 2 / 10 | Exact features; h=0.8 when used alone |
+| Combinations | All nonempty combinations, with either degree direction | Labels, node identities, dimensions, noise and class separation |
+
+Eleven shift definitions are linearly interpolated by severity. Severity measures movement along the parameter path, not guaranteed difficulty. h is a sampling parameter; neither measured homophily nor observed degree is held exactly fixed. A homophily-only change also has the documented small finite-size expected-degree drift.
+
+Five fresh base draws are assigned as **3 meta-training / 1 validation / 1 test lineages** using partition_seed=501, independently of generation_seed=601. All variants of a base stay together. Training/validation use severity 0.25/0.50; test uses 0.50/0.75/1.00, distinguishing unseen realizations from unseen severity values. Each lineage also has one unshifted control. The resulting 126 environments are **69/23/34**, not 126 independent draws. Default families are all seen during meta-training; optional held_out_families in the config supports a separate unseen-family experiment without exposing that family during validation.
+
+The command saves environment_manifest.json before auditing, then construction_audit.json, summary.json, run.json and a hashed construction-code snapshot. Reports include expected/observed degree, offline diagnostics and exact graph fingerprints. Audit checks preserve labels/splits and the required feature/edge tensors, and reject duplicate inputs across distinct lineages. Runtime artifacts remain ignored. Regeneration is verified on the local CPU software stack; re-audit fingerprints after changing versions.
+
+~~~python
+from pathlib import Path
+from amortized_gnn_tta.data import load_environment_manifest, load_shift_environment
+
+manifest = load_environment_manifest(Path("runs/controlled-shifts-paper/environment_manifest.json"))
+item = next(e for e in manifest["environments"] if e["role"] == "target_test")
+bundle = load_shift_environment(manifest, item["id"])  # One graph at a time
+target_graph = bundle.unlabeled_input(item["id"])
+# Feed only target_graph to models/adaptation; never the manifest or label-bearing bundle.
+~~~
+
+Meta-training environments retain train/val/test node splits; validation/test environments have eval-only labels. The original source-training helper continues to reject meta/held-out roles. A future meta-training loop must explicitly consume permitted meta-training supervision. The existing independent load_dataset API and pretrained banks are unchanged. Construction uses latent synthetic classes offline; it is not a label-free real-graph corruption procedure.
+
+Both small and paper-sized full suites passed construction audits. Adaptation, generator training and research accuracy comparisons remain future work.
 
 ## Select an architecture
 

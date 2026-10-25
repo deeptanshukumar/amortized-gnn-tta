@@ -1,6 +1,6 @@
 # Project state
 
-Last updated: 2026-10-25. Stage: **CSBM source-pretraining/bank foundation verified for GCN, GAT and GraphSAGE** — all three have full-budget 30-model banks, grouped model holdouts, and completed audits through the common pipeline.
+Last updated: 2026-10-25. Stage: **CSBM source banks plus controlled shifts/environment partitions verified** — all three architectures have audited 30-model banks; paired attribute/structural/combined development suites now have whole-lineage holdouts. Adaptation remains unimplemented.
 
 ## Current scope and decision
 
@@ -14,7 +14,7 @@ The owner authorized committing that foundation and moving on. Local commit **30
 
 The owner then explicitly requested the remaining task list and completion of Phase 1. The list was provided before further implementation. [Decision D5](DECISIONS.md#implemented-decision-d5--gcncsbm-phase-1-closure-2026-10-25) fixes the phase's reference protocol and whole-subset partition, and records the completed audit. This completes roadmap steps 1–3 for our GCN/CSBM scope, not teammates' architectures, adaptation, or the final research paper.
 
-The owner then explicitly authorized pushing commits 30af4f9/3c7976e and requested shared GAT and GraphSAGE implementations. That expansion is implemented under [Decision D6](DECISIONS.md#implemented-decision-d6--shared-gat-and-graphsage-models-2026-10-25). After verification, the owner explicitly authorized committing and pushing this extension. Team experiment ownership is unchanged; later changes require separate Git authorization.
+The owner then explicitly authorized pushing commits 30af4f9/3c7976e and requested shared GAT and GraphSAGE implementations. That expansion is implemented under [Decision D6](DECISIONS.md#implemented-decision-d6--shared-gat-and-graphsage-models-2026-10-25). After verification, the owner explicitly authorized committing and pushing this extension as bc91093. Team experiment ownership is unchanged; later changes require separate Git authorization. The owner subsequently requested all controlled-shift families and environment partitions; [D7](DECISIONS.md#implemented-decision-d7--paired-controlled-shifts-and-environment-partitions-2026-10-25) records the implemented development protocol. After reviewing verification, the owner explicitly authorized committing and pushing this controlled-shift milestone. That approval does not extend to later changes.
 
 Under that delegated authority, selected the released Matcha-code CSBM distribution, exposed through explicit p_in/p_out and a named degree_scale conversion. Exact finite-size expected degree is reported; no silent factor-of-two correction. Fixed-direction Gaussian feature scaling follows the released code. This is not full paper-result reproduction. Details and alternatives are in [DECISIONS.md](DECISIONS.md#implemented-decision-d1--initial-csbm-protocol-2026-10-25).
 
@@ -42,8 +42,11 @@ Under that delegated authority, selected the released Matcha-code CSBM distribut
 | Phase reference and review command | configs/phase1_csbm_gcn.json, examples/finalize_phase1.py | Frozen phase config, new review directory, persisted partition before scoring, JSON/CSV/Markdown evidence and analysis-code snapshot |
 | Phase verification | tests/test_bank_analysis.py | Corruption/mismatch/leak checks, independent CKA arithmetic, hidden-permutation and forward-compatibility tests, real finalization CLI |
 | Architecture verification | tests/test_models.py | Manual aggregation/attention semantics, gradients/learning, permutation/label invariance, empty graphs, checkpoints and shared CLI audit |
+| Controlled CSBM shifts | src/amortized_gnn_tta/data/shifts.py | Paired feature-center translation, homophily/degree changes and all declared combinations; exact preserved components |
+| Environment plans and audit | src/amortized_gnn_tta/data/environments.py | Versioned recipes, whole-lineage role assignment, severity/family holdouts, persistence/validation, lazy loading and duplicate/invariant audit |
+| Shift preparation and verification | configs/controlled_csbm_v1.json, examples/prepare_shift_environments.py, tests/test_shift_environments.py | Frozen-before-audit manifest, current code snapshot, CPU small/paper-sized full construction runs and boundary checks |
 
-Held-out graphs have eval-only indices; training_labels rejects validation/target roles. The loader preserves full graph context and does not add self-loops or model-specific normalization. A persistent cache and paired-shift generator are deliberately absent.
+Held-out graphs have eval-only indices; training_labels rejects validation/target roles. The loader preserves full graph context and does not add self-loops or model-specific normalization. Paired shifts are a separate explicit API; the original independent loader and source banks are unchanged. No persistent graph cache exists.
 
 ## Reference investigation
 
@@ -55,7 +58,7 @@ Earlier dataset/reference investigation and handbook work are preserved in the d
 
 ## Verification actually executed
 
-- OMP_NUM_THREADS=1 .venv/bin/python -m pytest -q: **125 passed** after the model extension (21 new model cases; 104 prior checks retained); upstream PyTorch/PyG deprecation warnings reported.
+- OMP_NUM_THREADS=1 .venv/bin/python -m pytest -q: **158 passed** after controlled shifts/environment partitions (33 new cases; 125 prior checks retained); upstream PyTorch/PyG deprecation warnings reported.
 - New checks include finite GCN gradients/empty-edge execution, learning on a deliberately easy fixture, exact seeded CPU repeatability, best-checkpoint restoration after validation worsens, inference/checkpoint equality, and unchanged training after held-out labels are changed. A spy also verifies source-view extraction reads only permitted source validation labels.
 - Python compileall on src/tests/examples: passed.
 - Small example: 300 nodes × 32 features per graph; source splits 180/60/60; target eval 300; forward/backward and label-free target input passed.
@@ -63,7 +66,7 @@ Earlier dataset/reference investigation and handbook work are preserved in the d
 - Paper-scale generation plus bundle validation took approximately 1.50 seconds in this local CPU run, excluding Python import/startup and the GCN operation. This is a smoke timing, not a benchmark comparison.
 - Reports were written outside Git to /tmp/afml_csbm_smoke.json and /tmp/afml_csbm_paper_scale.json; regenerate via the example commands in the README.
 - Direct project dependency requirement checks passed. Whole-environment pip check failed on unrelated inherited packages (e.g. AutoGluon/Pandas/Transformers/TensorBoard constraints), not on the selected project dependencies.
-- Git diff/whitespace, documentation consistency, and ignored-artifact checks passed for the foundation and completed phase. Runtime outputs/checkpoints remain excluded from the explicitly authorized Phase 1 completion commit. No push is authorized.
+- Git diff/whitespace, documentation consistency, and ignored-artifact checks passed. Runtime outputs/checkpoints remain excluded. Prior commits were explicitly pushed; the owner separately approved committing and pushing the verified controlled-shift milestone.
 
 Tested: Python 3.13.13, PyTorch 2.13.0+cpu, PyG 2.8.1, NumPy 2.3.5, pytest 9.1.1 on local Linux CPU. .venv inherits system site packages to reuse CPU PyTorch; new dependencies were installed into .venv only. Sandbox network failure was resolved by a permitted install retry. No global environment modifications.
 
@@ -167,11 +170,29 @@ The historical GCN bank was re-audited at runs/gcn-compatibility-after-models, p
 
 These are descriptive initial-model results on a reused development graph. GraphSAGE has about twice the parameters; activation functions and model definitions differ and no architecture-specific search was performed. Do not infer a statistically significant ranking, natural-shift robustness, or adaptation improvement from these values.
 
+## Controlled-shift/environment milestone
+
+Reference: configs/controlled_csbm_v1.json and D7. The existing source distribution is the reference, but all five base draws use fresh generation seeds. Each paired lineage has one control plus selected variants. Defaults cover feature translation, h changes, lower/higher degree scales, and their eleven nonempty combinations. Class separation, feature noise, label identities, dimensions and node membership stay fixed. This is our development extension of referenced CSBM controls, not an official Matcha benchmark reproduction.
+
+| Partition | Independent base lineages | Severity values for shifted variants | Environments including controls |
+| --- | ---: | --- | ---: |
+| Meta-training | 3 | 0.25 / 0.50 | 69 |
+| Validation | 1 | 0.25 / 0.50 | 23 |
+| Held-out test | 1 | 0.50 / 0.75 / 1.00 | 34 |
+
+The 126 variants are not independent repetitions. All variants from one base stay in the same role. Test0.50 measures a new realization at a seen severity; test0.75/1.00 uses unseen severity coordinates. Default families are seen; optional broad-family holdout is implemented and tested, not claimed as an executed performance experiment. Environment labels follow the existing role boundary; the source-fitting helper continues to reject meta-training and held-out environments.
+
+Executed commands: `.venv/bin/python examples/prepare_shift_environments.py --output-dir runs/controlled-shifts-small-v1` and the same command with `--paper-scale --output-dir runs/controlled-shifts-paper-v1`, both with OMP_NUM_THREADS=1. Full small300×32 and paper-sized5000×2000 suites completed with status complete, identical69/23/34 counts, all paired invariants verified, distinct base inputs and zero duplicate-variant groups. Audit times were approximately1.10s/36.19s on local CPU, excluding process startup/snapshot writing; the runs overlapped other development checks and are not a controlled timing benchmark.
+
+Each ignored output directory has environment_manifest.json (saved before construction audit), construction_audit.json (fingerprints, invariant checks, offline diagnostics), summary.json, run.json (effective config, software, Git state) and a hashed construction_code_snapshot. The recipe names/severities/parameters and label-derived diagnostics are not model conditioning. No model accuracy, adaptation or generator training was performed. Source banks/configurations/checkpoints were not modified.
+
+Tests cover all eleven definitions, exact feature/edge preservation, class-center translation, nested degree-change edges, finite-size expected-degree drift, roles/splits, source-seed exclusion, whole-lineage exclusivity, severity/family exposure, independent generation/partition RNGs, global RNG isolation, persistence/checksum/re-signed tampering rejection, unknown IDs, duplicate/invalid/no-op conditions, cross-lineage duplicate-input detection, all three real model inference paths, held-out-label invariance and a real preparation CLI. An initial test wrongly assumed the source-only trainer extractor accepted meta_train; its deliberate guard was retained and the test corrected to the existing boundary.
+
 ## Limits and next work
 
 - The source-pretraining/bank foundation is verified across all three architectures on CSBM. No adaptation or generator exists. Final research evaluation and estimates accounting for the paired design remain outstanding.
 - CPU verified only. Clean-isolated installation, macOS, Colab, CUDA, and MPS remain unverified.
 - Generation pair-scanning is O(N²), although no dense adjacency is allocated. Do not scale blindly to huge N.
-- Independent-draw development examples are not paired attribute-only interventions. Later scientific shift families/severities and holdout lineage require an explicit protocol.
-- Phase 1 fixes a 50%-pool reference budget and whole-subset model grouping. Future paper-level label budgets, environment allocation/holdouts, and natural-shift evaluation remain scientific decisions; do not reinterpret this model split as disjoint node labels, new graphs, or unseen initialization seeds.
-- Next milestone is parameter-efficient adaptation: discuss exact head/low-rank parameterization, supervised development oracles versus label-free baselines, controlled shift construction, and environment holdouts before implementing it. Diversity is measured, not proof that adaptation will help; no automatic bank redesign or arbitrary weight noise was introduced.
+- Original independent-draw examples remain independent; the new paired API explicitly controls realized components. Feature-noise/class-separation shifts, degree-heterogeneity models, concept shifts and natural-shift datasets are not implemented.
+- Phase 1 fixes a 50%-pool reference budget and whole-subset model grouping. D7 separately fixes development environment grouping/severities. Final-paper label budgets, independent environment counts, model×environment evaluation allocations, and natural-shift evaluation remain scientific decisions. Do not reinterpret model groups as new graphs or treat126 related variants as126 independent draws; there is only one validation and one test base lineage in the executed development suites.
+- Next milestone is parameter-efficient adaptation: discuss exact head/low-rank parameterization and supervised development oracles versus label-free objectives before implementing it. The new environments can support it, but neither recoverable accuracy nor helpful bank diversity is established. No automatic bank redesign or arbitrary weight noise was introduced.
