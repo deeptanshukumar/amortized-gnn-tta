@@ -1,4 +1,4 @@
-"""Episodic parameter-efficient updates with explicit supervision boundaries.
+"""Episodic weight updates with explicit supervision boundaries.
 
 LoRA algebra/initialization follows microsoft/LoRA loralib/layers.py (MIT).
 Entropy and information-maximization objectives follow Tent and SHOT respectively
@@ -30,17 +30,21 @@ class PEFTConfig:
     Output rank 1 remains strictly below the two-class matrix dimension. Hidden
     rank 4 is explicit, never silently clipped for another model size. LoRA does
     not update biases or GAT attention vectors. alpha/r controls each update.
+    Full fine-tuning trains every ordinary model parameter directly, only in
+    supervised development experiments; LoRA settings are unused for that method.
     """
 
-    method: Literal["head", "lora"] = "head"
+    # Retain the existing config/artifact interface for the supervised full-weight
+    # diagnostic. "full" is explicitly NOT parameter-efficient adaptation.
+    method: Literal["head", "lora", "full"] = "head"
     backbone_rank: int = 4
     head_rank: int = 1
     backbone_alpha: float = 4.0
     head_alpha: float = 1.0
 
     def __post_init__(self) -> None:
-        if self.method not in {"head", "lora"}:
-            raise ValueError("Use head or lora adaptation")
+        if self.method not in {"head", "lora", "full"}:
+            raise ValueError("Use head, lora or full adaptation")
         if any(type(v) is not int or v < 1 for v in (self.backbone_rank, self.head_rank)):
             raise ValueError("LoRA ranks must be positive integers")
         if any(isinstance(v, bool) or not math.isfinite(v) or v <= 0
@@ -71,6 +75,8 @@ def adaptation_targets(model: nn.Module, method: str) -> tuple[str, ...]:
     """Explicit maps for our homogeneous two-layer PyG models; reject others."""
     if not isinstance(model, (GCN, GAT, GraphSAGE)):
         raise ValueError("Adaptation supports our GCN, GAT and GraphSAGE models")
+    if method == "full":
+        return tuple(name for name, _ in model.named_parameters())
     if method == "head":
         return tuple(name for name, _ in model.named_parameters() if name.startswith("conv2."))
     if method != "lora":
@@ -87,6 +93,8 @@ class WeightAdapter(nn.Module):
     and graph normalization. Only substituted parameter values differ. All model
     dropout remains disabled during adaptation; eval() does NOT disable gradients.
     Each episode starts from zero effective change. No global RNG is consumed.
+    The separate full-weight reference instead optimizes a second ordinary model
+    copy directly; it shares the immutable initial model and artifact interface.
     """
 
     def __init__(self, model: nn.Module, config: PEFTConfig, *, seed: int = 801):
@@ -102,6 +110,11 @@ class WeightAdapter(nn.Module):
         self.offsets, self.a, self.b = nn.ParameterDict(), nn.ParameterDict(), nn.ParameterDict()
         self.scales: dict[str, float] = {}
         self._head_cache = None
+        if config.method == "full":
+            # Optimize ordinary parameters directly, as in PyG's supervised
+            # examples. Keep base immutable for initial/final/delta auditing.
+            self.full_model = deepcopy(self.base).requires_grad_(True).eval()
+            return
         generator = torch.Generator(device="cpu").manual_seed(seed)
         params = dict(self.base.named_parameters())
         for i, name in enumerate(self.target_names):
@@ -122,14 +135,21 @@ class WeightAdapter(nn.Module):
     def train(self, mode: bool = True):
         super().train(mode)
         self.base.eval()
+        if self.config.method == "full":
+            self.full_model.eval()  # Match the dropout-off PEFT comparison.
         return self
 
     def updates(self) -> dict[str, Tensor]:
+        if self.config.method == "full":
+            initial = dict(self.base.named_parameters())
+            return {name: value - initial[name] for name, value in self.full_model.named_parameters()}
         return {name: self.offsets[f"p{i}"] if self.config.method == "head" else
                 (self.b[f"p{i}"] @ self.a[f"p{i}"]) * self.scales[f"p{i}"]
                 for i, name in enumerate(self.target_names)}
 
     def forward(self, x: Tensor, edge_index: Tensor) -> Tensor:
+        if self.config.method == "full":
+            return self.full_model(x, edge_index)
         original = dict(self.base.named_parameters())
         replacements = {name: original[name] + change for name, change in self.updates().items()}
         cache = self._head_cache
@@ -170,6 +190,8 @@ class WeightAdapter(nn.Module):
 
     def merged_model(self) -> nn.Module:
         """Materialize ordinary architecture/state keys for inference and deltas."""
+        if self.config.method == "full":
+            return deepcopy(self.full_model).eval()
         result = deepcopy(self.base)
         params = dict(result.named_parameters())
         with torch.no_grad():
@@ -258,6 +280,8 @@ def fit_unlabeled(model: nn.Module, graph: Data, peft: PEFTConfig,
                   objective: str = "information_maximization",
                   device: str | torch.device = "cpu") -> AdaptationResult:
     """Fixed-budget, source-free episode. This signature accepts NO labels."""
+    if peft.method == "full":
+        raise ValueError("Full fine-tuning is a supervised development diagnostic only")
     if objective not in {"entropy", "information_maximization"}:
         raise ValueError("Unknown unlabeled objective")
     return _fit(model, graph, peft, config, objective, None, device)

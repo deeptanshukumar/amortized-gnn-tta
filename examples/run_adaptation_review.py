@@ -1,10 +1,12 @@
-"""Run frozen baselines and head/LoRA adaptation on permitted development pairs.
+"""Run frozen baselines and weight adaptation on permitted development pairs.
 
 Requires an existing audited bank, its model partition, and a controlled-shift
 manifest. Defaults choose one model from EACH meta-training source subset and
 all controls/shift variants at severity .5 in the first meta-training lineage.
 No held-out model or environment is selected. Use --all-meta-lineages for all
 three development base draws, --models-per-subset for repeated source seeds.
+Full fine-tuning requires --methods full --objectives supervised_development,
+and must be saved separately from the parameter-efficient experiments.
 """
 
 import argparse
@@ -36,7 +38,8 @@ def main() -> None:
     parser.add_argument("--severity", type=float, default=0.5)
     parser.add_argument("--shift-names", nargs="+", help="Optional exact shift names; control is always included")
     parser.add_argument("--objectives", nargs="+", choices=OBJECTIVES, default=list(OBJECTIVES))
-    parser.add_argument("--methods", nargs="+", choices=("head", "lora"), default=["head", "lora"])
+    parser.add_argument("--methods", nargs="+", choices=("head", "lora", "full"), default=["head", "lora"],
+                        help="Use full alone with --objectives supervised_development for a separate diagnostic")
     parser.add_argument("--steps", type=int, default=100)
     parser.add_argument("--patience", type=int, default=20)
     parser.add_argument("--learning-rate", type=float, default=0.01)
@@ -48,6 +51,8 @@ def main() -> None:
     args = parser.parse_args()
     if args.threads < 1 or args.models_per_subset < 1 or args.output_dir.exists():
         parser.error("Use positive threads/model count and a new output directory")
+    if "full" in args.methods and (args.methods != ["full"] or args.objectives != ["supervised_development"]):
+        parser.error("Run full separately with --methods full --objectives supervised_development")
     torch.set_num_threads(args.threads)
     raw = json.loads((args.bank / "source_subsets.json").read_text(encoding="utf-8"))
     values = dict(raw["source_provenance"]["graph_metadata"]["config"])

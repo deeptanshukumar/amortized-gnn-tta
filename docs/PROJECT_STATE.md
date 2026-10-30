@@ -246,6 +246,14 @@ Review assets: runs/peft-review-checkpoint/{summary.csv,summary.json,adaptation_
 
 The owner's requested items1–5 are implemented and verified. Meaningful recovery and objective failures support continued investigation, not a generator-success claim. Next week: review the teammate's proposed generators and decide update representation/norm control, fair equally informed baselines, and final held-out evaluation before implementing new methods.
 
+## Separate supervised full-fine-tuning diagnostic
+
+The owner approved this diagnostic after questioning limited adaptation gains. Implemented method=full through the shared adaptation/artifact interfaces, optimizing a separate ordinary model copy and preserving an immutable initial copy. Full is supervised-development-only and must run separately from head/LoRA. The matched comparison helper rejects changed optimizer budgets, software/graph/model identities, missing pairs and altered artifact metrics; earlier runs are preserved.
+
+Executed verification: **227 CPU tests passed**. Full-mode gradients and updated weights match an independent plain-PyTorch Adam loop exactly for all three architectures. Tests cover initial-model preservation, dropout-off behavior, changes in both graph layers, held-out/test-label invariance, validation selection, portable delta reconstruction, supervised-only restrictions, complete comparisons and mismatch rejection. Existing upstream deprecation warnings remain visible. No new dependency or GPU result.
+
+Execution in progress: separate40-step/patience15 full-weight sweeps on the previous broad development grid, and200-step/patience40 sweeps on the previous narrower attribute/homophily/combined grid. The suite plan was written before scoring to runs/full-diagnostic-suite-plan-v1.json; each run has its own pre-execution code snapshot and plan. Final results and audit status will replace this in-progress entry after completion. Method rationale and limitations: D10; beginner explanation: handbook Section31.
+
 ## Limits and next work
 
 - Source pretraining, controlled data, PEFT, delta artifacts and development experiment audits are verified for all three architectures on CSBM. Generators and final held-out research evaluation/estimates accounting for the paired design remain outstanding.

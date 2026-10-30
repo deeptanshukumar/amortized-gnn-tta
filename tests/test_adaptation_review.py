@@ -22,6 +22,7 @@ from amortized_gnn_tta.data import (
 )
 from amortized_gnn_tta.evaluation import predict
 from amortized_gnn_tta.models import build_model, make_model_spec
+from amortized_gnn_tta.review_comparison import compare_supervised_reviews
 from amortized_gnn_tta.source_subsets import create_source_subsets
 from amortized_gnn_tta.training import TrainingConfig, source_training_data
 from amortized_gnn_tta.weight_bank import train_weight_bank
@@ -111,6 +112,28 @@ def test_baseline_only_makes_no_weight_update_artifacts(setup, tmp_path):
     assert not list(output.rglob("*.pt"))
 
 
+def test_separate_full_diagnostic_and_objective_guards(setup, tmp_path):
+    source, bank, partition, env = setup
+    models, environments = selection(partition, env)
+    output = tmp_path / "full"
+    report = run_development_review(
+        bank, partition, env, source, model_ids=models, environment_ids=environments, output_dir=output,
+        peft_configs=(PEFTConfig("full"),), objectives=("supervised_development",), config=AdaptationConfig(steps=2))
+    assert report["protocol"] == "full-finetuning-development-v1"
+    assert len(report["adaptations"]) == len(report["baselines"]) == 3
+    for row in report["adaptations"]:
+        assert row["trainable_parameters"] == row["model_parameters"]
+        _, artifact = load_weight_delta(output / row["weight_delta"])
+        assert set(artifact["target_names"]) == set(artifact["initial_state"])
+    for methods, objectives in [((PEFTConfig("full"),), ("entropy",)),
+                                ((PEFTConfig("full"), PEFTConfig("head")), ("supervised_development",))]:
+        bad = tmp_path / "bad-full"
+        with pytest.raises(ValueError, match="separately"):
+            run_development_review(bank, partition, env, source, model_ids=models, environment_ids=environments,
+                                   output_dir=bad, peft_configs=methods, objectives=objectives)
+        assert not bad.exists()
+
+
 def test_actual_cli_and_pre_execution_snapshot(setup, tmp_path):
     source, bank, partition, env = setup
     root = Path(__file__).resolve().parents[1]
@@ -132,3 +155,40 @@ def test_actual_cli_and_pre_execution_snapshot(setup, tmp_path):
     assert "run_adaptation_review.py" in implementation["command"][0]
     for relative, expected in implementation["adaptation_code_snapshot_sha256"].items():
         assert hashlib.sha256((output / "adaptation_code_snapshot" / relative).read_bytes()).hexdigest() == expected
+
+
+def test_matched_supervised_comparison_and_mismatch_rejection(setup, tmp_path):
+    source, bank, partition, env = setup
+    models, environments = selection(partition, env)
+    full, reference = tmp_path / "full", tmp_path / "reference"
+    for path, configs in [(full, (PEFTConfig("full"),)),
+                          (reference, (PEFTConfig("head"), PEFTConfig("lora", backbone_rank=2)))]:
+        run_development_review(bank, partition, env, source, model_ids=models, environment_ids=environments,
+                               output_dir=path, peft_configs=configs, objectives=("supervised_development",),
+                               config=AdaptationConfig(steps=2))
+    comparison = compare_supervised_reviews(full, [reference], output_dir=tmp_path / "comparison")
+    assert len(comparison["pairs"]) == 3
+    shifted = [r for r in comparison["summary"] if r["shift"] == "all_shifted"]
+    assert {r["method"] for r in shifted} == {"full", "head", "lora"}
+    assert all(r["pairs"] == 2 for r in shifted)  # Control excluded from headline mean.
+    assert (tmp_path / "comparison" / "COMPARISON.md").exists()
+    bad = tmp_path / "bad-comparison"
+    with pytest.raises(ValueError, match="Duplicate method"):
+        compare_supervised_reviews(full, [reference, reference], output_dir=bad)
+    assert not bad.exists()
+    report_path, plan_path = reference / "review.json", reference / "plan.json"
+    report = json.loads(report_path.read_text())
+    original = json.loads(json.dumps(report))
+    report["adaptations"][0]["before"]["accuracy"] = 0.123
+    report_path.write_text(json.dumps(report))
+    with pytest.raises(ValueError, match="metrics disagree"):
+        compare_supervised_reviews(full, [reference], output_dir=bad)
+    report_path.write_text(json.dumps(original))
+    plan = json.loads(plan_path.read_text())
+    plan["adaptation_config"]["steps"] = 3
+    plan_path.write_text(json.dumps(plan))
+    original["plan_sha256"] = hashlib.sha256(plan_path.read_bytes()).hexdigest()
+    report_path.write_text(json.dumps(original))
+    with pytest.raises(ValueError, match="adaptation_config"):
+        compare_supervised_reviews(full, [reference], output_dir=bad)
+    assert not bad.exists()

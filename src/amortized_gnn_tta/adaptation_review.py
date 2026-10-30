@@ -99,6 +99,9 @@ def run_development_review(
             or len(set(objectives)) != len(objectives) or set(objectives) - set(OBJECTIVES)
             or bool(peft_configs) != bool(objectives)):
         raise ValueError("Choose distinct methods/objectives, or both empty for baseline only")
+    full_diagnostic = any(p.method == "full" for p in peft_configs)
+    if full_diagnostic and (len(peft_configs) != 1 or objectives != ["supervised_development"]):
+        raise ValueError("Run full fine-tuning separately with supervised_development only")
     model_rows = {m["model_id"]: m for m in bank.manifest["models"]}
     if (source.graph.x.shape[1] != environment_manifest["reference"]["num_features"]
             or bank.manifest["model_spec"]["config"]["out_channels"] != 2):
@@ -106,7 +109,8 @@ def run_development_review(
     output = Path(output_dir)
     output.mkdir(parents=True, exist_ok=False)
     plan = {
-        "protocol": "peft-development-review-v1", "scope": "development only; no held-out model/environment use",
+        "protocol": "full-finetuning-development-v1" if full_diagnostic else "peft-development-review-v1",
+        "scope": "development only; no held-out model/environment use",
         "model_ids": model_ids, "environment_ids": environment_ids,
         "bank_sha256": bank.sha256, "environment_manifest_sha256": environment_manifest["manifest_sha256"],
         "peft_configs": [asdict(p) for p in peft_configs], "objectives": objectives,
@@ -114,6 +118,7 @@ def run_development_review(
         "test_nodes": "native meta-environment test indices; scoring only",
         "unlabeled_visibility": "entire target graph; no labels or construction metadata",
         "versions": software_versions(), "device": device, "torch_num_threads": torch.get_num_threads(),
+        "dropout_during_adaptation": False, "adaptation_weight_decay": 0.0,
     }
     _write_json(output / "plan.json", plan)
     _write_json(output / "environment_manifest.json", environment_manifest)
@@ -212,10 +217,12 @@ def run_development_review(
                   "limitations": ["Development meta models/environments only; no generator or final test result",
                                   "Related shifts, models and node samples are not independent trials",
                                   "Supervised reference uses labeled meta train/val; unlabeled baselines do not",
-                                  "Head and LoRA have different parameter counts/sites; no matched-capacity claim",
+                                  "Update methods have different parameter counts/sites; no matched-capacity claim",
+                                  "A supervised reference is not a proven optimization or accuracy upper bound",
                                   "Timing is local execution evidence, not a controlled speed benchmark"]}
         _write_json(output / "review.json", report)
-        lines = ["# PEFT development review", "", "Development models/environments only; no generator result.", "",
+        title = "Full fine-tuning development diagnostic" if full_diagnostic else "PEFT development review"
+        lines = [f"# {title}", "", "Development models/environments only; no generator result.", "",
                  "| Update | Objective | Family | Pairs | Before | After | Gain (pp) |", "| --- | --- | --- | ---: | ---: | ---: | ---: |"]
         for s in report["summary"]:
             lines.append(f"| {s['method']} | {s['objective']} | {s['family']} | {s['pairs']} | "

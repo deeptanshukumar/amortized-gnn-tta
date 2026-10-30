@@ -37,7 +37,7 @@ def state(module):
 
 
 @pytest.mark.parametrize("architecture", ARCHITECTURES)
-@pytest.mark.parametrize("method", ("head", "lora"))
+@pytest.mark.parametrize("method", ("head", "lora", "full"))
 def test_zero_delta_gradients_frozen_model_and_merge(bundle, architecture, method):
     original = model(architecture).train()
     original_state = state(original)
@@ -57,8 +57,11 @@ def test_zero_delta_gradients_frozen_model_and_merge(bundle, architecture, metho
     if method == "lora":
         assert all(p.grad is not None and torch.count_nonzero(p.grad) == 0 for p in adapter.a.values())
         assert any(p.grad.abs().sum() > 0 for p in adapter.b.values())
-    else:
+    elif method == "head":
         assert any(p.grad.abs().sum() > 0 for p in adapter.offsets.values())
+    else:
+        assert all(p.requires_grad and p.grad is not None for p in adapter.full_model.parameters())
+        assert not adapter.full_model.training
     optimizer.step()
     assert any(torch.count_nonzero(change) for change in adapter.updates().values())
     assert all(torch.equal(value, state(original)[key]) for key, value in original_state.items())
@@ -90,7 +93,7 @@ def test_lora_algebra_scaling_rank_and_sites():
 
 
 @pytest.mark.parametrize("architecture", ARCHITECTURES)
-@pytest.mark.parametrize("method", ("head", "lora"))
+@pytest.mark.parametrize("method", ("head", "lora", "full"))
 def test_supervised_learning_selection_and_heldout_label_invariance(bundle, architecture, method):
     original = model(architecture)
     graph = bundle.unlabeled_input("meta")
@@ -153,7 +156,7 @@ def test_information_maximization_and_entropy_arithmetic():
 
 
 @pytest.mark.parametrize("architecture", ARCHITECTURES)
-@pytest.mark.parametrize("method", ("head", "lora"))
+@pytest.mark.parametrize("method", ("head", "lora", "full"))
 def test_delta_initial_final_reconstruction_and_tampering(bundle, architecture, method, tmp_path):
     original = model(architecture)
     graph = bundle.unlabeled_input("meta")
@@ -204,11 +207,41 @@ def test_invalid_fit_config(changes):
 
 
 @pytest.mark.parametrize("changes", [
-    {"method": "full"}, {"backbone_rank": 0}, {"head_rank": True}, {"backbone_alpha": 0},
+    {"method": "unknown"}, {"backbone_rank": 0}, {"head_rank": True}, {"backbone_alpha": 0},
 ])
 def test_invalid_peft_config(changes):
     with pytest.raises(ValueError):
         PEFTConfig(**changes)
+
+
+@pytest.mark.parametrize("architecture", ARCHITECTURES)
+def test_full_finetuning_matches_direct_pyg_adam_updates(bundle, architecture):
+    """Independent ordinary-model loop verifies every weight/gradient, not just loss."""
+    original = model(architecture)
+    direct = deepcopy(original).eval()
+    adapter = WeightAdapter(original, PEFTConfig("full")).train()
+    graph = bundle.unlabeled_input("meta")
+    adapter.prepare_episode(graph.x, graph.edge_index)
+    assert adapter._head_cache is None
+    assert adapter.target_names == tuple(dict(original.named_parameters()))
+    assert sum(p.numel() for p in adapter.parameters() if p.requires_grad) == sum(p.numel() for p in original.parameters())
+    indices, labels = bundle.select("meta", "train"), bundle.training_labels("meta")
+    optimizers = [torch.optim.Adam(direct.parameters(), lr=0.01),
+                  torch.optim.Adam([p for p in adapter.parameters() if p.requires_grad], lr=0.01)]
+    for _ in range(3):
+        for module, optimizer in zip((direct, adapter), optimizers):
+            optimizer.zero_grad(set_to_none=True)
+            loss = torch.nn.functional.cross_entropy(module(graph.x, graph.edge_index)[indices], labels)
+            loss.backward()
+            optimizer.step()
+        for name, parameter in direct.named_parameters():
+            actual = dict(adapter.full_model.named_parameters())[name]
+            torch.testing.assert_close(actual.grad, parameter.grad, rtol=0, atol=0)
+            torch.testing.assert_close(actual, parameter, rtol=0, atol=0)
+    for layer in ("conv1.", "conv2."):
+        assert any(torch.count_nonzero(value) for name, value in adapter.updates().items() if name.startswith(layer))
+    with pytest.raises(ValueError, match="supervised development"):
+        fit_unlabeled(original, graph, PEFTConfig("full"))
 
 
 def test_rank_is_not_silently_clipped_and_unknown_models_rejected():

@@ -14,7 +14,7 @@ Deeptanshu owns GCN experiments; teammates handle GAT and GraphSAGE. At the owne
 - Allowlisted, cloned target inputs without labels or diagnostic metadata. Training-label access rejects held-out environments.
 - Paired attribute, structural and combined CSBM shifts; saved whole-lineage environment partitions, severity holdouts, optional family holdouts, and sequential construction audits.
 - Head-only/LoRA updates for all three models, explicit supervised-development and label-free objectives, and validated initial/adapted/delta artifacts.
-- Core/data/model/bank/adaptation/compute-workflow verification: **213 tests**; actual numerical execution is CPU-verified. A Colab notebook/device probe is provided; CUDA is not yet verified here.
+- Core/data/model/bank/adaptation/compute-workflow verification: **227 tests**, including a separate supervised full-fine-tuning diagnostic; actual numerical execution is CPU-verified. A Colab notebook/device probe is provided; CUDA is not yet verified here.
 - Small and paper-sized (5,000 nodes × 2,000 features per graph) data/interface examples executed successfully.
 
 **The CSBM pretraining/bank foundation is verified for GCN, GAT and GraphSAGE:** shared loading/training/evaluation, a full-budget 30-model bank per architecture, validated artifact loading, saved 18/6/6 partitions, and weight/prediction/representation diagnostics. PEFT core support is described below; generators and other datasets remain later work. These development runs are not final paper benchmarks.
@@ -335,6 +335,23 @@ All three broad sweeps completed:108 baselines and648 adaptations per architectu
 These are descriptive development means, not held-out results, an architecture ranking or generator success. Supervised references have label/selection advantages. Head-only entropy minimization reduced mean accuracy by10.76/4.43/7.89 points respectively; failures are retained. LoRA can produce large update norms despite its smaller trainable count. No confidence interval assumes99 independent samples.
 
 A separate200-step/patience40 supervised head check adds108 adaptations on a narrower matched subset. All **2,052 broad/extended delta artifacts** passed independent state/factor/hash/metric/prediction replay audits, with no CPU replay accuracy differences. Actual outputs: runs/peft-gcn-review-v2, runs/peft-gat-review-v2, runs/peft-graphsage-review-v3, runs/peft-<architecture>-head-budget-check and runs/peft-review-checkpoint (summary CSV/JSON and figures). Runtime files remain ignored. See [project state](docs/PROJECT_STATE.md#completed-adaptation-review-checkpoint) and [the learning handbook](docs/learning/RESEARCH_ENGINEERING_NOTES.md#30-our-working-adaptation-checkpoint-initial-weights-final-weights-and-delta) for interpretation and limitations.
+
+## Separate supervised full-fine-tuning diagnostic
+
+To investigate limited PEFT recovery, allow every original model parameter to change on permitted meta-training labels. Use the existing runner with an explicit full-only supervised method and a new output directory:
+
+~~~bash
+python examples/run_adaptation_review.py --bank runs/gcn-bank-phase1 --model-partition runs/phase1-complete/model_partition.json --environments runs/controlled-shifts-paper-v1/environment_manifest.json --output-dir runs/full-gcn-diagnostic-40-v1 --all-meta-lineages --methods full --objectives supervised_development --steps 40 --patience 15
+python examples/compare_supervised_reviews.py --full runs/full-gcn-diagnostic-40-v1 --references runs/peft-gcn-review-v2 --output-dir runs/full-gcn-comparison-40-v1
+~~~
+
+Paths refer to existing local artifacts; choose new output names. GAT and GraphSAGE use their respective banks and partitions through the same interface. A separate longer check uses `--steps 200 --patience 40 --shift-names attribute homophily attribute_homophily` to match the earlier head-only check. Do not compare means from different case grids.
+
+Full fitting starts from pretrained weights, keeps dropout off, uses Adam lr0.01 without weight decay, and selects minimum development-validation cross-entropy including step0. Native test labels are offline evaluation only. Every episode preserves initial/adapted/delta states and ordinary-model replay. The historical PEFTConfig container accepts method=full; this method is not parameter-efficient. Full is rejected in unlabeled fitting and mixed-method review runs.
+
+The comparison tool validates complete matching pair grids, plans, bank/manifest/config/software identities, artifact checksums, initial weights and graph/evaluation-split identities. It records per-shift comparisons and regressions, excluding controls from the overall shifted mean. Independent prediction/metric replay is a separate audit. See [D10](docs/DECISIONS.md#implemented-decision-d10--separate-supervised-full-weight-diagnostic-2026-10-30) and [handbook Section31](docs/learning/RESEARCH_ENGINEERING_NOTES.md#31-what-a-training-budget-means-and-why-we-added-full-fine-tuning).
+
+This is a supervised development diagnostic, not a label-free result or a proven accuracy ceiling. Shared optimizer settings need not be equally optimal for every update method. Numerical results are recorded in PROJECT_STATE.md after the separate sweeps/audits complete.
 
 ## Data API
 

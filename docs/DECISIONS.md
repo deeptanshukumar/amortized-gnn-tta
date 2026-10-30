@@ -148,6 +148,18 @@ Authority: owner asked about laptop compute/free GPUs, then explicitly approved 
 
 Primary sources: [official LoRA layer](https://github.com/microsoft/LoRA/blob/c4593f060e6a368d7bb5af5273b8e42810cdef90/loralib/layers.py), [Tent reference](https://github.com/DequanWang/tent/blob/e9e926a668d85244c66a6d5c006efbd2b82e83e8/tent.py), [SHOT target loss](https://github.com/tim-learn/SHOT/blob/f7d555a0d53b525b885e5ef2a887a267a5be3c36/object/image_target.py), and [PyTorch functional_call](https://docs.pytorch.org/docs/stable/generated/torch.func.functional_call.html).
 
+## Implemented decision D10 — separate supervised full-weight diagnostic (2026-10-30)
+
+**Authority and purpose:** after asking whether the small accuracy gains were the best achievable, the owner approved the proposed full-fine-tuning diagnostic with "okay do that seperately." It tests recoverability when all model parameters can change; it is not a new unlabeled method or a generator experiment.
+
+- Optimize a second ordinary model copy directly with Adam and cross-entropy on permitted meta-training train nodes. Preserve the immutable initial copy for actual final-minus-initial artifacts and replay. The existing PEFTConfig/artifact container also accepts method=full to avoid a duplicate training/artifact pipeline; full is explicitly not parameter-efficient. Reject full in unlabeled fitting and mixed-method review runs.
+- Ground the ordinary supervised optimization pattern in the unchanged official PyG clone, revision ea2c5f62d54c8b414dd3ea7139814a7c1ef83182, examples/gcn.py (MIT). Our matched adaptation protocol deliberately keeps dropout off, learning rate0.01 and weight decay0, selecting minimum development-validation cross-entropy including step0. These differ from source retraining and PyG's example defaults; no fresh-from-scratch or fully tuned reference is claimed.
+- Freeze the comparison grid before scoring: all three architectures, the existing three meta models/shared seed31, all three meta lineages, eleven shifts plus control at severity0.5, cap40/patience15. Separately run cap200/patience40 on control, attribute, homophily and attribute_homophily, matching the previous longer head-only check. Same optimizer settings permit a controlled diagnostic, not a claim of equally optimal tuning.
+- Keep new runs in separate directories. Match model IDs, environment IDs, source-bank/manifest identities, initial weight hashes, graph/split identities, software versions and adaptation settings before comparing. Exclude controls from headline shifted means, retain per-shift results/regressions and trainable parameter counts, and reject mismatched or incomplete comparisons.
+- Existing PEFT results and held-out model/environment partitions stay intact. Meta-test labels remain offline scoring only. Supervised references are not deployment methods, mathematical upper bounds, independent-trial statistics, or evidence of generator success. A gap can motivate further diagnostics; it cannot by itself isolate a single causal limitation.
+
+Verification/results are recorded in PROJECT_STATE.md after execution. No dependency or dataset change is required.
+
 ## Established instructions
 
 The owner approved investigation, separate reference clones, and Markdown project context in the initial request. Loader implementation and dependency changes require discussion and approval. Foundation/completion commits 30af4f9 and 3c7976e were explicitly approved and then pushed after a separate explicit request. The owner subsequently authorized committing and pushing the verified architecture extension. These approvals do not cover later changes. These are owner instructions, not new research decisions.

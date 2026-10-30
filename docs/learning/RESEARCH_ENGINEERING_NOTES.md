@@ -2311,3 +2311,105 @@ All213 CPU tests passed. Actual Microsoft LoRA forward/A/B-gradient parity was c
 
 Explain the mathematics and tensor flow from zero; define hard words. Critique label permissions, factor non-uniqueness, gradient initialization, balanced-prior IM, optimization budgets, parameter-count fairness and interpretation of these gains/regressions. Explain why confidence is not correctness and why a generator cannot automatically fix an inadequate update class. Suggest which questions should be resolved before next week's generator work, distinguishing recommendations from implemented facts. Use primary references, do not invent results, and ask one reasoning question at a time.
 ~~~
+
+## 31. What a training budget means, and why we added full fine-tuning
+
+### The question we are trying to answer
+
+Our early adaptation gains were modest. That leaves several possible explanations: we may restrict the weights too much, use an unsuitable optimization setting, optimize an imperfect objective, or face a shift that this model handles poorly. These explanations require different tests. We must not pick one just because it sounds plausible.
+
+**Full fine-tuning** means starting with a pretrained model and allowing every model parameter to change. A **parameter** is a number the model learns, such as an entry in a weight matrix or a bias. This is a separate supervised development diagnostic: a test designed to help understand the system. It is not our proposed label-free deployment method.
+
+| Method | What may change? | Trainable numbers: GCN / GAT / GraphSAGE |
+| --- | --- | ---: |
+| Frozen baseline | Nothing | 0 / 0 / 0 |
+| Head-only | All parameters of the second graph layer | 66 / 70 / 130 |
+| LoRA | Small factor matrices that change linear transforms in both layers | 8,162 / 8,162 / 16,324 |
+| Full fine-tuning | Every original model parameter, including biases and GAT attention parameters | 64,098 / 64,166 / 128,162 |
+
+These counts apply to our current 2,000-input-feature, 32-hidden-channel, two-class models. Full fine-tuning changes the set of adjustable weights; it does not change graph connectivity, add layers, or replace a GCN's aggregation rule.
+
+### "Budget" is an allowance, not necessarily money
+
+| Term | Simple meaning | Our current example |
+| --- | --- | --- |
+| Optimization budget | How many weight-update steps a run may take | At most 40, or separately at most 200 |
+| Step | One prediction, loss calculation, gradient calculation and optimizer update | Adam changes the permitted weights once |
+| Loss | A number describing the error/objective being reduced | Supervised cross-entropy uses permitted correct labels |
+| Gradient | A local indication of how a small parameter change changes the loss | Calculated by PyTorch's backward pass |
+| Optimizer | The procedure that turns gradients into weight changes | Adam, with its own fresh state per episode |
+| Learning rate | A setting controlling the scale of optimizer updates | 0.01; it does not mean every weight changes by exactly 0.01 |
+| Patience | How many consecutive steps without validation-loss improvement we tolerate before stopping | 15 for the 40-step study, 40 for the 200-step check |
+| Label budget | How many correct answers training is allowed to use | 3,000 meta-training nodes here; distinct from source-bank subsampling |
+| Compute budget | Available time, memory and processor work | A different meaning; equal steps do not imply equal runtime |
+
+In our current **full-batch** graph setup, all permitted training nodes contribute to each supervised loss. We do not divide those nodes into small batches. A step is therefore roughly one training pass here; in mini-batch training, an epoch normally contains multiple steps. An **epoch** means one pass through the training examples.
+
+More steps do not guarantee higher accuracy. A model may become more confident without changing its predicted class. It may also fit training-specific noise: **overfitting**, meaning learning details that do not carry over to other examples. The 200-step check also increases patience; it is not a test that changes only the step cap.
+
+### Exactly how data and labels flow in this diagnostic
+
+For one current development graph:
+
+~~~text
+Unlabeled graph input:
+  x: 5,000 nodes × 2,000 feature values
+  edge_index: sparse list of connections, stored in both directions
+             |
+             v
+A separate copy of one source-pretrained GCN, GAT or GraphSAGE
+             |
+             v
+logits: 5,000 nodes × 2 class scores
+  - 3,000 train nodes + their labels -> loss -> weight updates
+  - 1,000 validation nodes + their labels -> choose saved weights
+  - 1,000 test nodes + their labels -> offline reporting only
+~~~
+
+**Logits** are raw class scores, before conversion to probabilities. **Validation** means checking examples withheld from direct gradient fitting to choose a checkpoint. A **checkpoint** is saved model weights. **Offline reporting** means evaluation after fitting; these test labels do not choose steps or settings.
+
+The whole graph remains visible for message passing; label masks choose which correct answers can be used for each purpose. We do not cut the graph into three smaller graphs. This setting is **transductive**: the model can use test-node features and connections, while their labels remain unavailable to fitting. The three source models and three development base graphs are the same ones used in the PEFT comparison. Held-out model groups and held-out environment groups remain unused.
+
+We keep the lowest validation cross-entropy checkpoint, including the initial model at step0. The reported test accuracy can still decrease: better validation loss does not guarantee better test accuracy. An initial checkpoint being eligible protects validation loss, not test accuracy.
+
+### What stays controlled, and what cannot be concluded
+
+All supervised methods share the same paired graphs, train/validation/test nodes and starting source weights. They use Adam, learning rate0.01, no adaptation weight decay and disabled dropout. **Dropout** randomly removes some intermediate activations during ordinary training; we disable it here to match the existing adaptation runs. Evaluation mode disables dropout, but does not stop gradients from being calculated.
+
+The full-weight implementation optimizes an ordinary copied model directly. An immutable initial copy is retained for auditing. The existing configuration is still called PEFTConfig for compatibility, but method=full is explicitly **not parameter-efficient**. The runner requires a separate output directory and supervised-only full runs. Earlier head/LoRA artifacts are not overwritten.
+
+The [official PyG GCN example](https://github.com/pyg-team/pytorch_geometric/blob/ea2c5f62d54c8b414dd3ea7139814a7c1ef83182/examples/gcn.py) grounds the Adam/cross-entropy update pattern. Our pretrained initialization, dropout-off comparison, zero weight decay and validation-loss selection are explicit project choices. We are not claiming a complete reproduction of that example.
+
+| Observation | Reasonable interpretation | What it does not prove |
+| --- | --- | --- |
+| Full fine-tuning helps much more than head/LoRA | A more flexible update is useful under these settings | Restricted updates can never work, or all of the gap is caused by rank |
+| Full fine-tuning helps only a little | Removing the parameter restriction alone was insufficient here | We found the best possible accuracy |
+| More steps help little | Longer optimization alone was insufficient in this check | Other learning rates or objectives cannot help |
+| A supervised reference is stronger than an unlabeled method | Useful recovery is available with extra correct answers | That recovery is attainable without those labels |
+| Full fine-tuning loses to LoRA | Restricted updates may provide useful constraints, or optimizer settings may suit them better | Full fine-tuning is fundamentally less expressive |
+
+A **ceiling** would be a justified upper limit. None of these empirical references establishes one. A **diagnostic** provides evidence about a question without settling every possible explanation. Equal optimizer settings are useful for a controlled comparison, but may not be equally suitable for every method. Equal step counts also allow different computation: head-only fitting caches its frozen first-layer representation; full fine-tuning must recompute the changing representation.
+
+### How this relates to our future generator
+
+A generator will learn to predict a weight change from permitted information. It cannot automatically remove limitations in the model, the allowed update representation, or its training examples. If its goal is to imitate fitted deltas, poor fitted deltas are a training-data concern. If it is trained through classification loss, it may learn a useful shared rule rather than imitate each fitted delta. Neither design guarantees improvement; the generator method remains a separate decision.
+
+### Committee/interview answers and a check for understanding
+
+**Why add a labeled full-weight experiment when the project is about unlabeled adaptation?** "It is an offline diagnostic using permitted development labels. It checks how much recovery we observe when every parameter can change. It is not presented as a label-free deployment result."
+
+**Why isn't more training automatically better?** "We optimize a loss on permitted data. More updates may improve confidence or fit noise without improving accuracy on unseen labels. We use validation selection and keep final evaluation separate."
+
+**Why keep the initial weights?** "We verify that adaptation did not modify the source model and save the actual difference, final weights minus initial weights. Reloading those weights must reproduce the saved predictions."
+
+Try answering this in your own words: *If full fine-tuning improves only slightly, why would it be wrong to conclude that LoRA rank was the main problem?* Writing this explanation does not establish that you understand it; discussing your answer is the next learning check.
+
+### Prompt T — second opinion on the full-weight diagnostic
+
+~~~text
+I am a beginner learning an AFML research project on amortized GNN weight adaptation under distribution shift. We use CSBM graphs with 5,000 nodes, 2,000 features and two classes. GCN, GAT and GraphSAGE use pretrained source-bank weights. We compare supervised head-only updates, supervised LoRA, and separately supervised full fine-tuning of all original parameters. No generator is implemented.
+
+Each development graph preserves full message-passing context. Its native3,000 train labels fit the model,1,000 validation labels select minimum validation cross-entropy including step0, and1,000 test labels score offline only. Held-out model/environment groups remain untouched. All compared methods share starting weights, exact graphs, splits, Adam lr0.01, no weight decay, dropout disabled and fresh optimizers. One study uses cap40/patience15 on11 shifts plus control; a separate narrower check uses cap200/patience40 on attribute, homophily and their combination plus control. We compare identical pairs within each study. Three source models share initialization seed31 across label subsets; three base graphs have related shift variants, so pair counts are not independent repetitions.
+
+Explain from first principles what optimization budget, step, epoch, loss, gradient, learning rate, patience, validation and full fine-tuning mean. Critique whether this diagnostic can distinguish restricted-update limitations from optimization or model limitations. Explain why its accuracy is not a proven ceiling, why shared optimizer settings need not be equally optimal, and what a generator can and cannot learn from these results. Suggest minimal further checks without accessing final held-out labels. Use primary references, do not invent results, and ask me one reasoning question at a time.
+~~~
