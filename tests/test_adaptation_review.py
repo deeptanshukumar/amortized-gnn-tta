@@ -59,6 +59,8 @@ def test_real_adaptation_review_and_delta_reloads(setup, tmp_path):
     assert report["status"] == "complete" and len(report["baselines"]) == 3
     assert len(report["adaptations"]) == 18
     progress = json.loads((output / "progress.json").read_text())
+    plan = json.loads((output / "plan.json").read_text())
+    assert plan["torch_num_threads"] == torch.get_num_threads()
     assert progress["completed_adaptations"] == progress["planned_adaptations"] == 18
     assert progress["status"] == "complete"
     for row in report["adaptations"]:
@@ -126,5 +128,7 @@ def test_actual_cli_and_pre_execution_snapshot(setup, tmp_path):
     assert '"status": "complete"' in result.stdout
     implementation = json.loads((output / "implementation.json").read_text())
     assert implementation["snapshot_captured"] == "before execution"
+    assert implementation["torch_num_threads"] == 1
+    assert "run_adaptation_review.py" in implementation["command"][0]
     for relative, expected in implementation["adaptation_code_snapshot_sha256"].items():
         assert hashlib.sha256((output / "adaptation_code_snapshot" / relative).read_bytes()).hexdigest() == expected

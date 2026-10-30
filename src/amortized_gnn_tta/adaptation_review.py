@@ -113,7 +113,7 @@ def run_development_review(
         "adaptation_config": asdict(config), "model_spec": bank.manifest["model_spec"],
         "test_nodes": "native meta-environment test indices; scoring only",
         "unlabeled_visibility": "entire target graph; no labels or construction metadata",
-        "versions": software_versions(), "device": device,
+        "versions": software_versions(), "device": device, "torch_num_threads": torch.get_num_threads(),
     }
     _write_json(output / "plan.json", plan)
     _write_json(output / "environment_manifest.json", environment_manifest)

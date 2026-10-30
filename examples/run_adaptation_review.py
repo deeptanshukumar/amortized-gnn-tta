@@ -12,6 +12,7 @@ import hashlib
 import json
 from pathlib import Path
 import subprocess
+import sys
 
 import torch
 
@@ -107,7 +108,8 @@ def main() -> None:
                 target.write_bytes(content)
                 snapshots[relative] = hashlib.sha256(content).hexdigest()
             (args.output_dir / "implementation.json").write_text(json.dumps(
-                {"git": git, "snapshot_captured": "before execution",
+                {"git": git, "snapshot_captured": "before execution", "command": sys.argv,
+                 "torch_num_threads": torch.get_num_threads(),
                  "adaptation_code_snapshot_sha256": snapshots}, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({"status": report["status"], "baselines": len(report["baselines"]),
                       "adaptations": len(report["adaptations"]), "output": str(args.output_dir)}, indent=2))

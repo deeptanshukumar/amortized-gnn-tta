@@ -14,7 +14,7 @@ Deeptanshu owns GCN experiments; teammates handle GAT and GraphSAGE. At the owne
 - Allowlisted, cloned target inputs without labels or diagnostic metadata. Training-label access rejects held-out environments.
 - Paired attribute, structural and combined CSBM shifts; saved whole-lineage environment partitions, severity holdouts, optional family holdouts, and sequential construction audits.
 - Head-only/LoRA updates for all three models, explicit supervised-development and label-free objectives, and validated initial/adapted/delta artifacts.
-- Core/data/model/bank/adaptation verification: **207 tests** (158 prior checks plus 49 adaptation/artifact/cache/runner cases); CPU only.
+- Core/data/model/bank/adaptation/compute-workflow verification: **213 tests**; actual numerical execution is CPU-verified. A Colab notebook/device probe is provided; CUDA is not yet verified here.
 - Small and paper-sized (5,000 nodes × 2,000 features per graph) data/interface examples executed successfully.
 
 **The CSBM pretraining/bank foundation is verified for GCN, GAT and GraphSAGE:** shared loading/training/evaluation, a full-budget 30-model bank per architecture, validated artifact loading, saved 18/6/6 partitions, and weight/prediction/representation diagnostics. PEFT core support is described below; generators and other datasets remain later work. These development runs are not final paper benchmarks.
@@ -44,6 +44,24 @@ Activation above works in Linux/macOS shells; the Python package itself uses por
 | pytest | 9.1.1 |
 
 The local .venv was created with --system-site-packages to reuse the existing CPU PyTorch/NumPy installation. New packages were installed only into .venv. Project dependency checks pass; whole-environment pip check also sees unrelated pre-existing package conflicts. A completely clean environment install, macOS, Colab, CUDA, and MPS have not been verified. Upstream PyTorch/PyG deprecation warnings remain visible.
+
+## Compute and Colab
+
+The current CSBM/PEFT pipeline runs on CPU. For longer sweeps, [Google Colab](https://research.google.com/colaboratory/faq.html) and [Kaggle Notebooks](https://www.kaggle.com/docs/notebooks) offer free GPU options subject to availability/account limits; no fixed GPU model or allowance is assumed. A GPU accelerates numerical work, not the implementation itself. Generator compute needs depend on the later selected method.
+
+Open [notebooks/colab_adaptation.ipynb](notebooks/colab_adaptation.ipynb) in Colab. Select a GPU runtime, upload an explicit project bundle, install the package, run CPU tests and the actual CUDA device probe, then run/export the same development protocol. Do not infer GPU compatibility from notebook existence. The notebook has no saved executions or outputs and mounts no Google Drive/account credentials.
+
+Export code only, or explicitly include one complete audited synthetic bank and its matching partitions:
+
+~~~bash
+python examples/export_colab_bundle.py --output runs/colab-code.zip
+python examples/export_colab_bundle.py --bank runs/phase1-bank --model-partition runs/phase1-review/model_partition.json --environments runs/controlled-shifts-paper/environment_manifest.json --output runs/colab-gcn.zip
+python examples/check_adaptation_device.py --device cpu --output-dir runs/my-device-smoke
+~~~
+
+Replace artifact paths with your actual paths; choose new output names. The exporter includes a fixed code/config/test/notebook allowlist and, only when all three artifact arguments are supplied, the verified bank's listed checkpoints/metrics. It excludes arbitrary run folders, references, Git state directories, virtual environments and user-home files. Checksums describe the exact captured bytes. ZIPs and models stay outside Git. The same helper supports GAT/GraphSAGE banks.
+
+The device probe exercises all three architectures × head/LoRA × supervised/entropy/IM fitting (18 tiny cases), saves deltas, and verifies CPU restoration. CPU checks have actually executed; CUDA/MPS must be run on available hardware. Explicit unsupported devices fail visibly. Colab regenerates and verifies source identities; a software-version/fingerprint mismatch must be investigated, not bypassed. Download results before the temporary runtime ends. Full optimizer resumption and cloud quota management are not implemented. Experiment plans record CPU thread counts, and CLI provenance records the invocation.
 
 ## Inspect data for the review
 
