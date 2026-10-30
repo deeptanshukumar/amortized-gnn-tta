@@ -14,7 +14,7 @@ Deeptanshu owns GCN experiments; teammates handle GAT and GraphSAGE. At the owne
 - Allowlisted, cloned target inputs without labels or diagnostic metadata. Training-label access rejects held-out environments.
 - Paired attribute, structural and combined CSBM shifts; saved whole-lineage environment partitions, severity holdouts, optional family holdouts, and sequential construction audits.
 - Head-only/LoRA updates for all three models, explicit supervised-development and label-free objectives, and validated initial/adapted/delta artifacts.
-- Core/data/model/bank verification: **200 tests** (158 prior checks plus 42 adaptation/artifact/cache cases); CPU only. The separately developed experiment runner is the next delivery milestone.
+- Core/data/model/bank/adaptation verification: **207 tests** (158 prior checks plus 49 adaptation/artifact/cache/runner cases); CPU only.
 - Small and paper-sized (5,000 nodes × 2,000 features per graph) data/interface examples executed successfully.
 
 **The CSBM pretraining/bank foundation is verified for GCN, GAT and GraphSAGE:** shared loading/training/evaluation, a full-budget 30-model bank per architecture, validated artifact loading, saved 18/6/6 partitions, and weight/prediction/representation diagnostics. PEFT core support is described below; generators and other datasets remain later work. These development runs are not final paper benchmarks.
@@ -288,7 +288,21 @@ save_weight_delta(Path("runs/example-weight-delta.pt"), result, metadata["model_
                   context={"environment_id": item["id"], "purpose": "supervised development reference"})
 ~~~
 
-Delta files contain canonical initial/adapted/delta states, A/B factors or head offsets, configs, history, selected step, hashes, predictions and context. Frozen tensors have exact zero deltas. `load_weight_delta` validates consistency and restores an ordinary CPU model. These are inference/update artifacts, not optimizer-state resume checkpoints. CPU is tested; CUDA/MPS require actual device checks. A complete development evaluation runner and aggregate results are a following milestone.
+Delta files contain canonical initial/adapted/delta states, A/B factors or head offsets, configs, history, selected step, hashes, predictions and context. Frozen tensors have exact zero deltas. `load_weight_delta` validates consistency and restores an ordinary CPU model. These are inference/update artifacts, not optimizer-state resume checkpoints. CPU is tested; CUDA/MPS require actual device checks.
+
+## Frozen baselines and development adaptation review
+
+~~~bash
+python examples/run_adaptation_review.py --bank runs/phase1-bank --model-partition runs/phase1-review/model_partition.json --environments runs/controlled-shifts-paper/environment_manifest.json --output-dir runs/gcn-peft-review --all-meta-lineages --steps 40 --patience 15
+~~~
+
+Use the bank and matching model-partition path for GAT/GraphSAGE; architecture is restored from the verified checkpoint. Environment reference settings must match the source bank. Select --baseline-only for a frozen sweep without updates. Output directories must be new. No automatic resume is implemented; partial artifacts are retained and progress.json distinguishes running/failed/complete runs.
+
+The runner validates the full bank and model partition, then selects one model (lowest saved seed) from each of the three meta-training label subsets. Default environment coverage is the first meta-training lineage's control plus eleven shift conditions at severity0.5; --all-meta-lineages includes all three permitted bases. Use --models-per-subset for additional paired seeds, --severity for another declared training severity, --shift-names for an explicit subset, and --methods/--objectives for targeted checks. Validation/test models and environments are rejected. Original source banks and partitions are never changed.
+
+Before scoring, plan.json freezes selected IDs, exact settings and identity hashes. Both methods run fresh episodes for supervised_development, entropy and information_maximization. The supervised reference uses native meta-environment training/validation nodes; all before/after accuracies are scored on its unused native test nodes. Unlabeled fitting sees the whole graph without labels and uses a fixed budget. Source-validation retention is scored separately after adaptation and never enters its objective/selection. Improvements, regressions, zero updates and class collapse are all retained.
+
+Each jobs/job_*/weight_delta.pt contains initial/final/delta weights and factors; metrics.json records source/environment identities, accuracy/loss, prediction entropy/class counts, update norms, parameter counts and fit time. Initial-plus-delta reconstruction, frozen-weight integrity, saved factors and CPU reload predictions are checked. review.json/REVIEW.md aggregate descriptive results by update/objective/family. Related models, base lineages and variants are not independent statistical trials. The CLI preserves a code snapshot captured before execution, including for interrupted runs, separately from the historical bank provenance. Full development sweeps and their results are recorded in PROJECT_STATE.md as they complete; no generator result is implied.
 
 ## Data API
 

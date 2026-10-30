@@ -1,6 +1,6 @@
 # Project state
 
-Last updated: 2026-10-30. Stage: **PEFT core and weight-delta artifacts implemented; development review runner/experiments in progress.** GCN, GAT and GraphSAGE support head-only/LoRA with supervised-development and unlabeled objectives. Generators remain unimplemented.
+Last updated: 2026-10-30. Stage: **PEFT core, weight-delta artifacts and development review runner implemented; full experiments in progress.** GCN, GAT and GraphSAGE support head-only/LoRA with supervised-development and unlabeled objectives. Generators remain unimplemented.
 
 ## Current scope and decision
 
@@ -197,6 +197,14 @@ New adaptation.py provides explicit head/LoRA sites for all three models, frozen
 The core checkpoint has39 new core/artifact checks plus the prior158 checks:197 tests, independently verified from the staged source snapshot. A standalone comparison against the actual official LoRA Linear class verified forward and A/B gradients, and SHOT loss arithmetic was independently checked. CPU only; CUDA/MPS remain unverified. The development runner and complete three-architecture experimental evidence are the next delivery checkpoint, not part of this core commit. The owner requested reasonably sized verified commits/pushes, then separately approved Colab support for longer compute runs as another setup milestone.
 
 The following performance checkpoint adds three cross-architecture frozen-head-cache checks (200 core tests total). Exact outputs/gradients and fallback on different or mutated inputs are verified. A paper-sized20-step head-only comparison also preserved histories and final weights exactly. Local uncached/cached fit seconds: GCN0.540/0.154, GAT0.635/0.184, GraphSAGE3.700/0.307. Evidence: ignored runs/head-cache-parity.json. This is one execution check, not a controlled speed benchmark. LoRA and exported models retain complete graph computation. The initial60-step broad sweeps were interrupted and retained with explicit incomplete status, superseded by a prospective uniform40-step development sweep; no pairs were filtered by scores.
+
+### Development review runner checkpoint
+
+Implemented adaptation_review.py, examples/run_adaptation_review.py and seven real integration checks;207 total tests passed. The runner freezes selected IDs/configs/hashes before scoring, accepts meta-training models/environments only, preserves native development-test label separation, and saves every baseline/update with verified initial/final/delta reconstruction. It checks source-reference identity, old bank/partition/checkpoint integrity, frozen parameters, factor consistency and CPU reload predictions. All artifact outputs remain ignored; no held-out model/environment or original bank is modified.
+
+Initial GCN preflight: runs/peft-gcn-preflight-v1, one meta lineage, control plus attribute severity0.5, three source models (subsets1/0/3, shared seed31),20-step budget, head/LoRA × supervised_development/information_maximization. All24 adaptations completed and reloads passed. Attribute-test means: frozen83.53%, supervised head87.93%, supervised LoRA87.00%, unlabeled IM head85.03%, unlabeled IM LoRA86.73%. These are preliminary development observations, not final tests or a tuned-method ranking. LoRA update norms can grow substantially; parameter efficiency is not a small-norm guarantee.
+
+Full runs/peft-{gcn,gat,graphsage}-review-v2 are IN PROGRESS, each predeclaring108 baseline pairs: three meta-training source subsets with shared seed31 × three meta-training environment lineages × twelve conditions (control plus eleven shifts at severity0.5). Each plans648 updates: head/LoRA × supervised/entropy/IM, cap40/patience15, lr.01, factor seed801. All share the same source data and environment manifest. Source/model/environment holdouts are preserved. The interrupted60-step v1 sweeps retain431/376/82 completed GCN/GAT/GraphSAGE jobs respectively and explicit interrupted status; they are not declared complete or used to drop unfavorable pairs. Complete v2 reports and independent artifact audit remain the next evidence milestone.
 
 ## Limits and next work
 
