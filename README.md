@@ -109,7 +109,7 @@ target_graph = bundle.unlabeled_input(item["id"])
 
 Meta-training environments retain train/val/test node splits; validation/test environments have eval-only labels. The original source-training helper continues to reject meta/held-out roles. A future meta-training loop must explicitly consume permitted meta-training supervision. The existing independent load_dataset API and pretrained banks are unchanged. Construction uses latent synthetic classes offline; it is not a label-free real-graph corruption procedure.
 
-Both small and paper-sized full suites passed construction audits. Adaptation, generator training and research accuracy comparisons remain future work.
+Both small and paper-sized full suites passed construction audits. These audits concern data construction; development adaptation results are recorded below. Generator training remains future work.
 
 ## Select an architecture
 
@@ -347,11 +347,13 @@ python examples/compare_supervised_reviews.py --full runs/full-gcn-diagnostic-40
 
 Paths refer to existing local artifacts; choose new output names. GAT and GraphSAGE use their respective banks and partitions through the same interface. A separate longer check uses `--steps 200 --patience 40 --shift-names attribute homophily attribute_homophily` to match the earlier head-only check. Do not compare means from different case grids.
 
-Full fitting starts from pretrained weights, keeps dropout off, uses Adam lr0.01 without weight decay, and selects minimum development-validation cross-entropy including step0. Native test labels are offline evaluation only. Every episode preserves initial/adapted/delta states and ordinary-model replay. The historical PEFTConfig container accepts method=full; this method is not parameter-efficient. Full is rejected in unlabeled fitting and mixed-method review runs.
+Full fitting starts from pretrained weights, keeps dropout off, uses Adam lr0.01 without weight decay, and selects minimum development-validation cross-entropy including step 0. Native test labels are offline evaluation only. Every episode preserves initial/adapted/delta states and ordinary-model replay. The historical PEFTConfig container accepts method=full; this method is not parameter-efficient. Full is rejected in unlabeled fitting and mixed-method review runs.
 
 The comparison tool validates complete matching pair grids, plans, bank/manifest/config/software identities, artifact checksums, initial weights and graph/evaluation-split identities. It records per-shift comparisons and regressions, excluding controls from the overall shifted mean. Independent prediction/metric replay is a separate audit. See [D10](docs/DECISIONS.md#implemented-decision-d10--separate-supervised-full-weight-diagnostic-2026-10-30) and [handbook Section31](docs/learning/RESEARCH_ENGINEERING_NOTES.md#31-what-a-training-budget-means-and-why-we-added-full-fine-tuning).
 
-This is a supervised development diagnostic, not a label-free result or a proven accuracy ceiling. Shared optimizer settings need not be equally optimal for every update method. Numerical results are recorded in PROJECT_STATE.md after the separate sweeps/audits complete.
+All six separate full-weight sweeps completed: **432 new artifacts independently audited**, with zero CPU replay accuracy differences. On the broad99 shifted pairs, full-weight means were 81.21%/80.30%/86.10% for GCN/GAT/GraphSAGE, gains2.85/2.36/5.81 percentage points over frozen models. The longer check selected identical final weights to the40-step runs on every matched case. See [full comparisons and limitations](docs/PROJECT_STATE.md#separate-supervised-full-fine-tuning-diagnostic).
+
+This is a supervised development diagnostic, not a label-free result or a proven accuracy ceiling. Shared optimizer settings need not be equally optimal for every update method. Full fitting leaves additional recovery over LoRA for GraphSAGE under these settings; it adds little over head-only GCN/GAT and does not resolve their homophily-only weakness.
 
 ## Data API
 

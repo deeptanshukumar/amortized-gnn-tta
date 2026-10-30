@@ -2370,7 +2370,7 @@ logits: 5,000 nodes × 2 class scores
 
 The whole graph remains visible for message passing; label masks choose which correct answers can be used for each purpose. We do not cut the graph into three smaller graphs. This setting is **transductive**: the model can use test-node features and connections, while their labels remain unavailable to fitting. The three source models and three development base graphs are the same ones used in the PEFT comparison. Held-out model groups and held-out environment groups remain unused.
 
-We keep the lowest validation cross-entropy checkpoint, including the initial model at step0. The reported test accuracy can still decrease: better validation loss does not guarantee better test accuracy. An initial checkpoint being eligible protects validation loss, not test accuracy.
+We keep the lowest validation cross-entropy checkpoint, including the initial model at step 0. The reported test accuracy can still decrease: better validation loss does not guarantee better test accuracy. An initial checkpoint being eligible protects validation loss, not test accuracy.
 
 ### What stays controlled, and what cannot be concluded
 
@@ -2389,6 +2389,36 @@ The [official PyG GCN example](https://github.com/pyg-team/pytorch_geometric/blo
 | Full fine-tuning loses to LoRA | Restricted updates may provide useful constraints, or optimizer settings may suit them better | Full fine-tuning is fundamentally less expressive |
 
 A **ceiling** would be a justified upper limit. None of these empirical references establishes one. A **diagnostic** provides evidence about a question without settling every possible explanation. Equal optimizer settings are useful for a controlled comparison, but may not be equally suitable for every method. Equal step counts also allow different computation: head-only fitting caches its frozen first-layer representation; full fine-tuning must recompute the changing representation.
+
+### What the separate full-weight diagnostic actually found
+
+**Verified development observations:** all six full-weight runs completed. All 432 new initial/final/delta artifacts passed an independent CPU replay audit with no test-accuracy differences. The complete automated suite passed 227 tests, including exact gradient/weight agreement with a direct ordinary-model Adam loop for all three architectures. No GPU execution is claimed.
+
+First compare methods on the same 99 shifted model/graph pairs per architecture, with a 40-step cap and patience 15. Controls are excluded:
+
+| Architecture | Frozen | Supervised head | Supervised LoRA | Supervised full |
+| --- | ---: | ---: | ---: | ---: |
+| GCN | 78.36% | 80.80% | 80.09% | 81.21% |
+| GAT | 77.94% | 80.08% | 79.17% | 80.30% |
+| GraphSAGE | 80.30% | 83.34% | 84.07% | 86.10% |
+
+GCN full fine-tuning gained 2.85 percentage points over frozen, but only 0.40 over head-only. GAT gained 2.36 over frozen and0.22 over head-only. GraphSAGE gained 5.81 over frozen and2.03 over LoRA. This is evidence of additional recovery for GraphSAGE under these settings. It does not prove that LoRA rank alone explains the gap: full fitting also changes different parameter sites and the optimization problem.
+
+The more detailed results matter too. Homophily-only full-weight changes were-0.10/-0.16/+5.32 points for GCN/GAT/GraphSAGE. Full fitting worsened 12/9/0 of the99 shifted pairs, respectively. Allowing all weights to change did not automatically fix each shift. These are related pairs from three source models sharing seed31 and three base graph draws, not99 independent trials.
+
+Then compare the longer runs on the same 27 shifted pairs covering attribute, homophily and their combination. These averages cover fewer shifts than the table above:
+
+| Architecture | Frozen | Supervised head, cap 200 | Supervised full, cap 200 |
+| --- | ---: | ---: | ---: |
+| GCN | 76.00% | 79.01% | 79.03% |
+| GAT | 75.53% | 78.77% | 78.01% |
+| GraphSAGE | 78.52% | 83.26% | 84.71% |
+
+For full fine-tuning, every one of these 27 shifted cases per architecture selected **identical final weights** to its corresponding40-step run, verified by weight checksums. Across the broader40-step study, the latest selected steps were 18/10/7 for GCN/GAT/GraphSAGE. A larger allowance did not help these selected full-weight models. This does not prove that a different learning rate or regularization would also fail. **Regularization** means constraints or penalties intended to discourage fitting unhelpful details; we did not add a new penalty in this diagnostic.
+
+The practical lesson is to ask a specific question instead of blindly adding steps: *Are we limited by the allowed updates, the optimization settings, the objective, or what the model can represent?* The current evidence narrows that question but does not settle it. A validation-only learning-rate study is a possible next check, not something already performed. The future generator is still unimplemented.
+
+The [project state](../PROJECT_STATE.md#separate-supervised-full-fine-tuning-diagnostic) links the exact local output names and verification evidence. The ignored run folder full-diagnostic-checkpoint-v1 contains a comparison chart, CSV/JSON numbers and captured analysis code; no checkpoints are committed to Git.
 
 ### How this relates to our future generator
 
@@ -2409,7 +2439,7 @@ Try answering this in your own words: *If full fine-tuning improves only slightl
 ~~~text
 I am a beginner learning an AFML research project on amortized GNN weight adaptation under distribution shift. We use CSBM graphs with 5,000 nodes, 2,000 features and two classes. GCN, GAT and GraphSAGE use pretrained source-bank weights. We compare supervised head-only updates, supervised LoRA, and separately supervised full fine-tuning of all original parameters. No generator is implemented.
 
-Each development graph preserves full message-passing context. Its native3,000 train labels fit the model,1,000 validation labels select minimum validation cross-entropy including step0, and1,000 test labels score offline only. Held-out model/environment groups remain untouched. All compared methods share starting weights, exact graphs, splits, Adam lr0.01, no weight decay, dropout disabled and fresh optimizers. One study uses cap40/patience15 on11 shifts plus control; a separate narrower check uses cap200/patience40 on attribute, homophily and their combination plus control. We compare identical pairs within each study. Three source models share initialization seed31 across label subsets; three base graphs have related shift variants, so pair counts are not independent repetitions.
+Each development graph preserves full message-passing context. Its native 3,000 train labels fit the model,1,000 validation labels select minimum validation cross-entropy including step 0, and1,000 test labels score offline only. Held-out model/environment groups remain untouched. All compared methods share starting weights, exact graphs, splits, Adam lr0.01, no weight decay, dropout disabled and fresh optimizers. One study uses cap 40/patience 15 on11 shifts plus control; a separate narrower check uses cap 200/patience 40 on attribute, homophily and their combination plus control. We compare identical pairs within each study. Three source models share initialization seed31 across label subsets; three base graphs have related shift variants, so pair counts are not independent repetitions.
 
 Explain from first principles what optimization budget, step, epoch, loss, gradient, learning rate, patience, validation and full fine-tuning mean. Critique whether this diagnostic can distinguish restricted-update limitations from optimization or model limitations. Explain why its accuracy is not a proven ceiling, why shared optimizer settings need not be equally optimal, and what a generator can and cannot learn from these results. Suggest minimal further checks without accessing final held-out labels. Use primary references, do not invent results, and ask me one reasoning question at a time.
 ~~~

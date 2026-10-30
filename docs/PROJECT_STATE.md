@@ -252,7 +252,31 @@ The owner approved this diagnostic after questioning limited adaptation gains. I
 
 Executed verification: **227 CPU tests passed**. Full-mode gradients and updated weights match an independent plain-PyTorch Adam loop exactly for all three architectures. Tests cover initial-model preservation, dropout-off behavior, changes in both graph layers, held-out/test-label invariance, validation selection, portable delta reconstruction, supervised-only restrictions, complete comparisons and mismatch rejection. Existing upstream deprecation warnings remain visible. No new dependency or GPU result.
 
-Execution in progress: separate40-step/patience15 full-weight sweeps on the previous broad development grid, and200-step/patience40 sweeps on the previous narrower attribute/homophily/combined grid. The suite plan was written before scoring to runs/full-diagnostic-suite-plan-v1.json; each run has its own pre-execution code snapshot and plan. Final results and audit status will replace this in-progress entry after completion. Method rationale and limitations: D10; beginner explanation: handbook Section31.
+All six sweeps completed: separate 40-step/patience 15 full-weight runs on the previous broad development grid (108 episodes each), and200-step/patience 40 runs on the previous narrower attribute/homophily/combined grid (36 each). The suite plan was written before scoring to runs/full-diagnostic-suite-plan-v1.json; every run preserves its pre-execution code snapshot and honest Git state. Earlier PEFT/source artifacts and final holdouts remain unchanged.
+
+Broad means on the **same 99 shifted pairs** per architecture, with controls excluded:
+
+| Architecture | Frozen | Supervised head40 | Supervised LoRA40 | Supervised full40 | Full gain vs frozen |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| GCN | 78.36% | 80.80% | 80.09% | 81.21% | +2.85pp |
+| GAT | 77.94% | 80.08% | 79.17% | 80.30% | +2.36pp |
+| GraphSAGE | 80.30% | 83.34% | 84.07% | 86.10% | +5.81pp |
+
+Full40 worsened 12/9/0 of 99 shifted pairs and selected step 0 in 9/16/0 for GCN/GAT/GraphSAGE. Largest selected steps were 18/10/7; none reached the cap. Broad mean source-validation accuracy fell by 0.60/0.81/0.58pp after full fitting; those source scores were diagnostics, not selection inputs.
+
+Longer comparisons on the **same 27 shifted pairs** within the narrower grid:
+
+| Architecture | Frozen | Supervised head200 | Supervised full200 |
+| --- | ---: | ---: | ---: |
+| GCN | 76.00% | 79.01% | 79.03% |
+| GAT | 75.53% | 78.77% | 78.01% |
+| GraphSAGE | 78.52% | 83.26% | 84.71% |
+
+The selected full200 weight hashes equal full40 hashes on **27/27 shifted cases for every architecture** (with matched cases), not merely equal rounded accuracy. More cap/patience therefore did not change these selected models. This does not establish convergence or an optimum at another learning rate. Homophily-only full-weight gains were-0.10/-0.16/+5.32pp. Under the tested settings, unrestricted updates help GraphSAGE more; GCN/GAT structural recovery still warrants investigation. Do not infer a causal architecture/rank limit or a guaranteed generator remedy.
+
+All **432 new artifacts** passed independent source/bank/manifest/graph/split/hash/parameter/delta/config/metric/prediction replay checks; zero one-thread CPU replay accuracy differences, including four-thread GraphSAGE training. Full/head/LoRA comparisons separately validate identical pair grids/configs/initial weights/evaluation splits and preserve every regression. No IID confidence interval or architecture ranking is claimed from related models/lineages.
+
+Outputs: runs/full-<architecture>-diagnostic-{40,200}-v1, matching full-<architecture>-comparison-{40,200}-v1, and runs/full-diagnostic-checkpoint-v1/{summary.csv,summary.json,supervised_recovery.png,analysis_sha256.json}. Captured analysis/audit/suite/comparison code and input hashes accompany the summary; the chart was visually inspected. Runtime artifacts remain ignored. Method rationale: D10; beginner explanation and results: handbook Section31. A validation-only learning-rate study is a possible next diagnostic, not implemented or selected from final holdouts. These results do not prove an accuracy ceiling or generator success.
 
 ## Limits and next work
 
