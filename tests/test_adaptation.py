@@ -241,3 +241,29 @@ def test_frozen_head_cache_preserves_gradients_and_rejects_other_or_mutated_inpu
     assert torch.equal(cached(graph.x, graph.edge_index), uncached(graph.x, graph.edge_index))
     graph.edge_index = torch.empty(2, 0, dtype=torch.long)
     assert torch.equal(cached(graph.x, graph.edge_index), uncached(graph.x, graph.edge_index))
+
+
+def test_adaptation_enables_gradients_inside_no_grad_and_restores_context(bundle):
+    original = model()
+    graph = bundle.unlabeled_input("target")
+    with torch.no_grad():
+        result = fit_unlabeled(original, graph, PEFTConfig("head"), AdaptationConfig(steps=2))
+        assert not torch.is_grad_enabled()
+    assert result.selected_step == 2
+    assert any(torch.count_nonzero(delta) for delta in result.adapter.updates().values())
+
+
+def test_inference_mode_is_rejected_before_fitting(bundle):
+    original = model()
+    graph = bundle.unlabeled_input("target")
+    with torch.inference_mode(), pytest.raises(ValueError, match="inference_mode"):
+        fit_unlabeled(original, graph, PEFTConfig("head"), AdaptationConfig(steps=2))
+
+
+def test_stale_source_gradients_are_cleared_only_on_the_frozen_copy():
+    original = model()
+    sum(p.sum() for p in original.parameters()).backward()
+    before = {name: p.grad.clone() for name, p in original.named_parameters()}
+    adapter = WeightAdapter(original, PEFTConfig("head"))
+    assert all(p.grad is None for p in adapter.base.parameters())
+    assert all(torch.equal(p.grad, before[name]) for name, p in original.named_parameters())

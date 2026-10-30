@@ -96,6 +96,9 @@ class WeightAdapter(nn.Module):
         self.config = config
         self.target_names = adaptation_targets(model, config.method)
         self.base = deepcopy(model).cpu().requires_grad_(False).eval()
+        # A directly supplied trained model may still hold its last source grads.
+        # Clear only the COPY, so diagnostics reflect this adaptation episode.
+        self.base.zero_grad(set_to_none=True)
         self.offsets, self.a, self.b = nn.ParameterDict(), nn.ParameterDict(), nn.ParameterDict()
         self.scales: dict[str, float] = {}
         self._head_cache = None
@@ -260,7 +263,10 @@ def fit_unlabeled(model: nn.Module, graph: Data, peft: PEFTConfig,
     return _fit(model, graph, peft, config, objective, None, device)
 
 
+@torch.enable_grad()
 def _fit(model, graph, peft, config, objective, supervision, device) -> AdaptationResult:
+    if torch.is_inference_mode_enabled():
+        raise ValueError("Adaptation needs autograd; do not wrap fitting in torch.inference_mode()")
     validate_input(graph)
     if supervision is not None:
         _validate_supervision(supervision, graph, model.config.out_channels)
