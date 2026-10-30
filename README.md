@@ -2,7 +2,7 @@
 
 Research project for Advanced Foundations of Machine Learning (UE24AM342AA1), PES University.
 
-We investigate whether an offline-trained generator can predict small parameter updates for a pretrained GNN on an unlabeled shifted target graph, without target-time gradient optimization. This is a research objective; no adaptation result is available yet.
+We investigate whether an offline-trained generator can predict small parameter updates for a pretrained GNN on an unlabeled shifted target graph, without target-time gradient optimization. Generator training remains future work. Head-only and low-rank iterative adaptation now provide the next foundation.
 
 Deeptanshu owns GCN experiments; teammates handle GAT and GraphSAGE. At the owner's request, the shared codebase now implements all three architectures with the same data/training/bank interfaces.
 
@@ -13,10 +13,11 @@ Deeptanshu owns GCN experiments; teammates handle GAT and GraphSAGE. At the owne
 - Stratified source splits, initially 60/20/20; held-out graphs expose an eval-only split. Full graph context is preserved; split indices select supervision, not induced subgraphs.
 - Allowlisted, cloned target inputs without labels or diagnostic metadata. Training-label access rejects held-out environments.
 - Paired attribute, structural and combined CSBM shifts; saved whole-lineage environment partitions, severity holdouts, optional family holdouts, and sequential construction audits.
-- Data, controlled shifts, all three models, training/checkpoints, banks, grouped holdouts and diagnostics: **158 tests passed** on the tested CPU stack.
+- Head-only/LoRA updates for all three models, explicit supervised-development and label-free objectives, and validated initial/adapted/delta artifacts.
+- Core/data/model/bank verification: **197 tests** (158 prior checks plus 39 adaptation/artifact cases); CPU only. The separately developed experiment runner is the next delivery milestone.
 - Small and paper-sized (5,000 nodes × 2,000 features per graph) data/interface examples executed successfully.
 
-**The CSBM pretraining/bank foundation is verified for GCN, GAT and GraphSAGE:** shared loading/training/evaluation, a full-budget 30-model bank per architecture, validated artifact loading, saved 18/6/6 partitions, and weight/prediction/representation diagnostics. Adaptation/generators and other datasets remain later work. These development runs are not final paper benchmarks.
+**The CSBM pretraining/bank foundation is verified for GCN, GAT and GraphSAGE:** shared loading/training/evaluation, a full-budget 30-model bank per architecture, validated artifact loading, saved 18/6/6 partitions, and weight/prediction/representation diagnostics. PEFT core support is described below; generators and other datasets remain later work. These development runs are not final paper benchmarks.
 
 GAT and GraphSAGE implementations now use those same entry points. Architecture-specific definitions and commands are below; matching hidden dimensions does not imply matching parameter budgets or optimal tuning for each model.
 
@@ -247,6 +248,45 @@ The GAT and GraphSAGE reference banks also completed with cap/patience 200/30 an
 | GraphSAGE (mean, full-neighborhood) | 128,162 | 88.69% | 6.90% | 20–98 |
 
 Each bank has 30 models/435 pairs, no selected checkpoint at its cap, and successful CPU reloads. The historical GCN bank was additionally re-audited through the shared factory without changing its results. These descriptive development values do not establish an architecture ranking: capacities/activations differ, defaults were not separately tuned, and the source test graph was previously viewed. Bank runs are source-only; no new target-label selection or adaptation was performed.
+
+## Parameter-efficient adaptation core
+
+| Update | Trainable sites | Original parameters |
+| --- | --- | --- |
+| head | All conv2 parameters, including GAT attention/bias and GraphSAGE root/neighbor transforms | conv1 frozen |
+| lora | BA updates for the linear transforms in both layers; hidden rank4/alpha4, output rank1/alpha1 | All originals frozen; bias/attention vectors unchanged |
+
+The caller's model is copied, never overwritten. Zero effective initialization preserves its predictions. Hidden and output ranks are explicit and strictly below both weight dimensions. Parameter efficiency does not imply few changed dense entries or a small update norm. Reference mechanisms and MIT attribution are in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md); no new runtime package is required.
+
+`fit_supervised_development` accepts explicit train/validation supervision from meta_train environments only and selects minimum validation CE including the initial checkpoint. It is a labeled development reference, not unlabeled deployment. `fit_unlabeled` accepts only a graph and settings, uses fixed-step entropy or information_maximization, and never selects with labels. The latter subtracts marginal prediction entropy to discourage class collapse; its balance preference needs care for imbalanced data. These are PEFT objective baselines, not full Tent/SHOT reproductions. All dropout remains off while update gradients are enabled.
+
+After preparing the paper-sized bank and controlled environments with the commands above:
+
+~~~python
+from pathlib import Path
+from amortized_gnn_tta.adaptation import (
+    AdaptationConfig, PEFTConfig, development_supervision, fit_supervised_development,
+)
+from amortized_gnn_tta.adaptation_artifacts import save_weight_delta
+from amortized_gnn_tta.data import load_environment_manifest, load_shift_environment
+from amortized_gnn_tta.models import build_model
+from amortized_gnn_tta.training import load_checkpoint
+
+manifest = load_environment_manifest(Path("runs/controlled-shifts-paper/environment_manifest.json"))
+item = next(e for e in manifest["environments"]
+            if e["role"] == "meta_train" and e["shift"] == "attribute" and e["severity"] == 0.5)
+bundle = load_shift_environment(manifest, item["id"])
+graph = bundle.unlabeled_input(item["id"])
+model, metadata = load_checkpoint(
+    Path("runs/phase1-bank/models/source_subset_1_seed_31/best_model.pt"), build_model)
+result = fit_supervised_development(
+    model, graph, development_supervision(bundle, item["id"]),
+    PEFTConfig("lora"), AdaptationConfig(steps=60), device="cpu")
+save_weight_delta(Path("runs/example-weight-delta.pt"), result, metadata["model_spec"], graph,
+                  context={"environment_id": item["id"], "purpose": "supervised development reference"})
+~~~
+
+Delta files contain canonical initial/adapted/delta states, A/B factors or head offsets, configs, history, selected step, hashes, predictions and context. Frozen tensors have exact zero deltas. `load_weight_delta` validates consistency and restores an ordinary CPU model. These are inference/update artifacts, not optimizer-state resume checkpoints. CPU is tested; CUDA/MPS require actual device checks. A complete development evaluation runner and aggregate results are a following milestone.
 
 ## Data API
 

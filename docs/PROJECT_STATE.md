@@ -1,6 +1,6 @@
 # Project state
 
-Last updated: 2026-10-25. Stage: **CSBM source banks plus controlled shifts/environment partitions verified** — all three architectures have audited 30-model banks; paired attribute/structural/combined development suites now have whole-lineage holdouts. Adaptation remains unimplemented.
+Last updated: 2026-10-30. Stage: **PEFT core and weight-delta artifacts implemented; development review runner/experiments in progress.** GCN, GAT and GraphSAGE support head-only/LoRA with supervised-development and unlabeled objectives. Generators remain unimplemented.
 
 ## Current scope and decision
 
@@ -188,11 +188,19 @@ Each ignored output directory has environment_manifest.json (saved before constr
 
 Tests cover all eleven definitions, exact feature/edge preservation, class-center translation, nested degree-change edges, finite-size expected-degree drift, roles/splits, source-seed exclusion, whole-lineage exclusivity, severity/family exposure, independent generation/partition RNGs, global RNG isolation, persistence/checksum/re-signed tampering rejection, unknown IDs, duplicate/invalid/no-op conditions, cross-lineage duplicate-input detection, all three real model inference paths, held-out-label invariance and a real preparation CLI. An initial test wrongly assumed the source-only trainer extractor accepted meta_train; its deliberate guard was retained and the test corrected to the existing boundary.
 
+## Parameter-efficient adaptation core
+
+Owner authorized tasks1–5 and the initial-versus-adapted-weight review checkpoint on 2026-10-30. The syntax-corrupting accidental insertion in weight_bank.py was restored to the committed allow_nan=False expression; unrelated handbook formatting is preserved. Separate official LoRA/Tent/SHOT clones were inspected, remain outside the repository, and supply the mechanisms documented in D8/THIRD_PARTY_NOTICES.md. No dependency/global environment changes.
+
+New adaptation.py provides explicit head/LoRA sites for all three models, frozen original weights, zero-initialized effective updates, deterministic local factor RNGs, supervised development train/validation selection including step0, and fixed-budget label-free entropy/information-maximization fitting. adaptation_artifacts.py writes actual initial/adapted/delta matrices and factors, validates frozen sites/hashes, and reconstructs ordinary model predictions after CPU reload. No held-out label access enters fitting.
+
+The core checkpoint has39 new core/artifact checks plus the prior158 checks:197 tests, independently verified from the staged source snapshot. A standalone comparison against the actual official LoRA Linear class verified forward and A/B gradients, and SHOT loss arithmetic was independently checked. CPU only; CUDA/MPS remain unverified. The development runner and complete three-architecture experimental evidence are the next delivery checkpoint, not part of this core commit. The owner requested reasonably sized verified commits/pushes, then separately approved Colab support for longer compute runs as another setup milestone.
+
 ## Limits and next work
 
-- The source-pretraining/bank foundation is verified across all three architectures on CSBM. No adaptation or generator exists. Final research evaluation and estimates accounting for the paired design remain outstanding.
+- The source-pretraining/bank foundation is verified across all three architectures on CSBM. PEFT is implemented under D8; generators remain absent. Development experiment reporting and final research evaluation/estimates accounting for the paired design remain outstanding.
 - CPU verified only. Clean-isolated installation, macOS, Colab, CUDA, and MPS remain unverified.
 - Generation pair-scanning is O(N²), although no dense adjacency is allocated. Do not scale blindly to huge N.
 - Original independent-draw examples remain independent; the new paired API explicitly controls realized components. Feature-noise/class-separation shifts, degree-heterogeneity models, concept shifts and natural-shift datasets are not implemented.
 - Phase 1 fixes a 50%-pool reference budget and whole-subset model grouping. D7 separately fixes development environment grouping/severities. Final-paper label budgets, independent environment counts, model×environment evaluation allocations, and natural-shift evaluation remain scientific decisions. Do not reinterpret model groups as new graphs or treat126 related variants as126 independent draws; there is only one validation and one test base lineage in the executed development suites.
-- Next milestone is parameter-efficient adaptation: discuss exact head/low-rank parameterization and supervised development oracles versus label-free objectives before implementing it. The new environments can support it, but neither recoverable accuracy nor helpful bank diversity is established. No automatic bank redesign or arbitrary weight noise was introduced.
+- Next delivery is the development evaluation/adaptation runner with initial/final/delta evidence and honest improvements/regressions. Broad held-out evaluation and generators follow separately. No automatic bank redesign or arbitrary weight noise was introduced.
