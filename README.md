@@ -14,7 +14,7 @@ Deeptanshu owns GCN experiments; teammates handle GAT and GraphSAGE. At the owne
 - Allowlisted, cloned target inputs without labels or diagnostic metadata. Training-label access rejects held-out environments.
 - Paired attribute, structural and combined CSBM shifts; saved whole-lineage environment partitions, severity holdouts, optional family holdouts, and sequential construction audits.
 - Head-only/LoRA updates for all three models, explicit supervised-development and label-free objectives, and validated initial/adapted/delta artifacts.
-- Core/data/model/bank verification: **197 tests** (158 prior checks plus 39 adaptation/artifact cases); CPU only. The separately developed experiment runner is the next delivery milestone.
+- Core/data/model/bank verification: **200 tests** (158 prior checks plus 42 adaptation/artifact/cache cases); CPU only. The separately developed experiment runner is the next delivery milestone.
 - Small and paper-sized (5,000 nodes × 2,000 features per graph) data/interface examples executed successfully.
 
 **The CSBM pretraining/bank foundation is verified for GCN, GAT and GraphSAGE:** shared loading/training/evaluation, a full-budget 30-model bank per architecture, validated artifact loading, saved 18/6/6 partitions, and weight/prediction/representation diagnostics. PEFT core support is described below; generators and other datasets remain later work. These development runs are not final paper benchmarks.
@@ -257,6 +257,8 @@ Each bank has 30 models/435 pairs, no selected checkpoint at its cap, and succes
 | lora | BA updates for the linear transforms in both layers; hidden rank4/alpha4, output rank1/alpha1 | All originals frozen; bias/attention vectors unchanged |
 
 The caller's model is copied, never overwritten. Zero effective initialization preserves its predictions. Hidden and output ranks are explicit and strictly below both weight dimensions. Parameter efficiency does not imply few changed dense entries or a small update norm. Reference mechanisms and MIT attribution are in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md); no new runtime package is required.
+
+Head-only fitting caches the frozen first-layer representation for the episode's exact, unmodified input tensors. Another graph or an in-place input mutation takes the full path. LoRA recomputes its changing backbone. Cache tests compare outputs and update gradients for all three architectures; a paper-sized 20-step check also produced identical histories/final weights with and without caching. Exported models contain no episode cache.
 
 `fit_supervised_development` accepts explicit train/validation supervision from meta_train environments only and selects minimum validation CE including the initial checkpoint. It is a labeled development reference, not unlabeled deployment. `fit_unlabeled` accepts only a graph and settings, uses fixed-step entropy or information_maximization, and never selects with labels. The latter subtracts marginal prediction entropy to discourage class collapse; its balance preference needs care for imbalanced data. These are PEFT objective baselines, not full Tent/SHOT reproductions. All dropout remains off while update gradients are enabled.
 

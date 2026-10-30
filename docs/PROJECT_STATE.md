@@ -196,6 +196,8 @@ New adaptation.py provides explicit head/LoRA sites for all three models, frozen
 
 The core checkpoint has39 new core/artifact checks plus the prior158 checks:197 tests, independently verified from the staged source snapshot. A standalone comparison against the actual official LoRA Linear class verified forward and A/B gradients, and SHOT loss arithmetic was independently checked. CPU only; CUDA/MPS remain unverified. The development runner and complete three-architecture experimental evidence are the next delivery checkpoint, not part of this core commit. The owner requested reasonably sized verified commits/pushes, then separately approved Colab support for longer compute runs as another setup milestone.
 
+The following performance checkpoint adds three cross-architecture frozen-head-cache checks (200 core tests total). Exact outputs/gradients and fallback on different or mutated inputs are verified. A paper-sized20-step head-only comparison also preserved histories and final weights exactly. Local uncached/cached fit seconds: GCN0.540/0.154, GAT0.635/0.184, GraphSAGE3.700/0.307. Evidence: ignored runs/head-cache-parity.json. This is one execution check, not a controlled speed benchmark. LoRA and exported models retain complete graph computation. The initial60-step broad sweeps were interrupted and retained with explicit incomplete status, superseded by a prospective uniform40-step development sweep; no pairs were filtered by scores.
+
 ## Limits and next work
 
 - The source-pretraining/bank foundation is verified across all three architectures on CSBM. PEFT is implemented under D8; generators remain absent. Development experiment reporting and final research evaluation/estimates accounting for the paired design remain outstanding.

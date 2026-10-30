@@ -98,6 +98,7 @@ class WeightAdapter(nn.Module):
         self.base = deepcopy(model).cpu().requires_grad_(False).eval()
         self.offsets, self.a, self.b = nn.ParameterDict(), nn.ParameterDict(), nn.ParameterDict()
         self.scales: dict[str, float] = {}
+        self._head_cache = None
         generator = torch.Generator(device="cpu").manual_seed(seed)
         params = dict(self.base.named_parameters())
         for i, name in enumerate(self.target_names):
@@ -128,7 +129,28 @@ class WeightAdapter(nn.Module):
     def forward(self, x: Tensor, edge_index: Tensor) -> Tensor:
         original = dict(self.base.named_parameters())
         replacements = {name: original[name] + change for name, change in self.updates().items()}
+        cache = self._head_cache
+        if (cache is not None and x is cache[0] and edge_index is cache[1]
+                and x._version == cache[2] and edge_index._version == cache[3]):
+            # conv1 is frozen and dropout is off: its representation is constant
+            # during this HEAD-only episode. Different/mutated inputs fall back
+            # to the complete model, preventing reuse on a source/other graph.
+            head = {name.removeprefix("conv2."): value for name, value in replacements.items()}
+            return functional_call(self.base.conv2, head, (cache[4], edge_index), strict=False)
         return functional_call(self.base, replacements, (x, edge_index), strict=False)
+
+    def prepare_episode(self, x: Tensor, edge_index: Tensor) -> None:
+        """Cache only a frozen head-only backbone for these exact input tensors.
+
+        This is a computation cache, never a cached source adjacency or label
+        statistic. LoRA changes conv1 and deliberately takes the full path.
+        Exported/merged models contain no episode cache.
+        """
+        self._head_cache = None
+        if self.config.method == "head" and not x.requires_grad:
+            with torch.no_grad():
+                features = self.base.encode(x, edge_index).detach()
+            self._head_cache = (x, edge_index, x._version, edge_index._version, features)
 
     def trainable_state(self) -> dict[str, Tensor]:
         return {name: p.detach().cpu().clone() for name, p in self.named_parameters() if p.requires_grad}
@@ -245,6 +267,7 @@ def _fit(model, graph, peft, config, objective, supervision, device) -> Adaptati
     chosen = select_device(device)
     adapter = WeightAdapter(model, peft, seed=config.initialization_seed).to(chosen).train()
     inputs = graph.clone().to(chosen)
+    adapter.prepare_episode(inputs.x, inputs.edge_index)
     optimizer = torch.optim.Adam([p for p in adapter.parameters() if p.requires_grad],
                                  lr=config.learning_rate, weight_decay=0.0)
     train_idx = supervision.train_indices.to(chosen) if supervision else None

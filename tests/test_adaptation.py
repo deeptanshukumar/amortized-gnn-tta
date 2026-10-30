@@ -218,3 +218,26 @@ def test_rank_is_not_silently_clipped_and_unknown_models_rejected():
         WeightAdapter(model(), PEFTConfig("lora", head_rank=2))
     with pytest.raises(ValueError, match="supports"):
         WeightAdapter(torch.nn.Linear(8, 2), PEFTConfig())
+
+
+@pytest.mark.parametrize("architecture", ARCHITECTURES)
+def test_frozen_head_cache_preserves_gradients_and_rejects_other_or_mutated_inputs(bundle, architecture):
+    original = model(architecture)
+    graph = bundle.unlabeled_input("meta")
+    uncached = WeightAdapter(original, PEFTConfig("head"))
+    cached = WeightAdapter(original, PEFTConfig("head"))
+    cached.prepare_episode(graph.x, graph.edge_index)
+    labels, indices = bundle.training_labels("meta"), bundle.select("meta", "train")
+    for adapter in (uncached, cached):
+        torch.nn.functional.cross_entropy(adapter(graph.x, graph.edge_index)[indices], labels).backward()
+    assert torch.equal(uncached(graph.x, graph.edge_index), cached(graph.x, graph.edge_index))
+    for (a_name, a), (b_name, b) in zip(uncached.named_parameters(), cached.named_parameters()):
+        assert a_name == b_name
+        if a.grad is not None:
+            assert torch.equal(a.grad, b.grad)
+    other = bundle.unlabeled_input("target")
+    assert torch.equal(cached(other.x, other.edge_index), uncached(other.x, other.edge_index))
+    graph.x.add_(0.1)  # Tensor identity alone would incorrectly hit an old cache.
+    assert torch.equal(cached(graph.x, graph.edge_index), uncached(graph.x, graph.edge_index))
+    graph.edge_index = torch.empty(2, 0, dtype=torch.long)
+    assert torch.equal(cached(graph.x, graph.edge_index), uncached(graph.x, graph.edge_index))
