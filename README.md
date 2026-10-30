@@ -322,6 +322,20 @@ Before scoring, plan.json freezes selected IDs, exact settings and identity hash
 
 Each jobs/job_*/weight_delta.pt contains initial/final/delta weights and factors; metrics.json records source/environment identities, accuracy/loss, prediction entropy/class counts, update norms, parameter counts and fit time. Initial-plus-delta reconstruction, frozen-weight integrity, saved factors and CPU reload predictions are checked. review.json/REVIEW.md aggregate descriptive results by update/objective/family. Related models, base lineages and variants are not independent statistical trials. The CLI preserves a code snapshot captured before execution, including for interrupted runs, separately from the historical bank provenance. Full development sweeps and their results are recorded in PROJECT_STATE.md as they complete; no generator result is implied.
 
+### Review checkpoint: executed development results
+
+All three broad sweeps completed:108 baselines and648 adaptations per architecture, with three source models × three meta-training lineages × twelve conditions (control plus eleven shifts at severity0.5). Two update methods × three objectives use cap40/patience15/lr0.01. The table excludes controls:99 related shifted pairs per method/architecture.
+
+| Architecture | Frozen | Supervised head | Supervised LoRA | Unlabeled IM-LoRA |
+| --- | ---: | ---: | ---: | ---: |
+| GCN | 78.36% | 80.80% | 80.09% | 79.53% |
+| GAT | 77.94% | 80.08% | 79.17% | 79.94% |
+| GraphSAGE | 80.30% | 83.34% | 84.07% | 83.04% |
+
+These are descriptive development means, not held-out results, an architecture ranking or generator success. Supervised references have label/selection advantages. Head-only entropy minimization reduced mean accuracy by10.76/4.43/7.89 points respectively; failures are retained. LoRA can produce large update norms despite its smaller trainable count. No confidence interval assumes99 independent samples.
+
+A separate200-step/patience40 supervised head check adds108 adaptations on a narrower matched subset. All **2,052 broad/extended delta artifacts** passed independent state/factor/hash/metric/prediction replay audits, with no CPU replay accuracy differences. Actual outputs: runs/peft-gcn-review-v2, runs/peft-gat-review-v2, runs/peft-graphsage-review-v3, runs/peft-<architecture>-head-budget-check and runs/peft-review-checkpoint (summary CSV/JSON and figures). Runtime files remain ignored. See [project state](docs/PROJECT_STATE.md#completed-adaptation-review-checkpoint) and [the learning handbook](docs/learning/RESEARCH_ENGINEERING_NOTES.md#30-our-working-adaptation-checkpoint-initial-weights-final-weights-and-delta) for interpretation and limitations.
+
 ## Data API
 
 ~~~python

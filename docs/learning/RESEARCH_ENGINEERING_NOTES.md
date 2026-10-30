@@ -4,7 +4,7 @@
 
 This handbook is for learning, explaining the project to a research committee, and preparing for interviews. Start with the examples; return to the formulas after the ideas make sense. It covers our current questions and likely follow-ups, and will grow when the work exposes new ones.
 
-**Status, 2026-10-25:** GCN, GAT, and GraphSAGE share our CSBM training/bank/audit pipeline; 158 CPU tests passed. All three full-budget banks have passed their audits, with 30 models/18–6–6 groups each. Controlled attribute/structural/combined shifts now have explicit environment partitions and exact paired checks. Adaptation and the generator remain future work. We retain the explicit Matcha-code sampling convention. Sections 24–29 explain the milestones; numerical teaching examples are illustrations unless identified as executed checks.
+**Status, 2026-10-30:** CSBM loading, all three source GNNs/banks, controlled shifts, head/LoRA adaptation and delta artifacts are implemented. All 213 CPU tests and 2,052 independent delta audits passed. Development gains and regressions are recorded in Section 30. Generator training and held-out research evaluation remain future work; Colab setup exists but CUDA execution is unverified.
 
 The assistant previously recorded “real benchmark first” as your preference. That was a misinterpretation and has been corrected. Your instruction is to use CSBM now.
 
@@ -30,6 +30,7 @@ The assistant previously recorded “real benchmark first” as your preference.
 | Phase 1 closure: grouped holdouts, CKA, bank audit, and what the actual results mean | Section 27 |
 | GCN versus GAT versus GraphSAGE: attention, heads, root features, sampling, and shared code | Section 28 |
 | Controlled shifts: what changes, what stays identical, how targets are held out and fed to models | Section 29 |
+| Our actual head/LoRA updates, objectives, deltas, results, failure modes and compute | Section 30 |
 
 You do not need to memorize everything at once. After each section, explain the main idea without looking. An explanation in your own words is more useful than repeating a prepared paragraph.
 
@@ -77,9 +78,9 @@ You own GCN experiments; teammates handle GAT and GraphSAGE. You later asked for
 | Other source architectures | Use the same pipeline with GAT or GraphSAGE | Implemented and CPU-tested; Section 28 |
 | Weight bank | Save multiple source-trained GCN parameter sets | Full-budget thirty-model bank audited, grouped, and compared; Sections 26–27 |
 | Controlled environments | Make related shifted graphs and separate their uses | Implemented and CPU-audited; Section 29 |
-| Small adaptations | Change only the classifier or a small structured part of the weights | Later |
+| Small adaptations | Change only the classifier or a small structured part of the weights | Head/LoRA implemented and CPU-tested; Section 30 |
 | Adaptation generator | Learn to predict those changes | Later |
-| Evaluation | Score a frozen model on source-test and target labels | Basic scoring and development model/environment holdouts implemented; final research evaluation remains |
+| Evaluation | Score a frozen model on source-test and target labels | Development adaptation/delta audits implemented; final held-out evaluation remains |
 
 The plan suggests 5 labeled-source splits × 6 model seeds = 30 models, then 18/6/6 models for generator training/validation/testing. This bank preparation and model partition are now implemented and verified for GCN/CSBM. The generator has not been trained. A subset manifest alone still does not contain trained models.
 
@@ -1020,10 +1021,10 @@ This table summarizes the important project records in plain English. It does no
 | Dependencies/environment | CPU stack installed/tested in .venv | Reuses existing torch/NumPy; clean install and other backends unverified |
 | Source training and scoring | Implemented and CPU-tested | Select minimum source-validation loss; score held-out labels afterward |
 | Sequential weight bank | Implemented and CPU-tested | Thirty subset/seed jobs retained; 18/6/6 assignment and diversity audit executed |
-| Adaptation/generators | Not implemented | Separate milestones and protocols |
-| Commits/pushes | Phase 1 and architecture extension pushed with approval; controlled-shift commit/push separately approved | Later Git actions still need approval; historical training dirty flags remain accurate |
+| Adaptation/generators | PEFT implemented; generators later | Supervised references and label-free baselines are separate; Section 30 |
+| Commits/pushes | Verified milestones committed/pushed incrementally with approval | Exclude unrelated edits/runtime artifacts; preserve historical training provenance |
 
-**Next:** discuss exact parameter-efficient adaptation methods and permitted objectives. Controlled development shifts/environment holdouts now exist. Phase 1's budget and model grouping are fixed; final-paper protocols remain open. Dataset choice and the approved interface do not need reopening.
+**Next:** assess the development results, then review your teammate's generator proposals before implementing them. Final-paper protocols remain separate.
 
 Project records: [DECISIONS.md](../DECISIONS.md), [PROJECT_STATE.md](../PROJECT_STATE.md), and [AGENTS.md](../../AGENTS.md).
 
@@ -2110,4 +2111,203 @@ Five fresh base lineages use seeds different from the original source. Whole lin
 Manifest recipes/checksum are saved before audit, graphs load one at a time, and audit verifies tensor invariants, graph fingerprints, expected/observed degrees and duplicate inputs across lineages. Meta-training labels are explicitly accessible; validation/test roles are eval-only. The original source trainer rejects meta_train. Models receive ONLY x/edge_index/num_nodes, never labels, severity, family, generation parameters or diagnostic metadata. Offline synthetic construction uses latent classes; deployment cannot use held-out labels. Both small and paper-sized construction audits passed;158 CPU tests passed. No adaptation accuracy or final-paper generalization is claimed. Only one validation/test base is a development limitation.
 
 Explain this from zero using examples and define unfamiliar terms. Critique the pairing, factorial paths, severity extrapolation, holdout independence, finite-size effects, label access and the distinction between attribute shifts and strict statistical covariate/concept-shift definitions. Identify what is established by our tests versus what requires experiments. Suggest the minimum additional independent environments and evaluation design needed before paper claims, without inventing results or silently replacing the protocol. Cite primary sources for external facts. Then ask one reasoning question at a time.
+~~~
+
+## 30. Our working adaptation checkpoint: initial weights, final weights and delta
+
+### What have we achieved?
+
+We can take a pretrained GCN, GAT or GraphSAGE, change a restricted set of its weights for one permitted graph, and save exactly what changed. We also measure the model before and after that change. The adaptation generator is still future work.
+
+A **parameter** is a learned number. **Adaptation** changes some parameters for a new environment. **PEFT** means *parameter-efficient fine-tuning*: train a restricted parameter set instead of retraining every original parameter. A **delta**, written Δ, means a difference:
+
+`Δθ = adapted weights − initial pretrained weights`.
+
+A nonzero delta proves that weights changed. It does not prove that predictions improved. That needs a separate accuracy check with labels kept outside the fitting method.
+
+### What does head-only mean for our three models?
+
+The **head** is our complete second graph layer, called conv2. We did not add a new linear classifier. The first layer remains frozen, meaning its parameter values cannot change.
+
+| Model | Head parameters that can change | Trainable scalars at F=2000/H=32/C=2 |
+| --- | --- | ---: |
+| GCN | Final feature transform and output bias | 66 |
+| GAT | Final feature transform, attention vectors and bias | 70 |
+| GraphSAGE | Final neighbor transform, root transform and bias | 130 |
+
+F is the input feature count, H is hidden width, and C is the class count. A **root transform** acts on the node itself; a **neighbor transform** acts on aggregated neighbors. An **attention vector** is a learned parameter used to score neighbor importance. Its values differ from the attention coefficients calculated for a particular graph.
+
+These definitions matter: saying “we trained the classifier” without identifying its graph operations would hide important differences between architectures.
+
+### Low-rank adaptation, with actual dimensions
+
+A weight matrix can contain many numbers. **Rank** describes how many independent directions its columns span. A low-rank update restricts the new change to a smaller set of directions.
+
+Our LoRA convention follows the inspected Microsoft implementation:
+
+`W_effective = W_original + (alpha / rank) × B × A`.
+
+For a weight with shape `[output_features, input_features]`, A has shape `[rank, input_features]` and B has shape `[output_features, rank]`. Their product has the same shape as W. The roadmap's AB notation can express the same idea with differently named factors; dimensions, not letter names, determine the multiplication order.
+
+| GCN transform | Original matrix | Factors | Trainable numbers |
+| --- | --- | --- | ---: |
+| First layer | [32, 2000] = 64,000 numbers | A [4,2000], B [32,4] | 8,128 |
+| Second layer | [2,32] = 64 numbers | A [1,32], B [2,1] | 34 |
+| Total update factors | Both matrices | Rank4 in hidden layer, rank1 in output layer | 8,162 |
+
+The full GCN has 64,098 parameters. The default LoRA update trains 8,162 scalars, about 12.7%. GAT also trains 8,162; GraphSAGE trains 16,324 because both root and neighbor matrices are adapted. Original biases and GAT attention vectors stay frozen in LoRA. Attention coefficients may still change because projected node features change.
+
+**Why not rank4 everywhere?** The output matrix has only two rows. Rank4 cannot be a strict low-rank restriction there. We use output rank1 and reject invalid ranks rather than silently changing them. Head and LoRA have different parameter counts; their comparison is not a matched-capacity experiment.
+
+### Why start one factor at zero?
+
+We initialize A randomly and B to zero. Therefore BA is zero, and the initial adapted model exactly preserves the pretrained predictions.
+
+A **gradient** tells us how a small parameter change affects the loss. **Backpropagation** calculates these gradients through the network. With B initially zero, A's first gradient is zero, but B can have a useful gradient because A is nonzero. After B changes, A can also learn. Our tests check this behavior.
+
+If both factors started at zero, both initial factor gradients would be zero. The update could get stuck. “Zero effective update” does not mean “make both factors zero.”
+
+### What is actually fed into adaptation?
+
+~~~text
+saved source checkpoint → independent frozen copy
+unlabeled graph tensors → model → raw class scores
+permitted objective → gradients → head offsets or LoRA factors
+selected update → ordinary merged GNN → offline scoring + saved delta
+~~~
+
+The model receives x `[N,F]`, edge_index `[2,E]` and num_nodes. E counts stored directed edge entries. It does not receive shift severity, generation parameters, true homophily or target labels. **Logits** are raw class scores; **softmax** converts them into class probabilities.
+
+We use PyTorch functional_call to evaluate temporary effective parameter values through the original PyG computation. The caller's source model is preserved. **Merging** means placing effective weights into an ordinary model copy for inference; the original pretrained checkpoint remains unchanged.
+
+Each model–graph–method episode starts fresh, with a new optimizer and zero effective delta. Updates never carry over from an earlier graph. **Episodic** means this reset-per-case behavior.
+
+### Three fitting objectives, with different information permissions
+
+| Objective | What fitting may see | Checkpoint selection | What its result means |
+| --- | --- | --- | --- |
+| Supervised development | Meta-environment training labels; validation labels for selection | Minimum validation cross-entropy, including the zero-update model | A labeled reference for recoverability under this update class/budget |
+| Entropy minimization | Entire graph and its own predictions; no labels | Final fixed-budget step | A simple unlabeled objective baseline |
+| Information maximization (IM) | Entire graph and its own predictions; no labels | Final fixed-budget step | Unlabeled confidence plus class-diversity objective |
+
+**Cross-entropy** penalizes wrong predictions using known labels. **Entropy** measures uncertainty in a probability distribution. **Conditional prediction entropy** here means average uncertainty per node. **Marginal prediction entropy** measures how spread the mean predictions are across classes.
+
+IM minimizes `average node entropy − entropy of average probabilities`. It encourages confident node predictions while discouraging every node being assigned to the same class. For illustration, confident predictions split across two classes can have low individual uncertainty and high overall diversity. A negative IM loss is valid: it is a difference of entropies, not a cross-entropy loss.
+
+Our balanced binary CSBM makes the diversity preference plausible. It is not a universally safe assumption for imbalanced real datasets. Confidence and diversity also cannot identify whether class names have been swapped: confident, balanced predictions may still be wrong.
+
+The entropy objective is grounded in Tent's reference code, but Tent normally updates normalization parameters. Our models have no batch-normalization layers, so we do not call this a full Tent reproduction. IM uses SHOT's entropy/diversity principle without copying its complete image pipeline or pseudo-label clustering. Exact sources and MIT attribution are in [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md).
+
+### What labels are reserved, exactly?
+
+Original source models use their saved source-label subsets. Adaptation studies use only the meta-training model groups and meta-training environment lineages. Whole validation/test models and environments remain reserved for later research evaluation.
+
+Inside each 5,000-node meta-environment, supervised development uses 3,000 training labels, selects with 1,000 validation labels, and is scored on 1,000 native test nodes. Unlabeled fitting receives no labels, even though the offline evaluator can score its predictions afterward.
+
+Those native meta-test nodes are not the project's held-out target environments. This is development evidence, not final unseen-target performance. The evaluator owns before/after labels and scores; neither unlabeled fitting nor supervised training receives the test-label tensor. Tests change test labels and confirm identical fitted histories/weights.
+
+### Why eval mode can still learn
+
+| PyTorch setting | Meaning here |
+| --- | --- |
+| model.eval() | Disables dropout/random training behavior; gradients can still flow |
+| torch.no_grad() | Temporarily suppresses gradient recording; our fitting function explicitly re-enables it and restores the caller's context |
+| torch.inference_mode() | Stronger inference-only restrictions; fitting rejects this context clearly |
+
+We clear old source gradients only on the frozen copy. Otherwise an already trained model could carry stale gradient values into diagnostics. The caller's parameters and gradients are preserved.
+
+For head-only fitting, the first-layer representation stays constant. We cache it once for the exact episode inputs. Another graph or an in-place tensor mutation triggers the full path. LoRA changes the first layer, so it cannot reuse that frozen representation. Exported models contain no episode cache.
+
+### Where are my initial weights, final weights and deltas?
+
+Each completed job has weight_delta.pt plus metrics.json. The binary file contains:
+
+| Field | Meaning |
+| --- | --- |
+| initial_state | The original pretrained parameters under ordinary model names |
+| adapted_state | Selected effective parameters after adaptation |
+| delta_state | Actual final-minus-initial tensors, including zeros at frozen sites |
+| adapter_state | Head offsets or learned A/B factors |
+| target_names | Which original parameters were permitted to change |
+| context | Source checkpoint, environment identity and separate evaluation evidence |
+| history / selected_step | Optimization path and why this update was retained |
+
+~~~python
+from pathlib import Path
+import torch
+from amortized_gnn_tta.adaptation_artifacts import load_weight_delta
+
+model, record = load_weight_delta(
+    Path("runs/peft-gcn-review-v2/jobs/job_00109/weight_delta.pt"))
+name = "conv2.lin.weight"
+initial = record["initial_state"][name]
+adapted = record["adapted_state"][name]
+delta = record["delta_state"][name]
+print(initial.shape, record["context"]["before"], record["context"]["after"])
+torch.testing.assert_close(initial + delta, adapted, rtol=1e-5, atol=1e-6)
+~~~
+
+The test uses a numerical tolerance because floating-point arithmetic rounds numbers. Stored delta itself is checked as exactly final-minus-initial in its saved dtype. Hashes detect changed artifact bytes; factor reconstruction and prediction comparisons check meaning as well as file integrity.
+
+**Why keep both factors and full deltas?** Factorizations are not unique: multiplying A by a nonzero scalar and dividing B by that scalar preserves BA. The effective delta is unambiguous relative to its initial model. This matters before deciding how a future generator should represent training targets.
+
+An **L2 norm** is the square root of the sum of squared tensor entries. Relative delta norm divides update norm by initial-weight norm. Parameter efficiency does not guarantee a small norm: GCN IM-LoRA had a mean relative delta norm around 4.91 in this study. Large changes can primarily alter confidence rather than class decisions. We record that instead of silently normalizing or hiding the updates.
+
+### What did the real experiments show?
+
+**Executed:** three architectures × 648 broad adaptations = 1,944 updates, plus 108 longer-budget supervised head updates. All 2,052 artifacts passed an independent one-thread CPU audit of identities, hashes, frozen sites, factors, native test scores and prediction replay, with no accuracy differences. All 213 automated tests passed. CUDA/MPS are not yet executed here.
+
+The broad study uses three source-label subsets with shared model seed31, three meta-training base lineages, eleven shifts plus control at severity0.5, both update methods, and all three objectives. Adam lr0.01, no adaptation weight decay, cap40/patience15, factor seed801. Below are gains on the 99 **shifted** pairs per method; controls are excluded from this table.
+
+| Update / objective | GCN gain (points) | GAT gain (points) | GraphSAGE gain (points) |
+| --- | ---: | ---: | ---: |
+| Head / supervised reference | +2.44 | +2.14 | +3.04 |
+| LoRA / supervised reference | +1.73 | +1.23 | +3.77 |
+| Head / entropy | −10.76 | −4.43 | −7.89 |
+| LoRA / entropy | −1.09 | +1.07 | +1.45 |
+| Head / IM | +1.53 | +0.41 | +0.85 |
+| LoRA / IM | +1.17 | +2.00 | +2.74 |
+
+Frozen means on these pairs were 78.36% / 77.94% / 80.30%. A percentage point is an absolute change: GCN supervised head moves from 78.36% to 80.80%, a gain of 2.44 points. These descriptive means do not establish an architecture ranking or a generator result. The 99 pairs reuse only three source models and three base lineages; they are not 99 independent trials.
+
+Longer supervised head checks compared the same 27 shifted pairs for attribute, homophily and their combination, with cap200/patience40:
+
+| Model | Frozen | Head40 | Head200 |
+| --- | ---: | ---: | ---: |
+| GCN | 76.00% | 78.92% | 79.01% |
+| GAT | 75.53% | 78.07% | 78.77% |
+| GraphSAGE | 78.52% | 82.11% | 83.26% |
+
+These rows have different coverage from the eleven-shift table; do not compare their averages directly. Many selected checkpoints still reach the cap. This does not prove convergence or an optimization upper bound. Validation loss can keep improving while the predicted classes barely change.
+
+The important conclusions are limited but useful: some small-parameter updates recover accuracy; entropy minimization can make predictions more confidently wrong; and recoverability depends on the update scope/architecture/shift. Weak GCN head recovery on homophily shifts warrants investigation, not a claim that a generator will automatically solve it. The exact per-pair failures and source-retention scores remain in the reports.
+
+### Compute: is the laptop enough, and what does Colab change?
+
+Our current laptop completed this checkpoint on CPU. It has an Intel Core Ultra5 125H and about16GiB system RAM. Its Intel Arc graphics are not NVIDIA CUDA hardware; the current tested stack uses CPU. **RAM** stores CPU data; **VRAM** is GPU memory. Having a GPU name available does not prove that our graph kernels work on it.
+
+A GPU may speed long numerical runs. We measured CPU thread settings instead of assuming more threads always help. Free [Colab](https://research.google.com/colaboratory/faq.html) and [Kaggle Notebooks](https://www.kaggle.com/docs/notebooks) have availability/account limits; no fixed free GPU allowance is promised.
+
+The [Colab notebook](../../notebooks/colab_adaptation.ipynb) accepts an explicitly exported project/bank bundle, checks hashes, installs the package, runs CPU tests and an 18-case CUDA probe, then runs/downloads the same protocol. It does not upload arbitrary home files or mount Drive. Temporary cloud disk is not persistent storage. We verified CPU execution and packaging locally, but have not executed an authenticated Colab GPU runtime. Do not call CUDA supported until its checks actually pass.
+
+### A short answer for the committee
+
+> “We implemented head-only and low-rank adaptation for GCN, GAT and GraphSAGE. We preserve initial weights, save actual effective deltas and verify reconstruction. Supervised development references use permitted train/validation labels; unlabeled baselines use predictions only. Some development cases improve, while plain entropy minimization can fail badly. The checkpoint validates the pipeline and exposes limitations; generator training and held-out generalization are still future work.”
+
+Try explaining: why does a nonzero delta not prove improvement? Why is rank4 inappropriate for a two-row output matrix? Why can eval mode still train an adapter? Why can reducing entropy hurt accuracy? Why are A/B factors not unique? Why are 99 related pairs not 99 independent experiments?
+
+### Prompt S — second opinion on our PEFT code and actual results
+
+~~~text
+I am learning an AFML research project, “Amortized Weight Adaptation for GNNs under Distribution Shift.” Current scope is CSBM node classification. GCN/GAT/GraphSAGE have audited 30-model source banks with 18/6/6 model groups. Controlled paired shifts preserve untouched tensors and keep entire base lineages in one environment role. No generator has been implemented.
+
+We implemented head-only adaptation (all conv2 parameters, including GAT attention/bias and GraphSAGE root/neighbor transforms) and LoRA on linear transforms in both layers. W_eff=W0+(alpha/r)BA, A[r,in] Kaiming-uniform/B[out,r] zero. Hidden rank4/alpha4, binary output rank1/alpha1; never clip invalid ranks. Original biases/attention vectors stay frozen under LoRA. At F2000/H32/C2 head counts66/70/130; LoRA counts8162/8162/16324 for GCN/GAT/GraphSAGE. Canonical original model weights are copied/frozen; functional_call substitutes changes; merged models retain ordinary state keys. Dropout stays off but gradients are enabled. Frozen-head features cache only for exact unmutated episode tensors, with other-graph fallback. Initialization uses a local seed; each pair resets both update and optimizer.
+
+Supervised development: only meta_train labels, native3000 training/1000 validation, selection includes step0; unused native1000 test nodes score separately. Unlabeled entropy or information maximization H(node predictions)-H(mean predictions) sees all graph nodes WITHOUT labels; fixed-step final selection. No source data or label-derived graph metadata enters unlabeled fitting. These are Tent/SHOT-inspired objective baselines, not full original algorithms. Models receive only x/edge_index/num_nodes. Original source and future held-out model/environment groups are preserved.
+
+Broad development sweep: 3 source-label subsets with shared seed31 × 3 fresh meta base lineages ×11 shifts plus control, severity0.5; head/LoRA × supervised/entropy/IM, Adam lr.01/no weight decay, cap40/patience15, factor seed801.648 adaptations per architecture. On99 shifted pairs per method, frozen accuracy is78.36/77.94/80.30%. Head supervised gains2.44/2.14/3.04 points; LoRA supervised gains1.73/1.23/3.77; head entropy changes-10.76/-4.43/-7.89; LoRA entropy-1.09/+1.07/+1.45; head IM+1.53/+0.41/+0.85; LoRA IM+1.17/+2.00/+2.74. Related pairs are not IID; no ranking/significance claim. A separate matched27-pair head200/patience40 check gives79.01/78.77/83.26%, versus head40 accuracy78.92/78.07/82.11%, on a different narrower shift subset. Many checkpoints still hit caps. GCN IM-LoRA mean relative update norm is about4.91, so few trainable parameters do not mean small weight change.
+
+All213 CPU tests passed. Actual Microsoft LoRA forward/A/B-gradient parity was checked. All2052 broad/extended artifacts passed independent state/factor/hash/metric/prediction audits with no CPU replay accuracy differences. We save initial/adapted/delta states, factors, identities, configuration/history and pre-execution code snapshots. CUDA/Colab execution remains unverified despite having a notebook/device probe. Results are development evidence, not held-out generalization or generator success.
+
+Explain the mathematics and tensor flow from zero; define hard words. Critique label permissions, factor non-uniqueness, gradient initialization, balanced-prior IM, optimization budgets, parameter-count fairness and interpretation of these gains/regressions. Explain why confidence is not correctness and why a generator cannot automatically fix an inadequate update class. Suggest which questions should be resolved before next week's generator work, distinguishing recommendations from implemented facts. Use primary references, do not invent results, and ask one reasoning question at a time.
 ~~~

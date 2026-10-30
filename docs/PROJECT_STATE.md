@@ -1,6 +1,6 @@
 # Project state
 
-Last updated: 2026-10-30. Stage: **PEFT core, weight-delta artifacts and development review runner implemented; full experiments in progress.** GCN, GAT and GraphSAGE support head-only/LoRA with supervised-development and unlabeled objectives. Generators remain unimplemented.
+Last updated: 2026-10-30. Stage: **Sunday adaptation/delta checkpoint completed on CPU.** GCN, GAT and GraphSAGE have head/LoRA, frozen baselines, supervised-development and unlabeled objectives, complete sweeps and2,052 independently audited delta artifacts.213 tests passed. Generators and held-out research evaluation remain future work; Colab setup exists but CUDA remains unexecuted.
 
 ## Current scope and decision
 
@@ -8,7 +8,7 @@ The owner authorized implementation and routine methodological/dependency choice
 
 The owner subsequently requested the small source-GCN training and evaluation pipeline using this loader. That milestone is now implemented without new dependencies. Source-validation cross-entropy selects the checkpoint; source-test and target labels are scored only after fitting. See [Decision D2](DECISIONS.md#implemented-decision-d2--small-source-gcn-baseline-2026-10-25).
 
-The owner then requested the remaining work one step at a time. First implemented the five source-label subsets needed before a bank runner. Label fraction is an explicit required argument; 50% of the native training pool was used for development execution only. The final scientific budget and model-bank grouping remain to be settled. See [Decision D3](DECISIONS.md#implemented-decision-d3--fixed-holdout-source-label-subsets-2026-10-25).
+The owner then requested the remaining work one step at a time. First implemented the five source-label subsets needed before a bank runner. Label fraction is an explicit required argument; 50% of the native training pool was initially a development example. At that earlier milestone budget/grouping were pending; D5 subsequently fixed the Phase1 reference. Final-paper protocols remain separate. See [Decision D3](DECISIONS.md#implemented-decision-d3--fixed-holdout-source-label-subsets-2026-10-25).
 
 The owner authorized committing that foundation and moving on. Local commit **30af4f9** contains it; nothing was pushed. The owner later explicitly approved the separate Phase 1 completion commit covering the bank runner, audit, configuration, tests and docs. See [Decision D4](DECISIONS.md#implemented-decision-d4--sequential-source-only-bank-runner-2026-10-25).
 
@@ -204,7 +204,7 @@ Implemented adaptation_review.py, examples/run_adaptation_review.py and seven re
 
 Initial GCN preflight: runs/peft-gcn-preflight-v1, one meta lineage, control plus attribute severity0.5, three source models (subsets1/0/3, shared seed31),20-step budget, head/LoRA × supervised_development/information_maximization. All24 adaptations completed and reloads passed. Attribute-test means: frozen83.53%, supervised head87.93%, supervised LoRA87.00%, unlabeled IM head85.03%, unlabeled IM LoRA86.73%. These are preliminary development observations, not final tests or a tuned-method ranking. LoRA update norms can grow substantially; parameter efficiency is not a small-norm guarantee.
 
-Full runs/peft-{gcn,gat,graphsage}-review-v2 are IN PROGRESS, each predeclaring108 baseline pairs: three meta-training source subsets with shared seed31 × three meta-training environment lineages × twelve conditions (control plus eleven shifts at severity0.5). Each plans648 updates: head/LoRA × supervised/entropy/IM, cap40/patience15, lr.01, factor seed801. All share the same source data and environment manifest. Source/model/environment holdouts are preserved. The interrupted60-step v1 sweeps retain431/376/82 completed GCN/GAT/GraphSAGE jobs respectively and explicit interrupted status; they are not declared complete or used to drop unfavorable pairs. Complete v2 reports and independent artifact audit remain the next evidence milestone.
+The full v2 sweeps predeclared108 baseline pairs: three meta-training source subsets with shared seed31 × three meta-training environment lineages × twelve conditions (control plus eleven shifts at severity0.5). Each plans648 updates: head/LoRA × supervised/entropy/IM, cap40/patience15, lr.01, factor seed801. GCN/GAT v2 completed; GraphSAGE's completed replacement is v3 below. All share the same source data and environment manifest. Source/model/environment holdouts are preserved. The interrupted60-step v1 sweeps retain431/376/82 completed GCN/GAT/GraphSAGE jobs respectively and explicit interrupted status; they are not declared complete or used to drop unfavorable pairs.
 
 ### Portable compute setup checkpoint
 
@@ -212,13 +212,45 @@ Owner separately approved Colab support. Added an unexecuted notebook, fixed-all
 
 Actual audited-bank exports were created under ignored runs/colab-gcn-review-bundle.zip (~7.6MB) and runs/colab-graphsage-review-bundle.zip (~14.7MB); they are runtime transfers, not Git artifacts. Export hashes are checked against captured source/artifact bytes. Code-only packaging and notebook syntax/no-saved-output checks pass.213 total tests passed, including the final18-case device probe. Runner plans now record CPU thread count; CLI snapshots record invocation and the code captured before execution. Fitting also handles an enclosing no_grad context, rejects inference_mode explicitly and clears stale source gradients only on its frozen copy, with tests.
 
-GCN/GAT v2 sweeps now completed all648 updates each, with every CPU reload passed; aggregate audit/evidence documentation follows. GraphSAGE v2 was stopped after163 jobs following a measured1/2/4-thread compute check; artifacts/progress are preserved with explicit incomplete status. Its replacement runs/peft-graphsage-review-v3 uses the identical40-step pair/method/objective grid with4 threads and remains in progress. Separate200-step supervised head checks on control/attribute/homophily/combined conditions test whether the short budget limits recovery; these are additional development references, not label-free results or replacements for the40-step sweep.
+GCN/GAT v2 completed all648 updates each. GraphSAGE v2 was stopped after163 jobs following a measured1/2/4-thread compute check; artifacts/progress are preserved with explicit incomplete status. Its completed replacement runs/peft-graphsage-review-v3 uses the identical40-step pair/method/objective grid with4 threads. Separate200-step supervised head checks on control/attribute/homophily/combined conditions also completed. They are additional development references, not label-free results or replacements for the40-step sweep.
+
+## Completed adaptation review checkpoint
+
+All six final studies completed with every saved CPU reload check passing: three broad runs (648 updates/108 baselines each) and three extended head studies (36 updates/36 baselines each). Independent post-run audits loaded all2,052 update artifacts, validated source/bank/manifest/model identities, complete Cartesian job membership, hashes, frozen sites, actual final-minus-initial tensors, factor reconstruction, code snapshots and recomputed native meta-test metrics. One-thread CPU prediction replay also checked the four-thread GraphSAGE run; **zero accuracy differences**. Each final directory contains independent_audit.json bound to its review.json hash.
+
+Broad means below exclude controls:99 shifted pairs per method/architecture, all evaluated on1,000 native meta-test nodes per graph. Three source models share seed31 across distinct source-label subsets; three base lineages and eleven variants are related, so no IID confidence interval or statistical ranking is claimed.
+
+| Update / objective | GCN after (gain pp) | GAT after (gain pp) | GraphSAGE after (gain pp) |
+| --- | ---: | ---: | ---: |
+| Frozen baseline | 78.36% | 77.94% | 80.30% |
+| Head / supervised | 80.80% (+2.44) | 80.08% (+2.14) | 83.34% (+3.04) |
+| LoRA / supervised | 80.09% (+1.73) | 79.17% (+1.23) | 84.07% (+3.77) |
+| Head / entropy | 67.59% (−10.76) | 73.51% (−4.43) | 72.41% (−7.89) |
+| LoRA / entropy | 77.27% (−1.09) | 79.00% (+1.07) | 81.74% (+1.45) |
+| Head / information maximization | 79.88% (+1.53) | 78.35% (+0.41) | 81.14% (+0.85) |
+| LoRA / information maximization | 79.53% (+1.17) | 79.94% (+2.00) | 83.04% (+2.74) |
+
+Trainable head scalars:66/70/130; LoRA:8,162/8,162/16,324. These counts and sites differ, not matched capacity. GCN head entropy worsened97/99 shifted pairs, while GraphSAGE supervised LoRA worsened0/99; these descriptive development observations do not prove generalization. IM-LoRA mean relative delta norms were4.914/3.951/5.101, demonstrating that parameter efficiency does not enforce a small-norm update. No weight normalization, failed-case filtering or post-hoc objective change was applied.
+
+Extended head references use the same27 shifted pairs for attribute/homophily/combined only, cap200/patience40:
+
+| Model | Frozen | Head40 | Head200 | Selected at200 |
+| --- | ---: | ---: | ---: | ---: |
+| GCN | 76.00% | 78.92% | 79.01% | 18/27 |
+| GAT | 75.53% | 78.07% | 78.77% | 22/27 |
+| GraphSAGE | 78.52% | 82.11% | 83.26% | 26/27 |
+
+The narrower coverage differs from the broad table. More budget/patience modestly helps some cases; cap selection does not prove convergence, and validation-loss improvement need not change accuracy. Homophily-only head200 gain was0.18pp for GCN and4.86pp for GraphSAGE; this flags an update/architecture/optimization question, not an identified causal mechanism.
+
+Review assets: runs/peft-review-checkpoint/{summary.csv,summary.json,adaptation_gains.png,head_budget_check.png,analysis_sha256.json} plus captured analysis scripts; weights live in each final study's jobs/job_*/weight_delta.pt. Example: runs/peft-gcn-review-v2/jobs/job_00109/weight_delta.pt is an attribute/head/supervised case with canonical initial/adapted/delta states. Source/reference banks and D7 manifests are unchanged. Initial studies ran from honest dirty working trees with pre-execution code snapshots; later commits do not retroactively change their provenance. Main numerical settings were unchanged by later autograd-context/provenance guards.
+
+The owner's requested items1–5 are implemented and verified. Meaningful recovery and objective failures support continued investigation, not a generator-success claim. Next week: review the teammate's proposed generators and decide update representation/norm control, fair equally informed baselines, and final held-out evaluation before implementing new methods.
 
 ## Limits and next work
 
-- The source-pretraining/bank foundation is verified across all three architectures on CSBM. PEFT is implemented under D8; generators remain absent. Development experiment reporting and final research evaluation/estimates accounting for the paired design remain outstanding.
+- Source pretraining, controlled data, PEFT, delta artifacts and development experiment audits are verified for all three architectures on CSBM. Generators and final held-out research evaluation/estimates accounting for the paired design remain outstanding.
 - CPU verified only. Clean-isolated installation, macOS, Colab, CUDA, and MPS remain unverified.
 - Generation pair-scanning is O(N²), although no dense adjacency is allocated. Do not scale blindly to huge N.
 - Original independent-draw examples remain independent; the new paired API explicitly controls realized components. Feature-noise/class-separation shifts, degree-heterogeneity models, concept shifts and natural-shift datasets are not implemented.
 - Phase 1 fixes a 50%-pool reference budget and whole-subset model grouping. D7 separately fixes development environment grouping/severities. Final-paper label budgets, independent environment counts, model×environment evaluation allocations, and natural-shift evaluation remain scientific decisions. Do not reinterpret model groups as new graphs or treat126 related variants as126 independent draws; there is only one validation and one test base lineage in the executed development suites.
-- Next delivery is the development evaluation/adaptation runner with initial/final/delta evidence and honest improvements/regressions. Broad held-out evaluation and generators follow separately. No automatic bank redesign or arbitrary weight noise was introduced.
+- Next implementation requires discussion of the teammate's generator proposals. Large relative deltas, supervised label advantages and some weak structural recovery should inform that discussion. Held-out performance, normalization/regularization changes and generator success are not established. No automatic bank redesign or arbitrary weight noise was introduced.
