@@ -34,6 +34,8 @@ def main() -> None:
     parser.add_argument("--config", type=Path, default=Path(__file__).resolve().parents[1]
                         / "configs" / "controlled_csbm_v1.json")
     parser.add_argument("--paper-scale", action="store_true")
+    parser.add_argument("--num-nodes", type=int, default=None, help="Override node count for non-paper runs")
+    parser.add_argument("--num-features", type=int, default=None, help="Override feature count for non-paper runs")
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--threads", type=int, default=1)
     args = parser.parse_args()
@@ -46,7 +48,9 @@ def main() -> None:
     reference = dict(protocol["reference"])
     reference["split_ratios"] = tuple(reference["split_ratios"])
     if not args.paper_scale:
-        reference.update(num_nodes=300, num_features=32)
+        nodes = args.num_nodes if args.num_nodes is not None else 300
+        features = args.num_features if args.num_features is not None else 32
+        reference.update(num_nodes=nodes, num_features=features)
     manifest = create_environment_manifest(
         CSBMConfig.from_matcha(**reference), [CSBMShift(**s) for s in protocol["shifts"]],
         lineage_counts=tuple(protocol["lineage_counts"]), train_severities=protocol["train_severities"],

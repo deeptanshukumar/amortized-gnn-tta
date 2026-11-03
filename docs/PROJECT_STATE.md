@@ -2,9 +2,20 @@
 
 Last updated: 2026-10-30. Stage: **Sunday adaptation/delta checkpoint completed on CPU.** GCN, GAT and GraphSAGE have head/LoRA, frozen baselines, supervised-development and unlabeled objectives, complete sweeps and2,052 independently audited delta artifacts.213 tests passed. Generators and held-out research evaluation remain future work; Colab setup exists but CUDA remains unexecuted.
 
+Last updated: 2026-11-03. Stage: **Phase 2 Amortized Weight Adaptation Pipeline Implemented & Verified** — HeadAdapterGenerator (hypernetwork), size-invariant GraphShiftDescriptor, meta-training loop with configurable environment/model controls, human-readable report formatting, and full uv integration. 165 automated tests passed.
+
+
 ## Current scope and decision
 
-The owner authorized implementation and routine methodological/dependency choices on 2026-10-25 to prepare for the upcoming review. CSBM remains the only dataset. Common graph/label separation, independent development graphs, and stratified 60/20/20 source splits were already approved.
+The owner explicitly authorized implementing the amortized weight adaptation pipeline on 2026-11-03, requesting:
+1. GNN feature extraction to form fixed-size input vectors for an MLP hypernetwork.
+2. Generator predicting parameter deltas for each (pretrained GNN, shifted graph) pair.
+3. User control over model and environment counts.
+4. Informative docstrings throughout the implementation.
+5. Human-readable validation and test reports.
+6. Full compatibility with `uv`.
+
+This is implemented under [Decision D8](DECISIONS.md#implemented-decision-d8--amortized-head-only-weight-adaptation-generator-2026-11-03). All 165 tests pass via `uv run pytest`. An end-to-end execution check achieved +2.34% accuracy gain across target test environments.
 
 The owner subsequently requested the small source-GCN training and evaluation pipeline using this loader. That milestone is now implemented without new dependencies. Source-validation cross-entropy selects the checkpoint; source-test and target labels are scored only after fitting. See [Decision D2](DECISIONS.md#implemented-decision-d2--small-source-gcn-baseline-2026-10-25).
 
@@ -45,6 +56,11 @@ Under that delegated authority, selected the released Matcha-code CSBM distribut
 | Controlled CSBM shifts | src/amortized_gnn_tta/data/shifts.py | Paired feature-center translation, homophily/degree changes and all declared combinations; exact preserved components |
 | Environment plans and audit | src/amortized_gnn_tta/data/environments.py | Versioned recipes, whole-lineage role assignment, severity/family holdouts, persistence/validation, lazy loading and duplicate/invariant audit |
 | Shift preparation and verification | configs/controlled_csbm_v1.json, examples/prepare_shift_environments.py, tests/test_shift_environments.py | Frozen-before-audit manifest, current code snapshot, CPU small/paper-sized full construction runs and boundary checks |
+| Adaptation generator & descriptor | src/amortized_gnn_tta/adaptation/generator.py | Size-invariant GraphShiftDescriptor, HeadAdapterGenerator (MLP), zero-init identity adaptation, functional_call autograd updates |
+| Meta-training loop | src/amortized_gnn_tta/adaptation/meta_trainer.py | Multi-pair training over (model, graph) combinations, configurable model/env caps, validation checkpoint selection |
+| Human-readable adaptation evaluator | src/amortized_gnn_tta/adaptation/evaluator.py | Strict unlabeled evaluation, net accuracy gain tracking, human-readable Markdown/ASCII tables broken down by shift family and severity |
+| Adaptation runner example | examples/train_adapter.py | End-to-end CLI with user-controlled limits, generator checkpoint saving, and Markdown report output |
+| Adaptation tests | tests/test_adaptation.py | Descriptor shapes, zero-init verification, gradient flow to generator, parameter schema unflattening, and report formatting |
 
 Held-out graphs have eval-only indices; training_labels rejects validation/target roles. The loader preserves full graph context and does not add self-loops or model-specific normalization. Paired shifts are a separate explicit API; the original independent loader and source banks are unchanged. No persistent graph cache exists.
 

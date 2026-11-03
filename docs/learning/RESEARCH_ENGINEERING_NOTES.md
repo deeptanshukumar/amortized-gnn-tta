@@ -2113,6 +2113,7 @@ Manifest recipes/checksum are saved before audit, graphs load one at a time, and
 Explain this from zero using examples and define unfamiliar terms. Critique the pairing, factorial paths, severity extrapolation, holdout independence, finite-size effects, label access and the distinction between attribute shifts and strict statistical covariate/concept-shift definitions. Identify what is established by our tests versus what requires experiments. Suggest the minimum additional independent environments and evaluation design needed before paper claims, without inventing results or silently replacing the protocol. Cite primary sources for external facts. Then ask one reasoning question at a time.
 ~~~
 
+
 ## 30. Our working adaptation checkpoint: initial weights, final weights and delta
 
 ### What have we achieved?
@@ -2442,4 +2443,30 @@ I am a beginner learning an AFML research project on amortized GNN weight adapta
 Each development graph preserves full message-passing context. Its native 3,000 train labels fit the model,1,000 validation labels select minimum validation cross-entropy including step 0, and1,000 test labels score offline only. Held-out model/environment groups remain untouched. All compared methods share starting weights, exact graphs, splits, Adam lr0.01, no weight decay, dropout disabled and fresh optimizers. One study uses cap 40/patience 15 on11 shifts plus control; a separate narrower check uses cap 200/patience 40 on attribute, homophily and their combination plus control. We compare identical pairs within each study. Three source models share initialization seed31 across label subsets; three base graphs have related shift variants, so pair counts are not independent repetitions.
 
 Explain from first principles what optimization budget, step, epoch, loss, gradient, learning rate, patience, validation and full fine-tuning mean. Critique whether this diagnostic can distinguish restricted-update limitations from optimization or model limitations. Explain why its accuracy is not a proven ceiling, why shared optimizer settings need not be equally optimal, and what a generator can and cannot learn from these results. Suggest minimal further checks without accessing final held-out labels. Use primary references, do not invent results, and ask me one reasoning question at a time.
+~~~
+## 30. Amortized Weight Adaptation: From Pretrained Bank to Single-Step Generator
+
+### What did we implement?
+
+We implemented the complete Phase 2 amortized weight adaptation pipeline:
+1. **GraphShiftDescriptor:** Takes any shifted graph $(X, E)$ of arbitrary node count $N$, passes it through the pretrained GNN encoder `model.encode(x, edge_index)`, and pools the hidden activations into a fixed-size summary vector of length $2H + 1$ (mean, standard deviation, and average degree).
+2. **HeadAdapterGenerator:** A multi-layer perceptron (hypernetwork) that takes `[graph_descriptor || current_head_weights]` and predicts a weight update vector $\Delta W, \Delta b$ specifically for the classification head (`conv2`).
+3. **Zero-Initialization Trick:** The final linear layer of the generator is initialized with exact zeros. At initialization, $\Delta W = 0$ and $\Delta b = 0$, guaranteeing that the adapted model starts at exact baseline performance without random degradation.
+4. **Meta-Training Loop:** Trains the generator across pairs of $(M_k, G_j)$, where $M_k$ is a meta-training model from the bank and $G_j$ is a meta-training shifted graph. Autograd gradients flow from the meta-loss directly back into the generator via `torch.func.functional_call`.
+5. **Human-Readable Reports:** Evaluates baseline vs adapted accuracy on held-out target environments, printing structured tables broken down by shift family (Attribute, Homophily, Degree, Combined) and severity ($0.25, 0.50$ in train/val; $0.50, 0.75, 1.00$ in test).
+
+### Why head-only adaptation first?
+
+Predicting all 64,000+ parameters of a GNN directly from a hypernetwork is prone to overfitting. The classification head (`conv2`) has only 66 parameters ($32 \times 2$ weights + 2 biases). Adapting the head allows the model to adjust its decision boundary and class balance to the shifted representations while keeping the learned feature extractor stable.
+
+### How to run the pipeline with uv
+
+~~~bash
+uv run python examples/train_adapter.py \
+    --bank runs/small-bank \
+    --manifest runs/matched-small-shifts/environment_manifest.json \
+    --output-dir runs/adapter-run \
+    --epochs 5 \
+    --max-environments 10 \
+    --max-models 3
 ~~~

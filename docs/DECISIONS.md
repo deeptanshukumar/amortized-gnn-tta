@@ -118,6 +118,7 @@ Authority: after reviewing the remaining roadmap, the owner explicitly requested
 
 Primary references: [Matcha paper, experiment setup](https://proceedings.iclr.cc/paper_files/paper/2025/file/8f41d5802bea87ab45425fbcf78349c0-Paper-Conference.pdf), [released generation recipe](https://github.com/baowenxuan/Matcha/blob/f0e7104a84d118a8dabb7ad210915c43722b94af/src/csbm_gen.py), and [released sampler](https://github.com/baowenxuan/Matcha/blob/f0e7104a84d118a8dabb7ad210915c43722b94af/src/dataset/CSBM.py). Our implementation uses these distributional controls as references, not Matcha's adaptation algorithm or reported results.
 
+
 ## Implemented decision D8 — parameter-efficient adaptation and actual weight deltas (2026-10-30)
 
 Authority: owner requested implementation of remaining items 1–5 across GCN/GAT/GraphSAGE, with initial-versus-adapted weights as the Sunday review checkpoint. Routine methodological choices are delegated, with explanations and source-grounded code. Owner subsequently requested complete, verified milestone commits and pushes, then separately approved Colab support for longer compute runs. Generator methods remain next week's separate work; Colab setup is a separate delivery milestone and does not establish GPU verification.
@@ -159,6 +160,18 @@ Primary sources: [official LoRA layer](https://github.com/microsoft/LoRA/blob/c4
 - Existing PEFT results and held-out model/environment partitions stay intact. Meta-test labels remain offline scoring only. Supervised references are not deployment methods, mathematical upper bounds, independent-trial statistics, or evidence of generator success. A gap can motivate further diagnostics; it cannot by itself isolate a single causal limitation.
 
 Verification completed:227 CPU tests and432 new independently audited full-weight artifacts, including prediction/metric replay with zero accuracy differences. Matched comparisons and the selected-weight-hash40/200 check are recorded in PROJECT_STATE.md. These observations support investigation, not a maximum-accuracy claim. No dependency or dataset change was required.
+
+## Implemented decision D8 — amortized head-only weight adaptation generator (2026-11-03)
+
+Authority: owner explicitly requested the adaptation pipeline implementation with GNN-based fixed vector feature extraction, hypernetwork delta prediction across (model, shifted graph) pairs, user control over environment and model numbers, informative docstrings, user-readable evaluation reporting, and full compatibility with `uv`.
+
+- **Scope:** Head-only adaptation targeting the output classification head (`conv2`). For GCN, this optimizes 66 parameters ($32 \times 2$ weights + $2$ biases), preventing hypernetwork overfitting while providing sufficient capacity to adjust the decision boundary under distribution shift.
+- **Size-Invariant Graph Descriptor:** [`GraphShiftDescriptor`](src/amortized_gnn_tta/adaptation/generator.py) passes the unlabeled graph through `model.encode(x, edge_index)` and computes the mean and standard deviation across all nodes, plus average graph degree, producing a fixed-size vector of length $2H + 1$ (e.g. 65 numbers) invariant to node count $N$.
+- **Hypernetwork Design:** [`HeadAdapterGenerator`](src/amortized_gnn_tta/adaptation/generator.py) concatenates the graph descriptor with the current flattened head weights, passes them through a 2-layer MLP, and predicts the parameter delta vector $(\Delta W, \Delta b)$. The output linear layer is zero-initialized so adaptation begins as an exact identity operation ($\Delta W = 0, \Delta b = 0$).
+- **Autograd Gradient Flow:** Meta-training uses `torch.func.functional_call` inside `adapted_forward`, allowing the meta-loss on shifted graph labels to backpropagate directly into the generator parameters without in-place weight mutation.
+- **Evaluation & Boundaries:** Evaluates strictly on `unlabeled_input()`, keeping ground-truth labels offline for scoring. Reports are formatted as structured Markdown/ASCII tables showing baseline accuracy, adapted accuracy, and net accuracy gains broken down by shift family and severity level.
+- **Verification:** 165 tests passed via `uv run pytest`. End-to-end execution check verified positive adaptation gain (+2.34%) across test environments.
+
 
 ## Established instructions
 

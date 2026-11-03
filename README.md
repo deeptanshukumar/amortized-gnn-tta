@@ -267,6 +267,7 @@ The GAT and GraphSAGE reference banks also completed with cap/patience 200/30 an
 
 Each bank has 30 models/435 pairs, no selected checkpoint at its cap, and successful CPU reloads. The historical GCN bank was additionally re-audited through the shared factory without changing its results. These descriptive development values do not establish an architecture ranking: capacities/activations differ, defaults were not separately tuned, and the source test graph was previously viewed. Bank runs are source-only; no new target-label selection or adaptation was performed.
 
+
 ## Parameter-efficient adaptation core
 
 | Update | Trainable sites | Original parameters |
@@ -354,6 +355,24 @@ The comparison tool validates complete matching pair grids, plans, bank/manifest
 All six separate full-weight sweeps completed: **432 new artifacts independently audited**, with zero CPU replay accuracy differences. On the broad99 shifted pairs, full-weight means were 81.21%/80.30%/86.10% for GCN/GAT/GraphSAGE, gains2.85/2.36/5.81 percentage points over frozen models. The longer check selected identical final weights to the40-step runs on every matched case. See [full comparisons and limitations](docs/PROJECT_STATE.md#separate-supervised-full-fine-tuning-diagnostic).
 
 This is a supervised development diagnostic, not a label-free result or a proven accuracy ceiling. Shared optimizer settings need not be equally optimal for every update method. Full fitting leaves additional recovery over LoRA for GraphSAGE under these settings; it adds little over head-only GCN/GAT and does not resolve their homophily-only weakness.
+## Train and evaluate the adaptation generator (Phase 2)
+
+Train the [`HeadAdapterGenerator`](src/amortized_gnn_tta/adaptation/generator.py) hypernetwork on meta-training pairs and evaluate test-time adaptation on held-out target environments.
+
+Using `uv`:
+
+~~~bash
+# Fast test run with user-controlled limits:
+uv run python examples/train_adapter.py \
+    --bank runs/small-bank \
+    --manifest runs/matched-small-shifts/environment_manifest.json \
+    --output-dir runs/adapter-run \
+    --epochs 5 \
+    --max-environments 10 \
+    --max-models 3
+~~~
+
+The CLI accepts `--max-environments` and `--max-models` so you can control execution time. `--output-dir` is optional: when provided, it saves `ADAPTATION_REPORT.md` and `generator_best.pt`; when omitted, the full evaluation report is dumped directly to the terminal without writing to disk. When omitted, `--max-environments` and `--max-models` run across the full 18 meta-training models and 69 meta-training environments ($1,242$ adaptation pairs).
 
 ## Data API
 
