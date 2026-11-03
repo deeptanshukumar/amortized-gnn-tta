@@ -1,4 +1,7 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 511141a (rename file)
 """Update algebra, gradients, leakage boundaries, learning and delta restoration."""
 
 from copy import deepcopy
@@ -301,6 +304,7 @@ def test_stale_source_gradients_are_cleared_only_on_the_frozen_copy():
     adapter = WeightAdapter(original, PEFTConfig("head"))
     assert all(p.grad is None for p in adapter.base.parameters())
     assert all(torch.equal(p.grad, before[name]) for name, p in original.named_parameters())
+<<<<<<< HEAD
 =======
 """Tests for the amortized adaptation generator, descriptor, and evaluator."""
 
@@ -487,3 +491,5 @@ def test_evaluate_adaptation_pair_and_report_formatting(tiny_bundle):
     assert "Breakdown by Shift Family" in report
     assert "Breakdown by Shift Severity" in report
 >>>>>>> a496aab (added hypernetwork generator code)
+=======
+>>>>>>> 511141a (rename file)
