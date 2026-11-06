@@ -60,12 +60,14 @@ def evaluate_adaptation_pair(
 
     # 1. Provide only unlabeled input to the descriptor and model
     unlabeled = bundle.unlabeled_input(env_id).to(device)
-    labels = bundle.evaluation_labels(env_id, "eval" if "eval" in bundle.graphs[env_id].splits else "test").to(device)
+    split_name = "eval" if "eval" in bundle.graphs[env_id].splits else "test"
+    labels = bundle.evaluation_labels(env_id, split_name).to(device)
+    eval_idx = bundle.select(env_id, split_name).to(device)
 
     # 2. Extract baseline predictions
     with torch.no_grad():
         base_logits = model(unlabeled.x, unlabeled.edge_index)
-        base_pred = base_logits.argmax(dim=-1)
+        base_pred = base_logits[eval_idx].argmax(dim=-1)
         base_acc = float((base_pred == labels).float().mean().item())
 
     # 3. Extract shift descriptor and current head weights
@@ -79,7 +81,7 @@ def evaluate_adaptation_pair(
         delta_norm = float(torch.linalg.vector_norm(delta).item())
         # Run adapted model
         adapted_logits = adapted_forward(model, unlabeled, delta, schema)
-        adapted_pred = adapted_logits.argmax(dim=-1)
+        adapted_pred = adapted_logits[eval_idx].argmax(dim=-1)
         adapted_acc = float((adapted_pred == labels).float().mean().item())
 
     gain = adapted_acc - base_acc
@@ -179,6 +181,36 @@ def format_adaptation_report(records: Sequence[AdaptationRecord], title: str = "
     return "\n".join(lines)
 
 
+def subsample_environments(
+    envs: Sequence[dict[str, Any]],
+    max_environments: int | None,
+) -> list[dict[str, Any]]:
+    """Select a balanced subset of environments across shift families.
+
+    Instead of taking the first N environments in raw manifest order (which
+    biases toward a single lineage and early shift types), this groups by
+    shift family and round-robins across them to ensure representation.
+    """
+    if max_environments is None or len(envs) <= max_environments:
+        return list(envs)
+
+    by_family: dict[str, list[dict[str, Any]]] = {}
+    for e in envs:
+        fam = e.get("family", "unknown")
+        by_family.setdefault(fam, []).append(e)
+
+    selected: list[dict[str, Any]] = []
+    family_queues = [list(lst) for lst in by_family.values()]
+    idx = 0
+    while len(selected) < max_environments and any(family_queues):
+        queue = family_queues[idx % len(family_queues)]
+        if queue:
+            selected.append(queue.pop(0))
+        idx += 1
+
+    return selected
+
+
 def evaluate_adaptation(
     models: dict[str, nn.Module],
     manifest: dict[str, Any],
@@ -196,8 +228,7 @@ def evaluate_adaptation(
         report: Formatted Markdown report string.
     """
     envs = [e for e in manifest["environments"] if e["role"] == role]
-    if max_environments is not None:
-        envs = envs[:max_environments]
+    envs = subsample_environments(envs, max_environments)
 
     records: list[AdaptationRecord] = []
 

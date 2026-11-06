@@ -15,7 +15,7 @@ from torch import Tensor, nn
 from torch.nn import functional as F
 
 from ..data.api import DatasetBundle
-from .evaluator import evaluate_adaptation_pair, summarize_records
+from .evaluator import evaluate_adaptation_pair, subsample_environments, summarize_records
 from .generator import (
     GraphShiftDescriptor,
     HeadAdapterGenerator,
@@ -76,10 +76,9 @@ def train_adaptation_generator(
     generator = generator.to(device)
     optimizer = torch.optim.Adam(generator.parameters(), lr=lr, weight_decay=weight_decay)
 
-    # Filter meta-training environments
+    # Filter meta-training environments with balanced stratification across families
     meta_envs = [e for e in manifest["environments"] if e["role"] == "meta_train"]
-    if max_environments is not None:
-        meta_envs = meta_envs[:max_environments]
+    meta_envs = subsample_environments(meta_envs, max_environments)
 
     # Select meta-training models
     model_items = list(models.items())
@@ -98,8 +97,28 @@ def train_adaptation_generator(
         print(f"  • Epochs: {epochs} | Device: {device}\n")
 
     history: list[dict[str, Any]] = []
-    best_val_loss = float("inf")
     best_state_dict = {k: v.cpu().clone() for k, v in generator.state_dict().items()}
+    best_val_loss = float("inf")
+    best_train_loss = float("inf")
+
+    # Evaluate Epoch 0 unadapted baseline if val_models provided (do-no-harm baseline check)
+    if val_models:
+        generator.eval()
+        val_envs = [e for e in manifest["environments"] if e["role"] == "validation"]
+        val_envs = subsample_environments(val_envs, max_environments)
+        baseline_records = []
+        for v_env in val_envs:
+            v_bundle = load_env_fn(manifest, v_env["id"])
+            for v_mid, v_m in val_models.items():
+                r = evaluate_adaptation_pair(
+                    v_m, v_mid, v_bundle, v_env["id"], v_env, descriptor, generator, device=device
+                )
+                baseline_records.append(r)
+        baseline_summary = summarize_records(baseline_records)
+        best_val_loss = 1.0 - baseline_summary.get("mean_adapted_acc", 0.0)
+        if verbose:
+            print(f"  • Unadapted Baseline Val Acc (Epoch 0): {baseline_summary.get('mean_adapted_acc', 0.0)*100:.2f}% (Threshold for saving generator)\n")
+
     start_time = time.time()
 
     for epoch in range(1, epochs + 1):
@@ -150,14 +169,13 @@ def train_adaptation_generator(
         mean_ce_loss = float(sum(ce_losses) / len(ce_losses))
         mean_norm = float(sum(delta_norms) / len(delta_norms))
 
-        # Optional validation check
+        # Validation check or training-loss selection
         val_loss = None
         val_gain = None
         if val_models:
             generator.eval()
             val_envs = [e for e in manifest["environments"] if e["role"] == "validation"]
-            if max_environments is not None:
-                val_envs = val_envs[:max_environments]
+            val_envs = subsample_environments(val_envs, max_environments)
 
             val_records = []
             for v_env in val_envs:
@@ -172,8 +190,14 @@ def train_adaptation_generator(
             val_gain = val_summary.get("mean_gain", 0.0)
             val_loss = 1.0 - val_summary.get("mean_adapted_acc", 0.0)
 
+            # Strictly require outperforming the unadapted baseline (do-no-harm)
             if val_loss < best_val_loss:
                 best_val_loss = val_loss
+                best_state_dict = {k: v.cpu().clone() for k, v in generator.state_dict().items()}
+        else:
+            # When no validation models are supplied, select by training loss so work is not discarded
+            if mean_train_loss < best_train_loss:
+                best_train_loss = mean_train_loss
                 best_state_dict = {k: v.cpu().clone() for k, v in generator.state_dict().items()}
 
         epoch_time = time.time() - epoch_start
