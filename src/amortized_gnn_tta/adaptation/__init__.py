@@ -21,6 +21,14 @@ from .generator import (
     apply_head_delta,
     extract_head_parameters,
 )
+from .diffusion import (
+    DiffusionHeadGenerator,
+    NoiseSchedule,
+    OracleTargetRecord,
+    SinusoidalPositionalEmbedding,
+    fit_oracle_deltas,
+    train_diffusion_generator,
+)
 from .meta_trainer import train_adaptation_generator
 from .evaluator import (
     AdaptationRecord,
@@ -33,11 +41,15 @@ from .evaluator import (
 __all__ = [
     # Generator symbols
     "AdaptationRecord",
+    "DiffusionHeadGenerator",
     "GraphShiftDescriptor",
     "HeadAdapterGenerator",
+    "NoiseSchedule",
     "apply_head_delta",
     "extract_head_parameters",
+    "fit_oracle_deltas",
     "train_adaptation_generator",
+    "train_diffusion_generator",
     "evaluate_adaptation",
     "evaluate_adaptation_pair",
     "format_adaptation_report",

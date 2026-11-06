@@ -22,11 +22,13 @@ import sys
 import torch
 
 from amortized_gnn_tta.adaptation import (
+    DiffusionHeadGenerator,
     GraphShiftDescriptor,
     HeadAdapterGenerator,
     evaluate_adaptation,
     extract_head_parameters,
     train_adaptation_generator,
+    train_diffusion_generator,
 )
 from amortized_gnn_tta.bank_artifacts import (
     artifact_path,
@@ -69,6 +71,14 @@ def parse_args():
                         help="Limit the number of models per role (for quick runs)")
     parser.add_argument("--device", type=str, default="cpu",
                         help="Device to run adaptation on ('cpu' or 'cuda')")
+    parser.add_argument("--generator", type=str, default="hypernetwork", choices=["hypernetwork", "diffusion"],
+                        help="Generator architecture: 'hypernetwork' (direct MLP) or 'diffusion' (conditional DDPM/DDIM)")
+    parser.add_argument("--diffusion-steps", type=int, default=100,
+                        help="Number of diffusion timesteps T (diffusion generator only)")
+    parser.add_argument("--sampling-steps", type=int, default=20,
+                        help="Number of DDIM sampling steps during inference (diffusion generator only)")
+    parser.add_argument("--oracle-steps", type=int, default=50,
+                        help="Steps to fit teacher oracle deltas (diffusion generator only)")
     return parser.parse_args()
 
 
@@ -149,32 +159,60 @@ def main():
     hidden_dim = sample_model.config.hidden_channels
 
     descriptor = GraphShiftDescriptor(hidden_channels=hidden_dim, include_degree=True)
-    generator = HeadAdapterGenerator(
-        descriptor_dim=descriptor.output_dim,
-        head_dim=head_dim,
-        hidden_dim=128,
-    )
+    if args.generator == "diffusion":
+        generator = DiffusionHeadGenerator(
+            descriptor_dim=descriptor.output_dim,
+            head_dim=head_dim,
+            hidden_dim=128,
+            diffusion_steps=args.diffusion_steps,
+            sampling_steps=args.sampling_steps,
+        )
+    else:
+        generator = HeadAdapterGenerator(
+            descriptor_dim=descriptor.output_dim,
+            head_dim=head_dim,
+            hidden_dim=128,
+        )
+    print(f"      Generator Architecture: {args.generator.upper()}")
     print(f"      Descriptor Vector Size: {descriptor.output_dim}")
     print(f"      Classification Head Parameter Size: {head_dim} ({[s[0] for s in schema]})")
     print(f"      Generator Total Trainable Weights: {sum(p.numel() for p in generator.parameters())}")
 
     # 4. Meta-Training
     print("\n[4/5] Executing Generator Meta-Training ...")
-    train_res = train_adaptation_generator(
-        models=grouped_models["meta_train"],
-        manifest=manifest,
-        load_env_fn=load_shift_environment,
-        descriptor=descriptor,
-        generator=generator,
-        epochs=args.epochs,
-        lr=args.lr,
-        delta_l2_reg=args.delta_l2,
-        max_environments=args.max_environments,
-        max_models=args.max_models,
-        val_models=grouped_models["validation"],
-        device=args.device,
-        verbose=True,
-    )
+    if args.generator == "diffusion":
+        train_res = train_diffusion_generator(
+            models=grouped_models["meta_train"],
+            manifest=manifest,
+            load_env_fn=load_shift_environment,
+            descriptor=descriptor,
+            generator=generator,
+            epochs=args.epochs,
+            lr=args.lr,
+            oracle_steps=args.oracle_steps,
+            delta_l2_reg=args.delta_l2,
+            max_environments=args.max_environments,
+            max_models=args.max_models,
+            val_models=grouped_models["validation"],
+            device=args.device,
+            verbose=True,
+        )
+    else:
+        train_res = train_adaptation_generator(
+            models=grouped_models["meta_train"],
+            manifest=manifest,
+            load_env_fn=load_shift_environment,
+            descriptor=descriptor,
+            generator=generator,
+            epochs=args.epochs,
+            lr=args.lr,
+            delta_l2_reg=args.delta_l2,
+            max_environments=args.max_environments,
+            max_models=args.max_models,
+            val_models=grouped_models["validation"],
+            device=args.device,
+            verbose=True,
+        )
 
     # Load best validation weights into generator
     generator.load_state_dict(train_res.best_state_dict)
@@ -209,6 +247,7 @@ def main():
 
         generator_ckpt = args.output_dir / "generator_best.pt"
         torch.save({
+            "generator_type": args.generator,
             "generator_state_dict": train_res.best_state_dict,
             "descriptor_dim": descriptor.output_dim,
             "head_dim": head_dim,
