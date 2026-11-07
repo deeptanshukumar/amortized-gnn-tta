@@ -1,12 +1,36 @@
 # Project state
 
-Last updated: 2026-11-07. Current milestone: **generator prototype repair and validation**, implemented on the `generator` branch after explicit owner approval. The actual system remains CSBM; generated LoRA, five-candidate diffusion selection and real-graph experiments remain future milestones. CUDA/MPS execution remains unverified.
+Last updated: 2026-11-07. Current milestone: **audited generator integration and matched compact comparison**, completed on `integration/generator-audit-fixes` after explicit owner approval. The actual system remains CSBM; generated LoRA, five-candidate diffusion selection and real-graph experiments remain future milestones. CUDA/MPS execution remains unverified.
 
-## Integration in progress
+## Completed integration checkpoint
 
-Owner approved a new local integration branch and reviewed commits. `integration/generator-audit-fixes` starts at c137e28 and carries the previously verified repairs without changing the original repair checkout. Its combined repair tree passed 392 CPU tests. Repair checkpoint committed locally as `8c6203a`. Portable shared comparisons are implemented: 24 focused workflow tests and the full 408-test CPU suite passed. The bounded matched compact study is next. Push/merge remain unauthorized.
+`integration/generator-audit-fixes` starts at c137e28. Local commits `8c6203a` (audited repairs) and `d81bb02` (portable shared comparisons) preserve the original repair checkout and all ten contributor scripts/result files. No push or merge is authorized. The combined implementation passed **408 CPU tests**, including 24 focused portable workflow checks.
 
-The c137e28 upload adds five experiment scripts and five result files, with no core changes. Independent arithmetic checks passed 2,205 relationships across 612 full-comparison records. The 44.49× GCN ratio is traceable, but generator timers omit adapted prediction and the compact diffusion timer also omits conditioning. The 64-feature experiment and our 2,000-feature validation study are different workloads.
+Portable commands now cover compact/structural/A-D and head/backbone/all direct scopes using saved partitions, complete checkpoints and validation-only review. Independent replay handles every scope. Standalone timing omits unmatched iterative ratios for broader scopes; review tables explicitly retain IM-head only as a reference. These direct broader updates are not generated LoRA.
+
+The predeclared matched GCN study completed **30 configurations and 360 saved cases**: six new compact fits, 24 completed A-D checkpoints reused byte-for-byte after identity/recipe/exact-delta checks. All predictions/timings reran. The independent audit reconstructed every named target tensor and checked regenerated deltas, source/graph/checkpoint hashes, predictions, metrics and raw timing aggregates: **zero logit differences and zero accuracy mismatches**. Maximum requested-versus-effective float32 delta difference was 2.9802322387695312e-08. Source code was committed and clean at d81bb02 for the new compact fits and inference measurements; reused fits retain their original training provenance/costs.
+
+All rows below use the same GCN checkpoint, head update sites (66 scalars), selected meta-training model/environment identities, five-epoch recipe and three generator seeds. Frozen shifted accuracy is **77.255%**; IM30 is **78.167%**. Accuracy excludes the unchanged control and averages eleven shifted validation conditions. Timing averages per-condition medians for control/attribute/homophily/combined; each uses 3 warmups and 15 repetitions, one local CPU thread. Ratios divide mean IM latency by mean generated latency within each row, not a shared grand-mean denominator.
+
+| Inputs | Hyper accuracy ± seed SD | Hyper pipeline / ratio | Diffusion accuracy ± seed SD | Diffusion pipeline / ratio |
+| --- | ---: | ---: | ---: | ---: |
+| compact | 78.087 ± 0.026% | 13.35ms / 3.89× | 77.999 ± 0.064% | 15.40ms / 3.51× |
+| A | 78.055 ± 0.002% | 94.12ms / 0.59× | 77.932 ± 0.147% | 101.18ms / 0.58× |
+| B | 78.067 ± 0.004% | 93.64ms / 0.58× | 77.916 ± 0.133% | 104.58ms / 0.58× |
+| C | 78.071 ± 0.005% | 96.48ms / 0.59× | 77.968 ± 0.092% | 102.83ms / 0.58× |
+| D | 78.061 ± 0.004% | 89.82ms / 0.62× | 78.099 ± 0.011% | 99.82ms / 0.56× |
+
+Compact gives +0.833pp / +0.744pp over frozen for hypernetwork/diffusion, while IM30 remains 0.080pp / 0.168pp higher in shifted accuracy. Both compact methods worsen 15/33 repeated shifted cases; unchanged-control mean losses are **0.653pp / 0.427pp**. D control losses are 0.307pp / 0.720pp. No method is universally safer. Compact hypernetwork has 25,410 generator parameters versus 522,818–538,434 for A-D; its input and model information differ, so this is not a one-field causal ablation.
+
+Compact mean offline wall time is 8.16s hypernetwork and 6.21s diffusion (including 2.69s teacher subset); these are per-fit training costs, excluding common canonical dataset preparation and research search. Hypernetwork has 180 optimizer updates, diffusion 15 denoiser updates plus 1,080 teacher steps. Different objectives/budgets do not establish a generator-family ranking. A-D timings vary with machine noise; their saved fits/predictions agree with the prior review.
+
+Interpretation: compact retains useful full-pipeline speedups on this binary-head workload. Expensive A-D remains slower despite similar mean accuracy. Keep both recipes explicit; do not select formal Arxiv inputs from this CSBM development study. One validation checkpoint and graph lineage per architecture are not an independent final benchmark. CPU only; no final-target scoring, CUDA/MPS execution or new real-data implementation.
+
+Evidence: ignored `runs/generator-compact-matched-gcn-v1/{PLAN.json,code_snapshot.zip,seed_results.csv,AGGREGATED_RESULTS.csv,VERIFIED_REVIEW.md,INDEPENDENT_REPLAY.json,matched_tradeoffs.png}` and per-fit checkpoints/deltas/raw timings. Configuration: `configs/generator_compact_matched_gcn.json`; source: d81bb02. Reproduction commands are in README; rerun to a fresh directory. The figure plots actual verified values, seed SD and the grand-mean IM30 timing for orientation; exact per-group ratios are in CSV.
+
+The c137e28 upload adds five experiment scripts and five result files, with no core changes. Independent arithmetic checks passed 2,205 relationships across 612 full-comparison records. The 44.49× GCN ratio is traceable, but generator timers omit adapted prediction and the compact diffusion timer also omits conditioning. The contributor’s 64-feature experiment and our 2,000-feature validation study are different workloads. Original files remain intact under `scratch/`, with a guide to portable equivalents.
+
+Next research milestone: ogbn-arxiv loader, agreed label pools/source GCN and paired feature/edge perturbations; generated LoRA/five-candidate selection and formal controls follow their approved experimental sequence. Exact replay of the contributor’s small-profile run still needs its matching artifacts and seeds; no synthetic replacement is presented as that reproduction.
 
 ## Completed repair milestone
 
@@ -16,7 +40,7 @@ Verification completed on local CPU: **392 automated tests passed** (including t
 
 The predeclared paper-sized review completed **72 configurations** (3 architectures × A-D × 2 generators × 3 seeds), with **864 saved cases**. Thirty completed compatible training checkpoints were reused after exact generated-delta/configuration/identity checks; all prediction and timing checks reran. Partial training was never resumed. Independent manual named-weight reconstruction verified every source/graph/checkpoint identity, requested/effective delta, final head tensor, prediction, accuracy, per-case aggregate and raw-timing median. Maximum logit replay error and accuracy mismatch count were both zero. The largest requested-versus-effective float32 delta difference was 2.9802322387695312e-08, not an artifact error.
 
-**Research verdict:** the repaired prototype runs correctly on tested inputs, but this workload does not demonstrate an amortized online speedup. Every A-D grouped speed ratio is below 1 against the improved cached IM30 baseline. Mean shifted accuracy improves; unchanged-control harm remains. Hypernetwork CE and diffusion teacher-MSE have different objectives/budgets; no definitive generator ranking or optimal accuracy claim follows.
+**Research verdict:** the repaired prototype runs correctly on tested inputs, but its A-D recipes do not demonstrate an amortized online speedup. Every A-D grouped speed ratio is below 1 against the improved cached IM30 baseline. Mean shifted accuracy improves; unchanged-control harm remains. Hypernetwork CE and diffusion teacher-MSE have different objectives/budgets; no definitive generator ranking or optimal accuracy claim follows.
 
 Fixed D reference (not an input selection for the later Arxiv study); ± is sample SD across three generator seeds:
 

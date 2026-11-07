@@ -8,6 +8,7 @@ Deeptanshu owns GCN experiments; teammates handle GAT and GraphSAGE. At the owne
 
 ## Implemented and verified
 
+- **Latest integration:** 408 CPU tests; portable shared comparisons; 30 matched GCN configurations and 360 independently replayed cases. Compact complete-pipeline ratios were 3.89× hypernetwork / 3.51× diffusion, with unchanged-control losses. See [current results and limits](docs/PROJECT_STATE.md#completed-integration-checkpoint).
 - **CSBM only:** balanced two-class Gaussian graphs with explicit connection probabilities, independent edge/feature/split RNG streams, and recorded generation settings.
 - CPU PyG graphs, separate ground truth, named split indices, explicit source/meta-training/validation/target roles.
 - Stratified source splits, initially 60/20/20; held-out graphs expose an eval-only split. Full graph context is preserved; split indices select supervision, not induced subgraphs.
@@ -437,7 +438,7 @@ regenerated deltas agree. Unknown configuration fields are conservatively part
 of the recipe check. Original checkpoints and their training costs/provenance
 are preserved; every prediction and timing measurement reruns. Six new compact
 fits plus 24 existing A-D fits constitute the planned 30-configuration study.
-This does not choose the later Arxiv inputs or establish a diffusion advantage.
+This does not choose the later Arxiv inputs or establish a diffusion advantage. The study completed: compact accuracies were 78.087% / 77.999% (hypernetwork/diffusion), versus frozen 77.255% and IM30 78.167%. Complete-pipeline ratios were 3.89× / 3.51×; control losses were 0.653pp / 0.427pp. Full A-D comparisons and verification are in [project state](docs/PROJECT_STATE.md#completed-integration-checkpoint).
 
 ### Verified repair checkpoint
 

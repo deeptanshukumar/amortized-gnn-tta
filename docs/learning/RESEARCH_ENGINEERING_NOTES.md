@@ -2691,3 +2691,19 @@ Self-check: explain why generating updates quickly can coexist with slow complet
 Second-opinion prompt:
 
 > We integrate a CSBM GNN-TTA prototype with compact/structural descriptors and nested A-D inputs, using two-layer GCN/GAT/GraphSAGE. Compact/structural retain separate raw update-site weights, while A-D disable them. We measure canonical target graph plus resident models through conditioning, update generation/application and usable predictions. An iterative IM baseline updates only the head. Direct generated backbone/all updates are not LoRA; their matched speedup is left blank. We reuse completed A-D fits only with the same training recipe/identities and agreeing regenerated deltas, then remeasure every event. Six newly trained compact fits complete a GCN three-seed development comparison. Explain the fairness and reproducibility assumptions, why its results do not select formal Arxiv inputs or establish a diffusion advantage, and how to diagnose unchanged-control harm without consulting deployment labels. Do not invent results.
+
+
+The matched integration study is now complete. All 408 CPU tests passed; 30 configurations produced 360 independently replayed saved cases with zero prediction/accuracy differences. Only six compact generators were newly trained; 24 A-D fits were reused after identity checks.
+
+| Matched GCN result | Hypernetwork compact | Diffusion compact |
+| --- | ---: | ---: |
+| Shifted validation accuracy | 78.087 ± 0.026% | 77.999 ± 0.064% |
+| Complete pipeline | 13.35ms | 15.40ms |
+| IM30 / generated cost ratio | 3.89× | 3.51× |
+| Unchanged-control change | −0.653 percentage points | −0.427 percentage points |
+
+Frozen shifted accuracy was 77.255%; iterative IM30 was 78.167%. Thus compact saved time but did not exceed iterative accuracy. A-D had similar shifted means and much higher preprocessing costs here. Three-seed SD measures repeated training variability, not confidence over new graphs: we still used one validation GNN checkpoint and graph lineage.
+
+One subtle fairness point: compact/structural also receive the raw weights at the sites they update. Changing head to backbone changes that input too. Such a scope comparison cannot isolate the effect of update sites alone. Our planned A-D comparison keeps input definitions independent of update sites; direct backbone/all coordinates still are not LoRA.
+
+Do not translate this result into a claim that a generator will always help or that compact is the chosen Arxiv design. Keep controls and the frozen model in the report. The immediate research checkpoint establishes reproducible software and a measured speed/accuracy trade-off on this CSBM workload.
