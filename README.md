@@ -2,13 +2,13 @@
 
 Research project for Advanced Foundations of Machine Learning (UE24AM342AA1), PES University.
 
-We investigate whether an offline-trained generator can predict small parameter updates for a pretrained GNN on an unlabeled shifted target graph, without target-time gradient optimization. This branch implements a CSBM direct-update hypernetwork/diffusion prototype alongside the existing iterative head/LoRA baselines. Generated LoRA has passed component/CLI validation on this integration branch; the planned real-graph studies remain future work.
+We investigate whether an offline-trained generator can predict small parameter updates for a pretrained GNN on an unlabeled shifted target graph, without target-time gradient optimization. This branch implements a CSBM direct-update hypernetwork/diffusion prototype alongside the existing iterative head/LoRA baselines. Generated LoRA has passed component, complete-checkpoint and numerical replay validation on this integration branch; the planned real-graph studies remain future work.
 
 Deeptanshu owns GCN experiments; teammates handle GAT and GraphSAGE. At the owner's request, the shared codebase now implements all three architectures with the same data/training/bank interfaces.
 
 ## Implemented and verified
 
-- **Latest integration:** generated-LoRA support and 431 CPU tests; 36 matched head/LoRA fits and 432 saved cases passed independent replay; the additional same-checkpoint full-fine-tuning diagnostic is next. The preceding integration had 408 tests; portable shared comparisons; 30 matched GCN configurations and 360 independently replayed cases. Compact complete-pipeline ratios were 3.89× hypernetwork / 3.51× diffusion, with unchanged-control losses. See [current results and limits](docs/PROJECT_STATE.md#completed-integration-checkpoint).
+- **Latest integration:** generated head/LoRA for both generators on all three GNNs; 431 full-suite tests plus the expanded CLI checks; 36 generator fits and 780 independently replayed saved update cases. Hyper-LoRA's complete CPU pipeline was 18.09–25.75× faster than matched LoRA IM30, with architecture-dependent accuracy tradeoffs. See [verified results and limitations](docs/PROJECT_STATE.md#completed-generated-lora-comparison).
 - **CSBM only:** balanced two-class Gaussian graphs with explicit connection probabilities, independent edge/feature/split RNG streams, and recorded generation settings.
 - CPU PyG graphs, separate ground truth, named split indices, explicit source/meta-training/validation/target roles.
 - Stratified source splits, initially 60/20/20; held-out graphs expose an eval-only split. Full graph context is preserved; split indices select supervision, not induced subgraphs.
@@ -406,16 +406,13 @@ methods in the JSON plan; use separate scope plans. This covers the experiments
 in the contributor's five scripts without adopting their hardcoded paths or
 partial timers. The original scripts/results remain in [scratch/](scratch/README.md).
 
-`compact` means hidden means/stds and E/N, plus separate raw update-site weights.
+The legacy/default `compact` recipe means hidden means/stds and E/N, plus separate raw update-site weights. The matched head/LoRA configs explicitly set `include_raw_weights=false`, retaining only the shared hidden summary.
 `structural` adds hidden edge/dispersion statistics and also retains those weights.
 A-D disable the extra raw-weight input. Compact is a reference method alongside
 A-D, not another step in the nested A-D ablation. Neither direct `backbone` nor
 `all` deltas are generated LoRA.
 
-All scopes report complete generated latency. The standalone benchmark omits
-an iterative ratio for broader scopes because its optimizer updates only the
-head. Review tables retain IM-head accuracy/latency as a clearly named reference,
-with matched speedup and break-even left blank for broader generated updates.
+All scopes report complete generated latency. Broader **direct-coordinate** scopes have no matched optimizer in this benchmark; their head-IM reference has no matched speedup or break-even claim. Explicitly tagged generated-LoRA checkpoints are compared with the matching iterative LoRA adapter.
 Training CLI `--threads` defaults to one and is recorded.
 
 The bounded matched study keeps the previous scientific training recipe and
