@@ -1,21 +1,52 @@
 # Project state
 
-Last updated: 2026-10-30. Stage: **Sunday adaptation/delta checkpoint completed on CPU.** GCN, GAT and GraphSAGE have head/LoRA, frozen baselines, supervised-development and unlabeled objectives, complete sweeps and2,052 independently audited delta artifacts.213 tests passed. Generators and held-out research evaluation remain future work; Colab setup exists but CUDA remains unexecuted.
+Last updated: 2026-11-07. Current milestone: **generator prototype repair and validation**, implemented on the `generator` branch after explicit owner approval. The actual system remains CSBM; generated LoRA, five-candidate diffusion selection and real-graph experiments remain future milestones. CUDA/MPS execution remains unverified.
 
-Last updated: 2026-11-03. Stage: **Phase 2 Amortized Weight Adaptation Pipeline Implemented & Verified** — HeadAdapterGenerator (hypernetwork), size-invariant GraphShiftDescriptor, meta-training loop with configurable environment/model controls, human-readable report formatting, and full uv integration. 165 automated tests passed.
+## Integration in progress
 
+Owner approved a new local integration branch and reviewed commits. `integration/generator-audit-fixes` starts at c137e28 and carries the previously verified repairs without changing the original repair checkout. Its combined repair tree passed 392 CPU tests. Portable shared comparisons and a matched compact-descriptor validation study are next; push/merge remain unauthorized.
 
-## Current scope and decision
+The c137e28 upload adds five experiment scripts and five result files, with no core changes. Independent arithmetic checks passed 2,205 relationships across 612 full-comparison records. The 44.49× GCN ratio is traceable, but generator timers omit adapted prediction and the compact diffusion timer also omits conditioning. The 64-feature experiment and our 2,000-feature validation study are different workloads.
 
-The owner explicitly authorized implementing the amortized weight adaptation pipeline on 2026-11-03, requesting:
-1. GNN feature extraction to form fixed-size input vectors for an MLP hypernetwork.
-2. Generator predicting parameter deltas for each (pretrained GNN, shifted graph) pair.
-3. User control over model and environment counts.
-4. Informative docstrings throughout the implementation.
-5. Human-readable validation and test reports.
-6. Full compatibility with `uv`.
+## Completed repair milestone
 
-This is implemented under [Decision D8](DECISIONS.md#implemented-decision-d8--amortized-head-only-weight-adaptation-generator-2026-11-03). All 165 tests pass via `uv run pytest`. An end-to-end execution check achieved +2.34% accuracy gain across target test environments.
+Implemented: atomic complete inference checkpoints and reload; numerical/schema guards; restored 57 regression cases; deterministic selection/statistic tests; caller-state/autograd preservation; saved partition/cap/seed handling; validation-default CLI with explicit final-evaluation gate; stable imports; short-linear-schedule restriction; versioned A-D descriptor definitions; bounded-memory edge statistics; shared encoder computation, within-event frozen-feature reuse for generated head predictions and frozen-head teacher reuse; explicit static D fingerprint caching; independent whole-pipeline benchmark and a predeclared three-seed development review.
+
+Verification completed on local CPU: **392 automated tests passed** (including the restored 57 cases, all-architecture/scope/input training matrix, forced selection paths, numerical/schema guards, complete non-default checkpoints, actual CLI workflows and frozen-feature parity). Compileall and complete diff/whitespace review passed. The small complete-review/reuse workflow and independent reconstruction smoke also passed.
+
+The predeclared paper-sized review completed **72 configurations** (3 architectures × A-D × 2 generators × 3 seeds), with **864 saved cases**. Thirty completed compatible training checkpoints were reused after exact generated-delta/configuration/identity checks; all prediction and timing checks reran. Partial training was never resumed. Independent manual named-weight reconstruction verified every source/graph/checkpoint identity, requested/effective delta, final head tensor, prediction, accuracy, per-case aggregate and raw-timing median. Maximum logit replay error and accuracy mismatch count were both zero. The largest requested-versus-effective float32 delta difference was 2.9802322387695312e-08, not an artifact error.
+
+**Research verdict:** the repaired prototype runs correctly on tested inputs, but this workload does not demonstrate an amortized online speedup. Every A-D grouped speed ratio is below 1 against the improved cached IM30 baseline. Mean shifted accuracy improves; unchanged-control harm remains. Hypernetwork CE and diffusion teacher-MSE have different objectives/budgets; no definitive generator ranking or optimal accuracy claim follows.
+
+Fixed D reference (not an input selection for the later Arxiv study); ± is sample SD across three generator seeds:
+
+| Architecture | Frozen | IM30 | Hypernetwork D | Diffusion D |
+| --- | ---: | ---: | ---: | ---: |
+| gcn | 77.255% | 78.167% | 78.061 ± 0.004% | 78.099 ± 0.011% |
+| gat | 77.447% | 77.445% | 77.684 ± 0.015% | 77.679 ± 0.017% |
+| graphsage | 79.316% | 80.251% | 81.033 ± 0.031% | 80.724 ± 0.029% |
+
+| Architecture | Hyper D pipeline / speed ratio | Diffusion D pipeline / speed ratio |
+| --- | ---: | ---: |
+| gcn | 93.89ms / 0.577× | 95.37ms / 0.580× |
+| gat | 97.61ms / 0.798× | 100.52ms / 0.799× |
+| graphsage | 176.20ms / 0.790× | 178.94ms / 0.786× |
+
+Speed ratio is mean IM latency divided by mean generated latency across the same four declared timed conditions and three seeds; below 1 means slower. Accuracy excludes the control and averages eleven shifted validation conditions. D control losses were hypernetwork/diffusion: GCN −0.307/−0.720pp, GAT −0.927/−1.113pp, GraphSAGE −3.120/−2.093pp. Harm counts across repeated shifted cases were 15/15, 15/15 and 12/13 out of 33 respectively. These are related conditions and repeated seeds, not 33 independent graph draws.
+
+One held-out GNN checkpoint and one validation graph lineage per architecture are used. The three training checkpoints share GNN initialization seed 31 across source-label subsets; only generator training seeds vary. Hypernetwork uses 180 optimizer updates; diffusion 15 denoiser updates plus 1,080 teacher steps. Both use five epochs, which is not equal compute. Current updates are head coordinates, not generated LoRA; diffusion uses one candidate. No final model/environment group was scored.
+
+Evidence (ignored runtime outputs): `runs/generator-repair-review-v5/VERIFIED_REVIEW.md`, `AGGREGATED_RESULTS.csv`, per-seed/per-case/raw timing files, complete checkpoints, actual weight deltas, code snapshots, `PLAN.json`, `HARDWARE.json` and `INDEPENDENT_REPLAY.json`. Reproduce using `examples/run_generator_review.py` and `examples/replay_generator_review.py`; individual checkpoints can be benchmarked with `examples/benchmark_adapters.py`. Hardware: Intel Core Ultra 5 125H, one numerical thread, Python 3.13.13 / Torch 2.13.0+cpu / PyG 2.8.1 / NumPy 2.3.5. CUDA/MPS are unexecuted. CPU sampled RSS includes resident review data/models and is not an exact incremental deployment peak.
+
+A matched one-graph preprocessing probe (5,000 nodes,2,000 features) reduced raw-summary median from 253.17 ms to 80.12 ms (~3.16×), with numerical parity. This is a component measurement, not a pipeline speedup. The unchanged iterative core moved to a normal module with only relative-import changes; its benchmark avoids extra export/prediction bookkeeping. Additional architecture-specific aggregation caching is not implemented, so the baseline is a documented implementation, not an optimal lower bound. The contributor timing recipe is now published at c137e28; its component ratios are internally consistent, while full model/graph replay still requires the matching artifacts and seeds.
+
+The original interrupted optimization runs are preserved with explicit interruption reasons. Existing audit snapshots and main checkout edits remain untouched. The repair was uncommitted before the current integration checkpoint; push/merge remain unauthorized.
+
+The canonical timing protocol and descriptor decisions are in [D12](DECISIONS.md#implemented-decision-d12--generator-reliability-descriptors-and-runtime-2026-11-07). `configs/generator_csbm_review.json` fixes the development study before scores. Existing audit snapshots and all prior numerical evidence remain outside Git and unchanged. The owner now authorizes reviewed local integration commits; no push or merge is authorized.
+
+## Historical implementation milestones
+
+The original generator branch reported 165 tests and +2.34 accuracy gain. That exact run was under-specified and was not independently reproduced. Later audits executed 191/202 branch tests, separately recovered the deleted 57 cases, and replayed 216/288 saved validation updates. These counts describe different revisions and are not the current suite count. The new review is neither a reproduction of that undocumented accuracy claim nor of the historical component-timing experiment, now published at c137e28.
 
 The owner subsequently requested the small source-GCN training and evaluation pipeline using this loader. That milestone is now implemented without new dependencies. Source-validation cross-entropy selects the checkpoint; source-test and target labels are scored only after fitting. See [Decision D2](DECISIONS.md#implemented-decision-d2--small-source-gcn-baseline-2026-10-25).
 
@@ -60,7 +91,7 @@ Under that delegated authority, selected the released Matcha-code CSBM distribut
 | Meta-training loop | src/amortized_gnn_tta/adaptation/meta_trainer.py | Multi-pair training over (model, graph) combinations, configurable model/env caps, validation checkpoint selection |
 | Human-readable adaptation evaluator | src/amortized_gnn_tta/adaptation/evaluator.py | Strict unlabeled evaluation, net accuracy gain tracking, human-readable Markdown/ASCII tables broken down by shift family and severity |
 | Adaptation runner example | examples/train_adapter.py | End-to-end CLI with user-controlled limits, generator checkpoint saving, and Markdown report output |
-| Adaptation tests | tests/test_adaptation.py | Descriptor shapes, zero-init verification, gradient flow to generator, parameter schema unflattening, and report formatting |
+| Iterative/generator tests | tests/test_adaptation.py, test_generator.py, test_diffusion.py, test_generator_reliability.py, test_generator_cli.py | Restored core adaptation coverage, exact-statistic/selection guards, all-architecture training matrix, real save/reload and benchmark workflows |
 
 Held-out graphs have eval-only indices; training_labels rejects validation/target roles. The loader preserves full graph context and does not add self-loops or model-specific normalization. Paired shifts are a separate explicit API; the original independent loader and source banks are unchanged. No persistent graph cache exists.
 
@@ -208,7 +239,7 @@ Tests cover all eleven definitions, exact feature/edge preservation, class-cente
 
 Owner authorized tasks1–5 and the initial-versus-adapted-weight review checkpoint on 2026-10-30. The syntax-corrupting accidental insertion in weight_bank.py was restored to the committed allow_nan=False expression; unrelated handbook formatting is preserved. Separate official LoRA/Tent/SHOT clones were inspected, remain outside the repository, and supply the mechanisms documented in D8/THIRD_PARTY_NOTICES.md. No dependency/global environment changes.
 
-New adaptation.py provides explicit head/LoRA sites for all three models, frozen original weights, zero-initialized effective updates, deterministic local factor RNGs, supervised development train/validation selection including step0, and fixed-budget label-free entropy/information-maximization fitting. adaptation_artifacts.py writes actual initial/adapted/delta matrices and factors, validates frozen sites/hashes, and reconstructs ordinary model predictions after CPU reload. No held-out label access enters fitting.
+The original adaptation.py (now adaptation/iterative.py under D12) provides explicit head/LoRA sites for all three models, frozen original weights, zero-initialized effective updates, deterministic local factor RNGs, supervised development train/validation selection including step0, and fixed-budget label-free entropy/information-maximization fitting. adaptation_artifacts.py writes actual initial/adapted/delta matrices and factors, validates frozen sites/hashes, and reconstructs ordinary model predictions after CPU reload. No held-out label access enters fitting.
 
 The core checkpoint has39 new core/artifact checks plus the prior158 checks:197 tests, independently verified from the staged source snapshot. A standalone comparison against the actual official LoRA Linear class verified forward and A/B gradients, and SHOT loss arithmetic was independently checked. CPU only; CUDA/MPS remain unverified. The development runner and complete three-architecture experimental evidence are the next delivery checkpoint, not part of this core commit. The owner requested reasonably sized verified commits/pushes, then separately approved Colab support for longer compute runs as another setup milestone.
 

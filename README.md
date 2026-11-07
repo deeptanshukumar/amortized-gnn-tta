@@ -2,7 +2,7 @@
 
 Research project for Advanced Foundations of Machine Learning (UE24AM342AA1), PES University.
 
-We investigate whether an offline-trained generator can predict small parameter updates for a pretrained GNN on an unlabeled shifted target graph, without target-time gradient optimization. Generator training remains future work. Head-only and low-rank iterative adaptation now provide the next foundation.
+We investigate whether an offline-trained generator can predict small parameter updates for a pretrained GNN on an unlabeled shifted target graph, without target-time gradient optimization. This branch implements a CSBM direct-update hypernetwork/diffusion prototype alongside the existing iterative head/LoRA baselines. Generated LoRA and the planned real-graph studies remain future work.
 
 Deeptanshu owns GCN experiments; teammates handle GAT and GraphSAGE. At the owner's request, the shared codebase now implements all three architectures with the same data/training/bank interfaces.
 
@@ -14,10 +14,10 @@ Deeptanshu owns GCN experiments; teammates handle GAT and GraphSAGE. At the owne
 - Allowlisted, cloned target inputs without labels or diagnostic metadata. Training-label access rejects held-out environments.
 - Paired attribute, structural and combined CSBM shifts; saved whole-lineage environment partitions, severity holdouts, optional family holdouts, and sequential construction audits.
 - Head-only/LoRA updates for all three models, explicit supervised-development and label-free objectives, and validated initial/adapted/delta artifacts.
-- Core/data/model/bank/adaptation/compute-workflow verification: **227 tests**, including a separate supervised full-fine-tuning diagnostic; actual numerical execution is CPU-verified. A Colab notebook/device probe is provided; CUDA is not yet verified here.
+- The historical core milestone had **227 tests**, including the supervised full-fine-tuning diagnostic. Current generator-repair verification and results are recorded in [project state](docs/PROJECT_STATE.md); numerical execution is CPU-verified. A Colab notebook/device probe is provided; CUDA is not yet verified here.
 - Small and paper-sized (5,000 nodes × 2,000 features per graph) data/interface examples executed successfully.
 
-**The CSBM pretraining/bank foundation is verified for GCN, GAT and GraphSAGE:** shared loading/training/evaluation, a full-budget 30-model bank per architecture, validated artifact loading, saved 18/6/6 partitions, and weight/prediction/representation diagnostics. PEFT core support is described below; generators and other datasets remain later work. These development runs are not final paper benchmarks.
+**The CSBM pretraining/bank foundation is verified for GCN, GAT and GraphSAGE:** shared loading/training/evaluation, a full-budget 30-model bank per architecture, validated artifact loading, saved 18/6/6 partitions, and weight/prediction/representation diagnostics. PEFT and the CSBM generator prototype are described below; real datasets and generated LoRA remain later work. These development runs are not final paper benchmarks.
 
 GAT and GraphSAGE implementations now use those same entry points. Architecture-specific definitions and commands are below; matching hidden dimensions does not imply matching parameter budgets or optimal tuning for each model.
 
@@ -109,7 +109,7 @@ target_graph = bundle.unlabeled_input(item["id"])
 
 Meta-training environments retain train/val/test node splits; validation/test environments have eval-only labels. The original source-training helper continues to reject meta/held-out roles. A future meta-training loop must explicitly consume permitted meta-training supervision. The existing independent load_dataset API and pretrained banks are unchanged. Construction uses latent synthetic classes offline; it is not a label-free real-graph corruption procedure.
 
-Both small and paper-sized full suites passed construction audits. These audits concern data construction; development adaptation results are recorded below. Generator training remains future work.
+Both small and paper-sized full suites passed construction audits. These audits concern data construction; development adaptation results are recorded below. The CSBM generator prototype is documented below; real-data studies remain future work.
 
 ## Select an architecture
 
@@ -355,24 +355,61 @@ The comparison tool validates complete matching pair grids, plans, bank/manifest
 All six separate full-weight sweeps completed: **432 new artifacts independently audited**, with zero CPU replay accuracy differences. On the broad99 shifted pairs, full-weight means were 81.21%/80.30%/86.10% for GCN/GAT/GraphSAGE, gains2.85/2.36/5.81 percentage points over frozen models. The longer check selected identical final weights to the40-step runs on every matched case. See [full comparisons and limitations](docs/PROJECT_STATE.md#separate-supervised-full-fine-tuning-diagnostic).
 
 This is a supervised development diagnostic, not a label-free result or a proven accuracy ceiling. Shared optimizer settings need not be equally optimal for every update method. Full fitting leaves additional recovery over LoRA for GraphSAGE under these settings; it adds little over head-only GCN/GAT and does not resolve their homophily-only weakness.
-## Train and evaluate the adaptation generator (Phase 2)
+## Train and benchmark the CSBM generator prototype
 
-Train the [`HeadAdapterGenerator`](src/amortized_gnn_tta/adaptation/generator.py) hypernetwork on meta-training pairs and evaluate test-time adaptation on held-out target environments.
-
-Using `uv`:
+Both hypernetwork and diffusion can generate direct deltas for `head`, `backbone` or `all` sites on GCN, GAT and GraphSAGE. These are ordinary coordinate updates, not generated LoRA. The numerical repair review uses head-only updates and one diffusion candidate. Validation chooses checkpoints; final labels are not scored by default.
 
 ~~~bash
-# Fast test run with user-controlled limits:
-uv run python examples/train_adapter.py \
-    --bank runs/small-bank \
-    --manifest runs/matched-small-shifts/environment_manifest.json \
-    --output-dir runs/adapter-run \
-    --epochs 5 \
-    --max-environments 10 \
-    --max-models 3
+python examples/train_adapter.py \
+  --bank runs/gcn-bank-phase1 \
+  --model-partition runs/phase1-complete/model_partition.json \
+  --manifest runs/controlled-shifts-paper-v1/environment_manifest.json \
+  --output-dir runs/generator-gcn-D \
+  --generator hypernetwork --conditioning D --scope head \
+  --epochs 5 --max-models 3 --max-environments 12 --seed 202801
+
+python examples/benchmark_adapters.py \
+  --checkpoint runs/generator-gcn-D/generator_best.pt \
+  --bank runs/gcn-bank-phase1 \
+  --model-partition runs/phase1-complete/model_partition.json \
+  --manifest runs/controlled-shifts-paper-v1/environment_manifest.json \
+  --output-dir runs/generator-gcn-D-timing --steps 30 --repeats 15
 ~~~
 
-The CLI accepts `--max-environments` and `--max-models` so you can control execution time. `--output-dir` is optional: when provided, it saves `ADAPTATION_REPORT.md` and `generator_best.pt`; when omitted, the full evaluation report is dumped directly to the terminal without writing to disk. When omitted, `--max-environments` and `--max-models` run across the full 18 meta-training models and 69 meta-training environments ($1,242$ adaptation pairs).
+Use `--generator diffusion` to select the cosine x0/DDIM generator; record `--diffusion-steps`, `--sampling-steps`, `--oracle-steps` and `--sampling-seed`. Initialization/training seeds are separate. The saved partition is required; it is never recreated implicitly. Caps apply to every loaded role and are debug subsamples, not guaranteed lineage/severity-balanced studies. Training defaults to validation evaluation. `--final-evaluation` explicitly opens held-out scoring; do not use it during tuning.
+
+The training CLI requires a new output directory; interactive in-memory training remains available through the library APIs. Checkpoints are saved atomically during training, before report writing, with constructor settings, descriptor version, exact schema, sampling settings, hashes, seeds and provenance. `load_generator_checkpoint` reconstructs inference; legacy incomplete files require an explicit migration recipe. This does not resume optimizer state. Run JSON records failures and preserves completed artifacts.
+
+Conditioning v2: A=raw graph; B=A+hidden summaries; C=B+predictive uncertainty; D=C+12 explicit full-model weight statistics. D's weight scope is independent of update sites. Directed isolated nodes have no incoming or outgoing edge. E/N is mean stored outgoing degree, not density. The retained-top-two spectral ratio is a heuristic, not a condition number. Feature/class mismatches fail rather than silently pad/truncate. v1 remains an explicit replay definition; equal vector length does not imply compatible semantics.
+
+The benchmark's main metric is **wall time from a canonical CPU target graph and resident models to usable adapted predictions**. Required target preprocessing, transfer, generator/iterative work, update application and prediction count. Disk loading, benchmark construction, offline training, label scoring and report I/O are separate. A prepared-input generator microbenchmark is diagnostic only. Static D fingerprints may be prepared once per unchanged source checkpoint, with setup time reported; target-specific descriptors are recomputed in every event. Head IM caches frozen features inside each event. Generated head-only predictions also reuse the exact first-layer features already computed for B-D conditioning, within that same event. Broader updates recompute their changed backbone. Raw repetitions, first-event/warm times, separate stage profiles and memory observations are saved. CPU RSS is sampled at 5ms and is a lower bound on peak process memory, not an exact per-operation allocation peak. CUDA/MPS timing paths exist but are unverified here.
+
+The reproducible repair review fixes its configuration before scoring:
+
+~~~bash
+python examples/run_generator_review.py \
+  --config configs/generator_csbm_review.json \
+  --artifact-root /path/to/checkout-containing-existing-runs \
+  --output-dir runs/generator-repair-review-v2
+~~~
+
+For an inference-equivalent optimization, `--reuse-completed-from /path/to/prior-review` can reuse only completed compatible checkpoints after configuration/identity checks and exact generated-delta agreement; partial training is never resumed. Every prediction/timing measurement is rerun in a new output directory.
+
+It spans three architectures, A-D, both generators and three generator seeds; training uses one seed-31 model from each permitted source-subset group. An independent validation checkpoint and validation lineage are used. Hypernetwork CE and diffusion teacher-MSE have different budgets, so this is development verification rather than a definitive generator ranking. The historical +2.34 run remains under-specified. Commit c137e28 published the timing scripts/results: their arithmetic is verified, but their component timings are not complete-pipeline speedups. Exact replay still needs matching artifacts and recorded initialization/hardware; do not substitute this review for that experiment. Run `python examples/replay_generator_review.py --review-dir runs/generator-repair-review-v2` after completion for independent named-weight reconstruction, metric/timing checks, and `VERIFIED_REVIEW.md`/`AGGREGATED_RESULTS.csv`. See [D12](docs/DECISIONS.md#implemented-decision-d12--generator-reliability-descriptors-and-runtime-2026-11-07).
+
+### Verified repair checkpoint
+
+**392 CPU tests; 72 development configurations; 864 independently replayed saved cases with zero logit/accuracy mismatch.** All tested A-D groups are slower end to end than the documented cached IM30 baseline on this 5,000-node/2,000-feature CPU workload, despite faster preprocessing. Average shifted accuracy improves modestly; unchanged controls can regress. No final-test, generated-LoRA, five-candidate or real-graph result is implied.
+
+Fixed D reference (mean ± generator-seed SD; not selection of the later Arxiv design):
+
+| Architecture | Frozen | IM30 | Hypernetwork D | Diffusion D |
+| --- | ---: | ---: | ---: | ---: |
+| gcn | 77.255% | 78.167% | 78.061 ± 0.004% | 78.099 ± 0.011% |
+| gat | 77.447% | 77.445% | 77.684 ± 0.015% | 77.679 ± 0.017% |
+| graphsage | 79.316% | 80.251% | 81.033 ± 0.031% | 80.724 ± 0.029% |
+
+See [project state](docs/PROJECT_STATE.md#current-repair-milestone) for timing, budgets and limitations. Full local evidence is in ignored `runs/generator-repair-review-v5/VERIFIED_REVIEW.md` and `AGGREGATED_RESULTS.csv`. Independent replay uses manual named-weight reconstruction and checks raw timing medians; source/code hashes and all raw cases are preserved. The existing main checkout's unrelated handbook formatting remains untouched.
 
 ## Data API
 

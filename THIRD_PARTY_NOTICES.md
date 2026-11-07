@@ -38,3 +38,10 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+
+## Generator equations and timing references
+
+The cosine schedule and x0/DDIM equations in the contributor's prototype were independently checked against [OpenAI improved-diffusion](https://github.com/openai/improved-diffusion/tree/1bc7bbbdc414d83d4abf2ad8cc1446dc36c4e4d5) and the [DDIM author implementation](https://github.com/ermongroup/ddim/tree/e8df66cf02e457719930748b5c26e37e3126dfdd). The repair retains the tested default equations and restricts unsupported short linear schedules. Reference checks are equation validation, not learned-generator performance evidence.
+
+The new reliability guards, exact-schema integration, checkpoint recipes, bounded reductions and benchmark runner are project implementation work. Measurement design is grounded in [Matcha Appendix C.8](https://arxiv.org/abs/2410.06976), [GNN-Diff Appendix I.3](https://arxiv.org/abs/2410.05697), [HyperFlow Figure 4](https://arxiv.org/html/2504.15323), [computational-time-aware TTA](https://arxiv.org/html/2304.04795) and [PyTorch benchmarking documentation](https://docs.pytorch.org/docs/2.13/benchmark_utils.html). These works use different tasks and timing scopes; no upstream timer is copied or represented as an exact equivalent of our protocol. GNN-Diff uses validation labels for candidate selection; that selection rule is not imported into unlabeled deployment. All reference repositories remain external and unmodified.

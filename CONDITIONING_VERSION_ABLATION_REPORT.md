@@ -1,3 +1,7 @@
+> **Historical contributor report.** Commit `c137e28` subsequently published the experiment scripts and JSON results under `scratch/`. Their arithmetic checks passed, including the original approximately 45× screenshot. These are component timing ratios: adapted prediction is outside the generator timers, and the compact full-comparison script also reuses conditioning outside diffusion timing. Exact checkpoint replay still needs the matching artifacts and recorded seeds/hardware. Preserve these tables; use the repaired complete-pipeline benchmark for current performance claims.
+>
+> These viewed test scores are development evidence. Input/scope rankings are provisional, direct all-weight updates are not LoRA, and the historical spectral ratio is not a condition number.
+
 # Conditioning Version Ablation Report: Amortized TTA vs. Fine-Tuning
 
 **Date:** 2026-11-07  

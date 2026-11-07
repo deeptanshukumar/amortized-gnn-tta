@@ -17,10 +17,10 @@ from torch.func import functional_call
 from torch.nn import functional as F
 from torch_geometric.data import Data
 
-from .data import DatasetBundle
-from .data.api import graph_fingerprint
-from .evaluation import select_device, validate_input, validate_logits
-from .models import GAT, GCN, GraphSAGE
+from ..data import DatasetBundle
+from ..data.api import graph_fingerprint
+from ..evaluation import select_device, validate_input, validate_logits
+from ..models import GAT, GCN, GraphSAGE
 
 
 @dataclass(frozen=True)

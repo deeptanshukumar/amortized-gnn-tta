@@ -1,5 +1,17 @@
 # Project instructions
 
+## Current approved integration milestone — 2026-11-07
+
+The owner approved combining the audited repairs with c137e28, portable shared experiment runners, consistent complete-pipeline timing and a bounded matched compact-versus-A-D study. Work on the new `integration/generator-audit-fixes` branch and commit reviewed milestones there. Preserve the original repair checkout, upstream scripts/results and all runtime evidence. This authorizes local commits, not a push or merge. Arxiv integration follows this checkpoint as a separate milestone.
+
+## Prior approved repair milestone — 2026-11-07
+
+The owner approved the consolidated generator repair plan and requested implementation on the existing `generator` branch. This authorizes reliability fixes, versioned descriptor v2, complete checkpoint reconstruction, regression/CLI tests, bounded-memory preprocessing, explicit static-model caching, reproducible whole-pipeline timing and all-architecture CSBM validation reruns. Preserve the audited revisions and main checkout's unrelated handbook edits. No new dependency is required. Commit/push and merging remain separate Git actions; no approval to merge is implied by passing tests.
+
+Primary runtime is canonical target graph plus resident models to usable adapted predictions, including method-required transfer, conditioning, generation/optimization, update application and required prediction/selection. Report complete adaptation-ready time, component diagnostics, first-event/warm timings, memory limitations and offline costs separately. Never headline a prepared-input generator call as whole-pipeline speedup.
+
+The agreed next research roadmap is Arxiv controlled/temporal experiments and separate MAG country generators. Generated LoRA, five-candidate MSE selection and these real-data experiments remain separate milestones. Existing `all` updates are full coordinate deltas, not LoRA. Historical statements below describe their dated scopes, not a prohibition on this subsequently approved repair.
+
 ## Scope and approval
 
 - Project: Amortized Weight Adaptation for Graph Neural Networks under Distribution Shift, an AFML course project with research-paper ambitions.

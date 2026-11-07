@@ -1,51 +1,31 @@
-"""Train and evaluate the Amortized Weight Adaptation Generator on GNNs under distribution shift.
+"""Train a CSBM direct-delta generator; validation-only unless explicitly requested.
 
-Example usage:
-    uv run python examples/train_adapter.py \\
-        --bank runs/phase1-bank \\
-        --manifest runs/controlled-shifts-small/environment_manifest.json \\
-        --output-dir runs/adapter-small \\
-        --epochs 5 \\
-        --max-environments 10 \\
-        --max-models 3
-
-This example runs a fast test run with user-controlled limits, evaluates baseline vs
-adapted models, and outputs a formatted Markdown report and checkpoint.
+Every saved run includes a complete inference recipe. This prototype does not
+implement generated LoRA, five-candidate selection or real-graph experiments.
 """
 
-import argparse
+from dataclasses import asdict
+import hashlib
 import json
-import os
 from pathlib import Path
+import subprocess
 import sys
 
 import torch
 
 from amortized_gnn_tta.adaptation import (
-    DiffusionHeadGenerator,
-    GraphShiftDescriptor,
-    HeadAdapterGenerator,
-    evaluate_adaptation,
-    extract_head_parameters,
-    extract_target_parameters,
-    train_adaptation_generator,
+    DiffusionHeadGenerator, GraphShiftDescriptor, HeadAdapterGenerator,
+    evaluate_adaptation, extract_target_parameters, train_adaptation_generator, subsample_environments,
     train_diffusion_generator,
 )
-from amortized_gnn_tta.bank_artifacts import (
-    artifact_path,
-    create_model_partition,
-    load_model_partition,
-    load_verified_bank,
-)
-from amortized_gnn_tta.data import (
-    CSBMConfig,
-    CSBMEnvironment,
-    load_dataset,
-    load_environment_manifest,
-    load_shift_environment,
-)
-from amortized_gnn_tta.models import ARCHITECTURES, build_model, make_model_spec
-from amortized_gnn_tta.training import load_checkpoint, source_training_data
+from amortized_gnn_tta.adaptation.checkpoints import atomic_json, save_generator_checkpoint, load_generator_checkpoint
+from amortized_gnn_tta.adaptation._validation import training_options
+from amortized_gnn_tta.bank_artifacts import artifact_path, load_model_partition, load_verified_bank
+from amortized_gnn_tta.data import CSBMConfig, CSBMEnvironment, load_dataset, load_environment_manifest, load_shift_environment
+from amortized_gnn_tta.evaluation import select_device
+from amortized_gnn_tta.models import build_model
+from amortized_gnn_tta.training import load_checkpoint, source_training_data, seed_model, software_versions
+import argparse
 
 
 def parse_args():
@@ -56,8 +36,8 @@ def parse_args():
                         help="Directory containing the completed 30-model source weight bank")
     parser.add_argument("--manifest", type=Path, default=root / "runs" / "controlled-shifts-small" / "environment_manifest.json",
                         help="Path to environment manifest JSON (from prepare_shift_environments.py)")
-    parser.add_argument("--output-dir", type=Path, default=None,
-                        help="Directory to save the trained generator and report (optional; if omitted, results are dumped to terminal only)")
+    parser.add_argument("--output-dir", type=Path, required=True,
+                        help="New directory for durable checkpoints, configuration and results; must not exist")
     parser.add_argument("--conditioning", type=str, default="D", choices=["A", "B", "C", "D"],
                         help="Conditioning version: 'A' (target graph only), 'B' (+hidden rep), 'C' (+predictive uncertainty), 'D' (+compact weights)")
     parser.add_argument("--generator", type=str, default="hypernetwork", choices=["hypernetwork", "diffusion"],
@@ -82,205 +62,155 @@ def parse_args():
                         help="Number of DDIM sampling steps during inference (diffusion generator only)")
     parser.add_argument("--oracle-steps", type=int, default=30,
                         help="Steps to fit teacher oracle deltas (diffusion generator only)")
+    parser.add_argument("--model-partition", type=Path, required=True, help="Verified saved model partition; never regenerated implicitly")
+    parser.add_argument("--seed", type=int, default=202701, help="Generator initialization/training seed")
+    parser.add_argument("--sampling-seed", type=int, default=42)
+    parser.add_argument("--training-seed", type=int, default=None, help="Training noise/order seed; default initialization seed + 10000")
+    parser.add_argument("--descriptor-version", choices=["v1", "v2"], default="v2")
+    parser.add_argument("--chunk-size", type=int, default=1024)
+    parser.add_argument("--final-evaluation", action="store_true", help="Explicitly score held-out test roles; default is validation only")
     return parser.parse_args()
 
 
-def load_partitioned_models(bank, partition, model_factory, device="cpu"):
-    """Load model instances grouped by their partition role (meta_train, validation, test)."""
-    roles = ("meta_train", "validation", "test")
-    loaded: dict[str, dict[str, torch.nn.Module]] = {role: {} for role in roles}
-
+def load_experiment(bank_dir, manifest_path, partition_path, *, device="cpu", max_models=None, final_evaluation=False, load_models=True):
+    """Verify inputs before constructing only the requested model roles/IDs."""
+    bank_dir = Path(bank_dir)
+    manifest = load_environment_manifest(Path(manifest_path))
+    subsets_path = bank_dir / "source_subsets.json"
+    if not subsets_path.is_file():
+        raise ValueError("Bank is incomplete: source_subsets.json is required")
+    subsets = json.loads(subsets_path.read_text())
+    config = dict(subsets["source_provenance"]["graph_metadata"]["config"])
+    config["split_ratios"] = tuple(config["split_ratios"])
+    bundle = load_dataset([CSBMEnvironment("source", "source_train", CSBMConfig(**config))])
+    bank = load_verified_bank(bank_dir, source_training_data(bundle, "source"), build_model)
+    partition = load_model_partition(Path(partition_path), bank)
+    if not load_models:
+        return bank, partition, manifest, {}
+    roles = ["meta_train", "validation"] + (["test"] if final_evaluation else [])
+    grouped = {}
     for role in roles:
-        model_ids = partition["model_ids"].get(role, [])
-        for model_id in model_ids:
-            row = next(r for r in bank.manifest["models"] if r["model_id"] == model_id)
-            ckpt_path = artifact_path(bank.directory, row["checkpoint"])
-            model, _ = load_checkpoint(ckpt_path, model_factory, device=device)
-            model.eval()
-            loaded[role][model_id] = model
+        ids = partition["model_ids"][role][:max_models]
+        grouped[role] = {}
+        for model_id in ids:
+            row = next(row for row in bank.manifest["models"] if row["model_id"] == model_id)
+            model, _ = load_checkpoint(artifact_path(bank.directory, row["checkpoint"]), build_model, device=device)
+            grouped[role][model_id] = model.eval()
+        if not grouped[role]:
+            raise ValueError(f"No models selected for {role}")
+    return bank, partition, manifest, grouped
 
-    return loaded
+
+def file_hash(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def code_provenance():
+    root = Path(__file__).resolve().parents[1]
+    def git(*args):
+        return subprocess.run(["git", *args], cwd=root, text=True, capture_output=True, check=True).stdout.strip()
+    # Hash the actual source, including uncommitted fixes and new modules.
+    files = sorted((root / "src").rglob("*.py")) + sorted((root / "examples").glob("*.py"))
+    try:
+        revision, dirty, git_status = git("rev-parse", "HEAD"), bool(git("status", "--porcelain")), "available"
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        revision, dirty, git_status = None, None, "unavailable: exported code or git executable absent"
+    return {"revision": revision, "dirty": dirty, "git_status": git_status,
+            "source_hashes": {str(p.relative_to(root)): file_hash(p) for p in files}}
+
+
+def run(args):
+    training_options(args.epochs, args.lr, args.delta_l2, args.max_models, args.max_environments)
+    device = str(select_device(args.device))
+    if type(args.seed) is not int or not 0 <= args.seed < 2**32:
+        raise ValueError("Generator seed must be in [0,2**32)")
+    if args.training_seed is None:
+        args.training_seed = (args.seed + 10000) % (2**32)
+    seed_model(args.seed)
+    bank, partition, manifest, grouped = load_experiment(args.bank, args.manifest, args.model_partition,
+        device=device, max_models=args.max_models, final_evaluation=args.final_evaluation)
+    sample = next(iter(grouped["meta_train"].values()))
+    flat, schema = extract_target_parameters(sample, args.scope)
+    descriptor = GraphShiftDescriptor(in_channels=sample.config.in_channels,
+        hidden_channels=sample.config.hidden_channels, out_channels=sample.config.out_channels,
+        conditioning=args.conditioning, target_scope=args.scope, descriptor_version=args.descriptor_version,
+        weight_scope="all", chunk_size=args.chunk_size)
+    # Bank reconstruction consumes RNG for temporary models; generator
+    # initialization must depend on its own seed, not on caps or bank size.
+    seed_model(args.seed)
+    kwargs = dict(descriptor_dim=descriptor.output_dim, head_dim=len(flat), hidden_dim=128, include_head_weights=False)
+    if args.generator == "diffusion":
+        generator = DiffusionHeadGenerator(**kwargs, diffusion_steps=args.diffusion_steps,
+            sampling_steps=args.sampling_steps, default_seed=args.sampling_seed)
+    else:
+        generator = HeadAdapterGenerator(**kwargs)
+    provenance = {"arguments": {k: str(v) if isinstance(v, Path) else v for k, v in vars(args).items()},
+        "code": code_provenance(), "software": software_versions(), "torch_threads": torch.get_num_threads(),
+        "bank_manifest_sha256": file_hash(args.bank / "bank.json"),
+        "model_partition_sha256": file_hash(args.model_partition),
+        "environment_manifest_sha256": file_hash(args.manifest), "model_partition": partition,
+        "selected_model_ids": {role: list(models) for role, models in grouped.items()},
+        "selected_environment_ids": {role: [e["id"] for e in subsample_environments([e for e in manifest["environments"] if e["role"] == role], args.max_environments)] for role in ["meta_train", "validation"] + (["target_test"] if args.final_evaluation else [])},
+        "effective_training": {"hypernetwork_weight_decay": 1e-4, "diffusion_batch_size": 16, "diffusion_target_std_floor": 1e-3, "oracle_lr": .01, "optimizer": "Adam"},
+        "selection": "mean validation accuracy; strict improvement, otherwise initial candidate",
+        "evaluation_role": "target_test" if args.final_evaluation else "validation"}
+    print(f"Verified {len(bank.manifest['models'])} bank models; selected " + str(provenance["selected_model_ids"]))
+    if args.output_dir:
+        atomic_json(args.output_dir / "run.json", {"status": "running", **provenance})
+        # Capture the actual code as well as its hashes for dirty-run replay.
+        import zipfile
+        root = Path(__file__).resolve().parents[1]
+        with zipfile.ZipFile(args.output_dir / "code_snapshot.zip", "x") as archive:
+            for name in provenance["code"]["source_hashes"]:
+                archive.write(root / name, name)
+    def checkpoint(state, history):
+        if args.output_dir:
+            save_generator_checkpoint(args.output_dir / "generator_best.pt", generator, descriptor, schema,
+                target_scope=args.scope, provenance=provenance, history=history, state_dict=state, overwrite=True)
+    training_seed = args.training_seed if args.training_seed is not None else (args.seed + 10000) % (2**32)
+    if type(training_seed) is not int or not 0 <= training_seed < 2**32:
+        raise ValueError("Training seed must be in [0,2**32)")
+    seed_model(training_seed)
+    common = dict(models=grouped["meta_train"], manifest=manifest, load_env_fn=load_shift_environment,
+        descriptor=descriptor, generator=generator, epochs=args.epochs, lr=args.lr,
+        delta_l2_reg=args.delta_l2, max_environments=args.max_environments, max_models=args.max_models,
+        val_models=grouped["validation"], device=device, target_scope=args.scope, checkpoint_callback=checkpoint)
+    result = (train_diffusion_generator(**common, oracle_steps=args.oracle_steps)
+              if args.generator == "diffusion" else train_adaptation_generator(**common))
+    generator.load_state_dict(result.best_state_dict)
+    if args.output_dir:
+        restored, restored_descriptor, _ = load_generator_checkpoint(args.output_dir / "generator_best.pt", model=sample, device=device)
+        graph = next(row for row in manifest["environments"] if row["role"] == "validation")
+        inputs = load_shift_environment(manifest, graph["id"]).unlabeled_input(graph["id"]).to(device)
+        with torch.no_grad():
+            torch.testing.assert_close(restored(restored_descriptor(sample, inputs), flat), generator(descriptor(sample, inputs), flat), rtol=0, atol=0)
+    role = "target_test" if args.final_evaluation else "validation"
+    models = grouped["test" if args.final_evaluation else "validation"]
+    records, report = evaluate_adaptation(models, manifest, load_shift_environment, descriptor, generator,
+        role=role, max_environments=args.max_environments, device=device, target_scope=args.scope,
+        allow_final_evaluation=args.final_evaluation)
+    print(report)
+    if args.output_dir:
+        atomic_json(args.output_dir / "pair_results.json", [asdict(r) for r in records])
+        (args.output_dir / "ADAPTATION_REPORT.md").write_text(report, encoding="utf-8")
+        atomic_json(args.output_dir / "run.json", {"status": "complete", "training_wall_seconds": result.total_time_seconds, "teacher_wall_seconds": result.teacher_time_seconds, "optimizer_updates": result.optimizer_steps, "selected_epoch": result.selected_epoch, **provenance})
+    return result
 
 
 def main():
     args = parse_args()
-
-    if args.output_dir is not None and args.output_dir.exists():
-        sys.exit(f"Error: Output directory '{args.output_dir}' already exists. Use a new directory.")
-
-    print("=" * 80)
-    print("AMORTIZED GNN TEST-TIME ADAPTATION: GENERATOR TRAINING & EVALUATION")
-    print("=" * 80)
-
-    # 1. Load Environment Manifest
-    print(f"\n[1/5] Loading Environment Manifest from '{args.manifest}' ...")
-    if not args.manifest.exists():
-        sys.exit(f"Error: Environment manifest not found at '{args.manifest}'.\n"
-                 f"Generate it first via: python examples/prepare_shift_environments.py --output-dir {args.manifest.parent}")
-
-    manifest = load_environment_manifest(args.manifest)
-    total_envs = len(manifest["environments"])
-    print(f"      Manifest loaded successfully ({total_envs} environments total).")
-
-    # 2. Load Pretrained Bank and Partition
-    print(f"\n[2/5] Loading Pretrained Source Bank from '{args.bank}' ...")
-    if not args.bank.exists():
-        sys.exit(f"Error: Pretrained bank directory not found at '{args.bank}'.\n"
-                 f"Train it first via: python examples/train_weight_bank.py --output-dir {args.bank}")
-
-    subsets_file = args.bank / "source_subsets.json"
-    if subsets_file.exists():
-        subset_manifest = json.loads(subsets_file.read_text(encoding="utf-8"))
-        source_cfg = dict(subset_manifest["source_provenance"]["graph_metadata"]["config"])
-    else:
-        protocol = json.loads(args.config.read_text(encoding="utf-8"))
-        source_cfg = dict(protocol["source"])
-        if "from_matcha" in source_cfg:
-            del source_cfg["from_matcha"]
-
-    source_cfg["split_ratios"] = tuple(source_cfg["split_ratios"])
-    source_csbm = CSBMConfig(**source_cfg) if "p_in" in source_cfg else CSBMConfig.from_matcha(**source_cfg)
-    bundle = load_dataset([CSBMEnvironment("source", "source_train", source_csbm)])
-    source_data = source_training_data(bundle, "source")
-
-    bank = load_verified_bank(args.bank, source_data, build_model)
-    partition = create_model_partition(bank, seed=401)
-
-    print(f"      Bank verified (30 models). Partition: "
-          f"{len(partition['model_ids']['meta_train'])} meta-train, "
-          f"{len(partition['model_ids']['validation'])} validation, "
-          f"{len(partition['model_ids']['test'])} test.")
-
-    # 3. Materialize Models in Memory
-    print("\n[3/5] Instantiating GNN Models ...")
-    grouped_models = load_partitioned_models(bank, partition, build_model, device=args.device)
-
-    # Inspect target parameters on sample model to configure generator
-    sample_model = next(iter(grouped_models["meta_train"].values()))
-    target_flat, schema = extract_target_parameters(sample_model, scope=args.scope)
-    target_dim = len(target_flat)
-    hidden_dim = sample_model.config.hidden_channels
-
-    in_channels = sample_model.config.in_channels
-    out_channels = sample_model.config.out_channels
-    descriptor = GraphShiftDescriptor(
-        in_channels=in_channels,
-        hidden_channels=hidden_dim,
-        out_channels=out_channels,
-        conditioning=args.conditioning,
-        target_scope=args.scope,
-    )
-    include_head_weights = (args.conditioning is None)
-    if args.generator == "diffusion":
-        generator = DiffusionHeadGenerator(
-            descriptor_dim=descriptor.output_dim,
-            head_dim=target_dim,
-            hidden_dim=128,
-            diffusion_steps=args.diffusion_steps,
-            sampling_steps=args.sampling_steps,
-            include_head_weights=include_head_weights,
-        )
-    else:
-        generator = HeadAdapterGenerator(
-            descriptor_dim=descriptor.output_dim,
-            head_dim=target_dim,
-            hidden_dim=128,
-            include_head_weights=include_head_weights,
-        )
-    print(f"      Generator Architecture: {args.generator.upper()}")
-    print(f"      Adaptation Scope: {args.scope.upper()}")
-    print(f"      Conditioning Version: {args.conditioning.upper()}")
-    print(f"      Descriptor Vector Size: {descriptor.output_dim}")
-    print(f"      Target Parameter Count: {target_dim} ({len(schema)} tensors: {[s[0] for s in schema]})")
-    print(f"      Generator Total Trainable Weights: {sum(p.numel() for p in generator.parameters())}")
-
-    # 4. Meta-Training
-    print("\n[4/5] Executing Generator Meta-Training ...")
-    if args.generator == "diffusion":
-        train_res = train_diffusion_generator(
-            models=grouped_models["meta_train"],
-            manifest=manifest,
-            load_env_fn=load_shift_environment,
-            descriptor=descriptor,
-            generator=generator,
-            epochs=args.epochs,
-            lr=args.lr,
-            oracle_steps=args.oracle_steps,
-            delta_l2_reg=args.delta_l2,
-            max_environments=args.max_environments,
-            max_models=args.max_models,
-            val_models=grouped_models["validation"],
-            device=args.device,
-            verbose=True,
-            target_scope=args.scope,
-        )
-    else:
-        train_res = train_adaptation_generator(
-            models=grouped_models["meta_train"],
-            manifest=manifest,
-            load_env_fn=load_shift_environment,
-            descriptor=descriptor,
-            generator=generator,
-            epochs=args.epochs,
-            lr=args.lr,
-            delta_l2_reg=args.delta_l2,
-            max_environments=args.max_environments,
-            max_models=args.max_models,
-            val_models=grouped_models["validation"],
-            device=args.device,
-            verbose=True,
-            target_scope=args.scope,
-        )
-
-    # Load best validation weights into generator
-    generator.load_state_dict(train_res.best_state_dict)
-
-    # 5. Final Evaluation on Held-Out Test Set
-    print("\n[5/5] Evaluating Amortized Adaptation on Test Environments ...")
-    test_models = grouped_models["test"]
-    if args.max_models is not None:
-        test_models = dict(list(test_models.items())[:args.max_models])
-
-    records, report = evaluate_adaptation(
-        models=test_models,
-        manifest=manifest,
-        load_env_fn=load_shift_environment,
-        descriptor=descriptor,
-        generator=generator,
-        role="target_test",
-        max_environments=args.max_environments,
-        device=args.device,
-        target_scope=args.scope,
-    )
-
-    # Print the user-readable report
-    print("\n" + "=" * 80)
-    print(report)
-    print("=" * 80)
-
-    # Save artifacts if an output directory was provided
-    if args.output_dir is not None:
-        args.output_dir.mkdir(parents=True, exist_ok=True)
-        report_file = args.output_dir / "ADAPTATION_REPORT.md"
-        report_file.write_text(report, encoding="utf-8")
-
-        generator_ckpt = args.output_dir / "generator_best.pt"
-        torch.save({
-            "generator_type": args.generator,
-            "scope": args.scope,
-            "descriptor_type": args.descriptor,
-            "generator_state_dict": train_res.best_state_dict,
-            "descriptor_dim": descriptor.output_dim,
-            "head_dim": target_dim,
-            "schema": schema,
-            "history": train_res.history,
-        }, generator_ckpt)
-
-        print(f"\nAll outputs saved successfully:")
-        print(f"  • Human-readable report: {report_file}")
-        print(f"  • Generator checkpoint:  {generator_ckpt}\n")
-    else:
-        print("\n[Notice] No --output-dir provided. Results dumped to terminal only; no artifacts saved to disk.\n")
+    if args.output_dir:
+        args.output_dir.mkdir(parents=True, exist_ok=False)
+        atomic_json(args.output_dir / "run.json", {"status": "starting", "argv": sys.argv})
+    try:
+        run(args)
+    except BaseException as error:
+        if args.output_dir:
+            path = args.output_dir / "run.json"
+            status = json.loads(path.read_text())
+            status.update(status="failed", error=f"{type(error).__name__}: {error}")
+            atomic_json(path, status)
+        raise
 
 
 if __name__ == "__main__":

@@ -6,8 +6,9 @@ validation pairs.
 """
 
 from collections.abc import Callable
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 import time
+import math
 from typing import Any
 
 import torch
@@ -16,11 +17,11 @@ from torch.nn import functional as F
 
 from ..data.api import DatasetBundle
 from .evaluator import evaluate_adaptation_pair, subsample_environments, summarize_records
+from ._validation import conditioning_contract, checked_backward, frozen_sources, training_options
 from .generator import (
     GraphShiftDescriptor,
     HeadAdapterGenerator,
     adapted_forward,
-    extract_head_parameters,
     extract_target_parameters,
 )
 
@@ -29,13 +30,17 @@ from .generator import (
 class MetaTrainResult:
     """Artifacts and history from training the adaptation generator."""
 
-    generator: HeadAdapterGenerator
+    generator: nn.Module
     best_state_dict: dict[str, Tensor]
     history: list[dict[str, Any]]
     total_time_seconds: float
     pairs_trained: int
+    teacher_time_seconds: float = 0.0
+    optimizer_steps: int = 0
+    selected_epoch: int = 0
 
 
+@frozen_sources
 def train_adaptation_generator(
     models: dict[str, nn.Module],
     manifest: dict[str, Any],
@@ -53,6 +58,7 @@ def train_adaptation_generator(
     device: str = "cpu",
     verbose: bool = True,
     target_scope: str = "head",
+    checkpoint_callback: Callable | None = None,
 ) -> MetaTrainResult:
     """Train the HeadAdapterGenerator across (pretrained_model, shifted_graph) pairs.
 
@@ -75,10 +81,17 @@ def train_adaptation_generator(
     Returns:
         MetaTrainResult containing the trained generator, best weights, and metrics history.
     """
+    conditioning_contract(descriptor, generator)
+    training_options(epochs, lr, delta_l2_reg, max_models, max_environments)
+    if weight_decay < 0 or not math.isfinite(weight_decay):
+        raise ValueError("weight_decay must be finite and nonnegative")
+    if val_models is not None:
+        val_models = dict(list(val_models.items())[:max_models])
+    total_start = time.perf_counter()
     generator = generator.to(device)
     optimizer = torch.optim.Adam(generator.parameters(), lr=lr, weight_decay=weight_decay)
 
-    # Filter meta-training environments with balanced stratification across families
+    # Filter meta-training environments with family round-robin debug subsampling (not lineage/severity balancing)
     meta_envs = [e for e in manifest["environments"] if e["role"] == "meta_train"]
     meta_envs = subsample_environments(meta_envs, max_environments)
 
@@ -102,12 +115,15 @@ def train_adaptation_generator(
     best_state_dict = {k: v.cpu().clone() for k, v in generator.state_dict().items()}
     best_val_loss = float("inf")
     best_train_loss = float("inf")
+    selected_epoch = 0
 
     # Evaluate Epoch 0 unadapted baseline if val_models provided (do-no-harm baseline check)
     if val_models:
         generator.eval()
         val_envs = [e for e in manifest["environments"] if e["role"] == "validation"]
         val_envs = subsample_environments(val_envs, max_environments)
+        if not val_envs:
+            raise ValueError("Validation models require validation environments")
         baseline_records = []
         for v_env in val_envs:
             v_bundle = load_env_fn(manifest, v_env["id"])
@@ -119,9 +135,11 @@ def train_adaptation_generator(
         baseline_summary = summarize_records(baseline_records)
         best_val_loss = 1.0 - baseline_summary.get("mean_adapted_acc", 0.0)
         if verbose:
-            print(f"  • Unadapted Baseline Val Acc (Epoch 0): {baseline_summary.get('mean_adapted_acc', 0.0)*100:.2f}% (Threshold for saving generator)\n")
+            print(f"  • Initial Candidate Val Acc (Epoch 0): {baseline_summary.get('mean_adapted_acc', 0.0)*100:.2f}% (Threshold for saving generator)\n")
 
-    start_time = time.time()
+    if checkpoint_callback:
+        checkpoint_callback(best_state_dict, history)
+    start_time = total_start
 
     for epoch in range(1, epochs + 1):
         epoch_start = time.time()
@@ -160,7 +178,7 @@ def train_adaptation_generator(
 
                 # 5. Backpropagate into the generator ONLY
                 optimizer.zero_grad()
-                loss.backward()
+                checked_backward(loss, generator.parameters())
                 optimizer.step()
 
                 train_losses.append(loss.item())
@@ -195,11 +213,13 @@ def train_adaptation_generator(
             # Strictly require outperforming the unadapted baseline (do-no-harm)
             if val_loss < best_val_loss:
                 best_val_loss = val_loss
+                selected_epoch = epoch
                 best_state_dict = {k: v.cpu().clone() for k, v in generator.state_dict().items()}
         else:
             # When no validation models are supplied, select by training loss so work is not discarded
             if mean_train_loss < best_train_loss:
                 best_train_loss = mean_train_loss
+                selected_epoch = epoch
                 best_state_dict = {k: v.cpu().clone() for k, v in generator.state_dict().items()}
 
         epoch_time = time.time() - epoch_start
@@ -212,16 +232,19 @@ def train_adaptation_generator(
             "val_gain": val_gain,
             "time_seconds": epoch_time,
         }
+        epoch_record["validation_accuracy_error"] = val_loss
         history.append(epoch_record)
+        if checkpoint_callback:
+            checkpoint_callback(best_state_dict, history)
 
         if verbose:
-            val_msg = f" | Val Acc Gain: {val_gain * 100:+.2f}%" if val_gain is not None else ""
+            val_msg = f" | Val Acc Gain: {val_gain * 100:+.2f} pp" if val_gain is not None else ""
             print(
                 f"Epoch {epoch:02d}/{epochs:02d} | Train Loss: {mean_train_loss:.4f} "
                 f"(CE: {mean_ce_loss:.4f}) | ΔNorm: {mean_norm:.4f}{val_msg} | Time: {epoch_time:.2f}s"
             )
 
-    total_time = time.time() - start_time
+    total_time = time.perf_counter() - start_time
     if verbose:
         print(f"\nMeta-training finished in {total_time:.2f}s across {total_pairs * epochs} step evaluations.")
 
@@ -231,4 +254,6 @@ def train_adaptation_generator(
         history=history,
         total_time_seconds=total_time,
         pairs_trained=total_pairs,
+        optimizer_steps=total_pairs * epochs,
+        selected_epoch=selected_epoch,
     )

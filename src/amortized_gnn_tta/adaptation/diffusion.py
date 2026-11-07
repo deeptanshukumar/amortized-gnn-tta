@@ -8,7 +8,7 @@ Provides:
 5. train_diffusion_generator: Training loop with DDIM validation and do-no-harm fallback.
 """
 
-from collections.abc import Callable, Sequence
+from collections.abc import Callable
 from dataclasses import dataclass
 import math
 import time
@@ -18,13 +18,13 @@ import numpy as np
 import torch
 from torch import Tensor, nn
 from torch.nn import functional as F
-from torch_geometric.data import Data
 
 from .evaluator import evaluate_adaptation_pair, subsample_environments, summarize_records
+from ._validation import conditioning_contract, finite, positive_int, training_options, frozen_sources, checked_backward
 from .generator import (
+    head_forward,
     GraphShiftDescriptor,
     adapted_forward,
-    extract_head_parameters,
     extract_target_parameters,
 )
 from .meta_trainer import MetaTrainResult
@@ -43,6 +43,7 @@ class NoiseSchedule(nn.Module):
 
     def __init__(self, timesteps: int = 100, schedule: str = "cosine"):
         super().__init__()
+        positive_int(timesteps, "timesteps")
         self.timesteps = timesteps
         self.schedule = schedule
 
@@ -56,6 +57,8 @@ class NoiseSchedule(nn.Module):
             betas = 1.0 - (alphas_cumprod[1:] / alphas_cumprod[:-1])
             betas = torch.clip(betas, min=1e-5, max=0.999)
         elif schedule == "linear":
+            if timesteps < 1000:
+                raise ValueError("Short linear schedules are unsupported; use cosine or linear T>=1000")
             betas = torch.linspace(1e-4, 0.02, timesteps, dtype=torch.float32)
         else:
             raise ValueError(f"Unknown schedule: {schedule}")
@@ -133,8 +136,9 @@ class DiffusionHeadGenerator(nn.Module):
     Architecture:
         Conditions on [descriptor || head_weights || time_emb(t)].
         Uses x0-parameterization: the denoiser directly predicts the clean target delta.
-        Zero-initialization of the final layer guarantees delta = 0 at initialization
-        (exact identity / do-no-harm start).
+        Zero-initialization produces zero normalized deltas. Identity initialization
+        requires the zero-centered normalizer used by our trainer; explicitly
+        supplying a nonzero target mean changes that starting point.
     """
 
     def __init__(
@@ -154,6 +158,13 @@ class DiffusionHeadGenerator(nn.Module):
         self.descriptor_dim = descriptor_dim
         self.head_dim = head_dim
         self.hidden_dim = hidden_dim
+        self.num_layers, self.time_dim = num_layers, time_dim
+        for name, value in (("descriptor_dim", descriptor_dim), ("head_dim", head_dim), ("hidden_dim", hidden_dim), ("num_layers", num_layers), ("time_dim", time_dim), ("sampling_steps", sampling_steps)):
+            positive_int(value, name)
+        if sampling_steps > diffusion_steps:
+            raise ValueError("sampling_steps must not exceed diffusion_steps")
+        if type(default_seed) is not int or not 0 <= default_seed < 2**32:
+            raise ValueError("default_seed must be an integer in [0,2**32)")
         self.sampling_steps = sampling_steps
         self.default_seed = default_seed
         self.include_head_weights = include_head_weights
@@ -186,9 +197,15 @@ class DiffusionHeadGenerator(nn.Module):
 
     def set_target_normalizer(self, std: Tensor, mean: Tensor | None = None) -> None:
         """Register standardization statistics so diffusion trains on unit-variance space."""
-        safe_std = torch.clamp(torch.nan_to_num(std, nan=1.0), min=1e-4)
+        finite(std, "target scale")
+        if std.shape != self.target_std.shape or (std < 0).any():
+            raise ValueError("Target scale must match the update dimension and be nonnegative")
+        safe_std = torch.clamp(std, min=1e-4)
         if mean is not None:
-            safe_mean = torch.nan_to_num(mean, nan=0.0)
+            finite(mean, "target mean")
+            if mean.shape != self.target_mean.shape:
+                raise ValueError("Target mean dimension mismatch")
+            safe_mean = mean
         else:
             safe_mean = torch.zeros_like(safe_std)
         self.target_mean.copy_(safe_mean.detach().to(self.target_mean.device))
@@ -207,6 +224,16 @@ class DiffusionHeadGenerator(nn.Module):
 
     def forward_denoiser(self, x_t: Tensor, t: Tensor, desc: Tensor, head_weights: Tensor | None = None) -> Tensor:
         """Denoiser forward pass predicting clean x0."""
+        for value, name, dimension in ((x_t, "noisy delta", self.head_dim), (desc, "conditioning", self.descriptor_dim)):
+            finite(value, name)
+            if value.ndim not in (1, 2) or value.shape[-1] != dimension:
+                raise ValueError(f"Invalid {name} dimensions")
+        if x_t.shape[:-1] != desc.shape[:-1]:
+            raise ValueError("Denoiser batch dimensions disagree")
+        if self.include_head_weights:
+            if head_weights is None or head_weights.shape != x_t.shape:
+                raise ValueError("Source weights are required with the update dimensions")
+            finite(head_weights, "source weights")
         # Ensure 2D batch shape
         is_single = x_t.ndim == 1
         if is_single:
@@ -233,6 +260,7 @@ class DiffusionHeadGenerator(nn.Module):
     def diffusion_loss(self, desc: Tensor, head_weights: Tensor | None, target_delta: Tensor) -> Tensor:
         """Compute training MSE loss: ||x0 - x0_hat||^2 on random timestep t."""
         # Normalize target into unit-variance space
+        finite(target_delta, "teacher delta")
         x_0 = self.normalize(target_delta)
         device = target_delta.device
 
@@ -271,7 +299,11 @@ class DiffusionHeadGenerator(nn.Module):
             seed = self.default_seed
 
         device = head_weights.device if head_weights is not None else desc.device
-        steps = max(1, min(steps, self.schedule.timesteps))
+        positive_int(steps, "sampling steps")
+        if steps > self.schedule.timesteps:
+            raise ValueError("Sampling steps exceed diffusion timesteps")
+        if type(seed) is not int or not 0 <= seed < 2**32:
+            raise ValueError("Sampling seed must be an integer in [0,2**32)")
 
         # Sample initial pure Gaussian noise
         if seed is not None:
@@ -306,7 +338,7 @@ class DiffusionHeadGenerator(nn.Module):
 
         # Unnormalize back to raw weight update space
         clean_delta = self.unnormalize(x_t)
-        return clean_delta
+        return finite(clean_delta, "sampled delta")
 
     def forward(self, desc: Tensor, head_weights: Tensor | None = None) -> Tensor:
         """Evaluate adaptation delta, matching HeadAdapterGenerator callable interface."""
@@ -329,6 +361,7 @@ class OracleTargetRecord:
     oracle_acc: float
 
 
+@frozen_sources
 def fit_oracle_deltas(
     models: dict[str, nn.Module],
     manifest: dict[str, Any],
@@ -346,10 +379,13 @@ def fit_oracle_deltas(
 
     Strict boundary: reads training_labels ONLY on environments where role == 'meta_train'.
     """
+    training_options(steps, lr, delta_l2_reg, max_environments=max_environments)
     meta_envs = [e for e in manifest["environments"] if e["role"] == "meta_train"]
     meta_envs = subsample_environments(meta_envs, max_environments)
 
     total_pairs = len(models) * len(meta_envs)
+    if not total_pairs:
+        raise ValueError("No permitted teacher model/environment pairs")
     if verbose:
         print(f"Fitting Teacher Oracle Targets:")
         print(f"  • Models: {len(models)} | Environments: {len(meta_envs)}")
@@ -368,8 +404,6 @@ def fit_oracle_deltas(
 
         for model_id, model in models.items():
             model.eval()
-            for p in model.parameters():
-                p.requires_grad = False
             flat_w, schema = extract_target_parameters(model, scope=target_scope)
             flat_w = flat_w.to(device)
             desc = descriptor(model, unlabeled).to(device)
@@ -379,20 +413,26 @@ def fit_oracle_deltas(
                 init_logits = model(unlabeled.x, unlabeled.edge_index)[train_idx]
                 base_acc = float((init_logits.argmax(-1) == train_y).float().mean().item())
 
+            # Exact first-layer reuse applies only when updates leave it frozen.
+            with torch.no_grad():
+                hidden = model.encode(unlabeled.x, unlabeled.edge_index).detach() if target_scope == "head" else None
+            def predict_delta(delta):
+                return head_forward(model, unlabeled, delta, schema, hidden) if hidden is not None else adapted_forward(model, unlabeled, delta, schema)
+
             # Optimize delta directly with Adam
             delta_param = nn.Parameter(torch.zeros_like(flat_w, requires_grad=True))
             optimizer = torch.optim.Adam([delta_param], lr=lr)
 
             for _ in range(steps):
                 optimizer.zero_grad()
-                logits = adapted_forward(model, unlabeled, delta_param, schema)[train_idx]
+                logits = predict_delta(delta_param)[train_idx]
                 loss = F.cross_entropy(logits, train_y) + delta_l2_reg * torch.sum(delta_param ** 2)
-                loss.backward()
+                checked_backward(loss, [delta_param])
                 optimizer.step()
 
             # Record final oracle accuracy on training nodes
             with torch.no_grad():
-                final_logits = adapted_forward(model, unlabeled, delta_param, schema)[train_idx]
+                final_logits = predict_delta(delta_param)[train_idx]
                 oracle_acc = float((final_logits.argmax(-1) == train_y).float().mean().item())
 
             records.append(OracleTargetRecord(
@@ -408,7 +448,7 @@ def fit_oracle_deltas(
     elapsed = time.time() - start_time
     mean_gain = np.mean([r.oracle_acc - r.baseline_acc for r in records])
     if verbose:
-        print(f"  • Fitted {len(records)} targets in {elapsed:.2f}s (Average Oracle Train Gain: {mean_gain*100:+.2f}%)\n")
+        print(f"  • Fitted {len(records)} targets in {elapsed:.2f}s (Average Teacher Train Gain: {mean_gain*100:+.2f} pp)\n")
 
     return records
 
@@ -417,6 +457,7 @@ def fit_oracle_deltas(
 # 5. Diffusion Training Loop
 # ==============================================================================
 
+@frozen_sources
 def train_diffusion_generator(
     models: dict[str, nn.Module],
     manifest: dict[str, Any],
@@ -434,8 +475,14 @@ def train_diffusion_generator(
     device: str = "cpu",
     verbose: bool = True,
     target_scope: str = "head",
+    checkpoint_callback: Callable | None = None,
 ) -> MetaTrainResult:
     """Train the conditional diffusion head generator using oracle distillation."""
+    conditioning_contract(descriptor, generator)
+    training_options(epochs, lr, delta_l2_reg, max_models, max_environments)
+    training_options(oracle_steps, oracle_lr, delta_l2_reg)
+    if val_models is not None:
+        val_models = dict(list(val_models.items())[:max_models])
     total_start_time = time.time()
     generator = generator.to(device)
     optimizer = torch.optim.Adam(generator.parameters(), lr=lr)
@@ -444,6 +491,7 @@ def train_diffusion_generator(
     model_items = dict(list(models.items())[:max_models] if max_models is not None else models)
 
     # 2. Fit supervised teacher target deltas
+    teacher_start = time.perf_counter()
     targets = fit_oracle_deltas(
         models=model_items,
         manifest=manifest,
@@ -458,6 +506,7 @@ def train_diffusion_generator(
         target_scope=target_scope,
     )
 
+    teacher_seconds = time.perf_counter() - teacher_start
     if not targets:
         raise ValueError("No oracle targets were fitted. Check manifest and max_environments.")
 
@@ -467,7 +516,6 @@ def train_diffusion_generator(
         std_delta = all_targets.std(dim=0)
     else:
         std_delta = torch.ones(generator.head_dim)
-    std_delta = torch.nan_to_num(std_delta, nan=1.0)
     std_delta = torch.clamp(std_delta, min=1e-3)
     generator.set_target_normalizer(std=std_delta)
 
@@ -475,12 +523,15 @@ def train_diffusion_generator(
     best_state_dict = {k: v.cpu().clone() for k, v in generator.state_dict().items()}
     best_val_loss = float("inf")
     best_train_loss = float("inf")
+    selected_epoch = 0
 
     if val_models:
         generator.eval()
         val_envs = [e for e in manifest["environments"] if e["role"] == "validation"]
         val_envs = subsample_environments(val_envs, max_environments)
 
+        if not val_envs:
+            raise ValueError("Validation models require validation environments")
         baseline_records = []
         for v_env in val_envs:
             v_bundle = load_env_fn(manifest, v_env["id"])
@@ -493,10 +544,12 @@ def train_diffusion_generator(
         best_val_loss = 1.0 - baseline_summary.get("mean_adapted_acc", 0.0)
         if verbose:
             print(f"Starting Diffusion Denoiser Training:")
-            print(f"  • Unadapted Baseline Val Acc (Epoch 0): {baseline_summary.get('mean_adapted_acc', 0.0)*100:.2f}% (Threshold for saving generator)\n")
+            print(f"  • Initial Candidate Val Acc (Epoch 0): {baseline_summary.get('mean_adapted_acc', 0.0)*100:.2f}% (Threshold for saving generator)\n")
 
     history: list[dict[str, Any]] = []
 
+    if checkpoint_callback:
+        checkpoint_callback(best_state_dict, history)
     # 5. Training loop over targets (batched)
     batch_size = 16
     for epoch in range(1, epochs + 1):
@@ -515,7 +568,7 @@ def train_diffusion_generator(
 
             optimizer.zero_grad()
             loss = generator.diffusion_loss(d, w, td)
-            loss.backward()
+            checked_backward(loss, generator.parameters())
             optimizer.step()
 
             train_losses.append(loss.item())
@@ -546,10 +599,12 @@ def train_diffusion_generator(
             # Do-no-harm update rule: strictly require beating the unadapted baseline
             if val_loss < best_val_loss:
                 best_val_loss = val_loss
+                selected_epoch = epoch
                 best_state_dict = {k: v.cpu().clone() for k, v in generator.state_dict().items()}
         else:
             if mean_loss < best_train_loss:
                 best_train_loss = mean_loss
+                selected_epoch = epoch
                 best_state_dict = {k: v.cpu().clone() for k, v in generator.state_dict().items()}
 
         epoch_time = time.time() - epoch_start
@@ -560,10 +615,13 @@ def train_diffusion_generator(
             "val_gain": val_gain,
             "time_seconds": epoch_time,
         }
+        epoch_record["validation_accuracy_error"] = val_loss
         history.append(epoch_record)
+        if checkpoint_callback:
+            checkpoint_callback(best_state_dict, history)
 
         if verbose:
-            val_str = f"Val Acc Gain: {val_gain*100:+.2f}%" if val_gain is not None else "No Val"
+            val_str = f"Val Acc Gain: {val_gain*100:+.2f} pp" if val_gain is not None else "No Val"
             print(f"Epoch {epoch:02d}/{epochs:02d} | Diff MSE: {mean_loss:.5f} | {val_str} | Time: {epoch_time:.2f}s")
 
     total_time = time.time() - total_start_time
@@ -574,4 +632,7 @@ def train_diffusion_generator(
         history=history,
         total_time_seconds=total_time,
         pairs_trained=len(targets),
+        teacher_time_seconds=teacher_seconds,
+        optimizer_steps=epochs * math.ceil(len(targets) / batch_size),
+        selected_epoch=selected_epoch,
     )

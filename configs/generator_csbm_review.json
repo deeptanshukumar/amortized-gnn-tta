@@ -1,0 +1,81 @@
+{
+  "protocol": "csbm-direct-generator-repair-review-v2",
+  "purpose": "Development verification, not the final Arxiv experiment or a fair-objective generator ranking",
+  "architectures": [
+    "gcn",
+    "gat",
+    "graphsage"
+  ],
+  "methods": [
+    "hypernetwork",
+    "diffusion"
+  ],
+  "conditioning": [
+    "A",
+    "B",
+    "C",
+    "D"
+  ],
+  "generator_seeds": [
+    202801,
+    202802,
+    202803
+  ],
+  "training_seed_offset": 10000,
+  "sampling_seed": 42,
+  "descriptor_version": "v2",
+  "weight_scope": "all",
+  "update_scope": "head",
+  "chunk_size": 1024,
+  "epochs": 5,
+  "learning_rate": 0.001,
+  "delta_l2": 0.001,
+  "diffusion_steps": 50,
+  "sampling_steps": 10,
+  "candidate_count": 1,
+  "teacher_steps": 30,
+  "teacher_lr": 0.01,
+  "iterative_steps": 30,
+  "iterative_lr": 0.01,
+  "model_seed": 31,
+  "training_checkpoint_selection": "one seed-31 checkpoint from each of the three saved meta-training source-subset groups",
+  "validation_checkpoint_selection": "first seed-31 checkpoint in the saved validation group",
+  "training_shifts": [
+    "attribute",
+    "homophily",
+    "attribute_homophily"
+  ],
+  "severity": 0.5,
+  "timed_shifts": [
+    "control",
+    "attribute",
+    "homophily",
+    "attribute_homophily"
+  ],
+  "warmups": 3,
+  "repeats": 15,
+  "threads": 1,
+  "device": "cpu",
+  "environment_manifest": "runs/controlled-shifts-paper-v1/environment_manifest.json",
+  "banks": {
+    "gcn": [
+      "runs/gcn-bank-phase1",
+      "runs/phase1-complete/model_partition.json"
+    ],
+    "gat": [
+      "runs/gat-bank-phase1",
+      "runs/gat-phase1-complete/model_partition.json"
+    ],
+    "graphsage": [
+      "runs/graphsage-bank-phase1",
+      "runs/graphsage-phase1-complete/model_partition.json"
+    ]
+  },
+  "hypernetwork_weight_decay": 0.0001,
+  "hidden_dim": 128,
+  "num_layers": 2,
+  "time_dim": 32,
+  "noise_schedule": "cosine",
+  "diffusion_batch_size": 16,
+  "target_std_floor": 0.001
+}

@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass
 
+import numpy as np
 import torch
 from torch import Tensor, nn
 from torch.nn import functional as F
@@ -35,7 +36,12 @@ def validate_input(graph: Data) -> None:
     if graph.edge_index is None or graph.edge_index.dtype != torch.long:
         raise ValueError("edge_index must be int64 [2,E]")
     graph.validate(raise_on_error=True)
-    if graph.x.shape[0] != graph.num_nodes or not torch.isfinite(graph.x).all():
+    # NumPy reads the same CPU float32 storage without a copy. Its vectorized
+    # finite scan avoids several large temporary PyTorch tensors on this path;
+    # accelerator inputs retain the native check. No values are transformed.
+    features_finite = (bool(np.isfinite(graph.x.detach().numpy()).all()) if graph.x.device.type == "cpu"
+                       else bool(torch.isfinite(graph.x).all()))
+    if graph.x.shape[0] != graph.num_nodes or not features_finite:
         raise ValueError("Features must be finite and aligned with num_nodes")
 
 

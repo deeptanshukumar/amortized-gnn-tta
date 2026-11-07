@@ -2444,11 +2444,11 @@ Each development graph preserves full message-passing context. Its native 3,000 
 
 Explain from first principles what optimization budget, step, epoch, loss, gradient, learning rate, patience, validation and full fine-tuning mean. Critique whether this diagnostic can distinguish restricted-update limitations from optimization or model limitations. Explain why its accuracy is not a proven ceiling, why shared optimizer settings need not be equally optimal, and what a generator can and cannot learn from these results. Suggest minimal further checks without accessing final held-out labels. Use primary references, do not invent results, and ask me one reasoning question at a time.
 ~~~
-## 30. Amortized Weight Adaptation: From Pretrained Bank to Single-Step Generator
+## 32. Historical first generator prototype
 
 ### What did we implement?
 
-We implemented the complete Phase 2 amortized weight adaptation pipeline:
+This section describes the original small head-generator prototype, not the complete research plan. Section 33 supersedes its operational instructions and explains the repaired version:
 1. **GraphShiftDescriptor:** Takes any shifted graph $(X, E)$ of arbitrary node count $N$, passes it through the pretrained GNN encoder `model.encode(x, edge_index)`, and pools the hidden activations into a fixed-size summary vector of length $2H + 1$ (mean, standard deviation, and average degree).
 2. **HeadAdapterGenerator:** A multi-layer perceptron (hypernetwork) that takes `[graph_descriptor || current_head_weights]` and predicts a weight update vector $\Delta W, \Delta b$ specifically for the classification head (`conv2`).
 3. **Zero-Initialization Trick:** The final linear layer of the generator is initialized with exact zeros. At initialization, $\Delta W = 0$ and $\Delta b = 0$, guaranteeing that the adapted model starts at exact baseline performance without random degradation.
@@ -2464,9 +2464,205 @@ Predicting all 64,000+ parameters of a GNN directly from a hypernetwork is prone
 ~~~bash
 uv run python examples/train_adapter.py \
     --bank runs/small-bank \
+    --model-partition runs/small-review/model_partition.json \
     --manifest runs/matched-small-shifts/environment_manifest.json \
     --output-dir runs/adapter-run \
     --epochs 5 \
     --max-environments 10 \
     --max-models 3
 ~~~
+
+## 33. Generated adaptation: what we repaired, and how to judge speed honestly
+
+### Start with the actual question
+
+We have a trained graph neural network (GNN). A new graph arrives, and its features or connections differ from the graphs used to train that GNN. We want an accurate prediction quickly.
+
+**Iterative adaptation** means repeatedly changing a small set of weights using an objective on the new graph. An **objective** is the number the optimizer tries to reduce. Our unlabeled IM objective combines making individual predictions confident with encouraging diversity across predicted classes. It does not read the target's true classes. That objective can still make accuracy worse: confidence and correctness are different things.
+
+**Generated adaptation** means a second network predicts a weight change. We trained this second network beforehand on permitted practice environments. The second network is the **generator**. A hypernetwork outputs an update directly. Our diffusion generator starts with random noise and repeatedly predicts a cleaner update. Both can avoid target-time backpropagation while still requiring graph processing and forward passes.
+
+**Amortized** means paying a cost beforehand to reduce work we would otherwise repeat. Learning a generator is that upfront cost. It is not a promise that every new graph will become cheaper or more accurate.
+
+### Exactly what goes into the system?
+
+| Object | Shape in the paper-sized CSBM development setup | Meaning |
+| --- | --- | --- |
+| `x` | `[5000, 2000]` float32 | 5,000 nodes, each described by 2,000 feature numbers |
+| `edge_index` | `[2, E]` integers | Each column names a source and destination node; E counts stored entries |
+| Hidden representation | `[5000, 32]` | 32 learned numbers describing each node after the first GNN layer |
+| Logits | `[5000, 2]` | Two raw class scores per node |
+| Probabilities | `[5000, 2]` | Softmax converts scores into nonnegative values summing to one per node |
+| Conditioning vector | One vector; length depends on A–D | Summary supplied to the generator |
+| Delta | One vector with a named parameter schema | Proposed changes to the allowed GNN weights |
+
+CSBM is synthetic: we know how its classes, features and connections were generated. This lets us test controlled changes. It is not evidence that the same trained generator already works on Arxiv or MAG.
+
+The real-data roadmap is separate. **ogbn-arxiv** is one paper-citation graph with paper-topic labels and official time-based label splits. The **MAG country graphs** are separate country graphs from a particular reference benchmark, not another name for native heterogeneous `ogbn-mag`. A **heterogeneous graph** contains different kinds of nodes or relations; our current common GNN wrappers use one node/edge type. No real-data generator experiment has been completed by repairing this CSBM prototype.
+
+### What do A, B, C and D mean?
+
+**Conditioning** simply means the information we give a generator so its output can depend on the current situation.
+
+| Version | Information | Length when F=2000, H=32, C=2 |
+| --- | --- | ---: |
+| A | Raw feature and connection summaries | 4,017 |
+| B | A plus hidden-representation summaries | 4,118 |
+| C | B plus predicted uncertainty and average predicted probabilities | 4,127 |
+| D | C plus 12 summaries of pretrained model weights | 4,139 |
+
+F means features per node, H means hidden width, and C means number of classes. Fixed vector length does not mean every graph gives the same summary. It means changing the number of nodes does not change the interface length.
+
+**Uncertainty** describes how unsure predictions appear. We summarize entropy, confidence and margins. **Entropy** is higher when probability is spread across classes. **Confidence** is the largest predicted probability. **Margin** is the gap between the two highest probabilities. These describe predictions, not whether they are correct.
+
+The average probability vector is the **predicted class marginal**: how much probability the model assigns to each class across the graph. It is not the true class distribution. A confidently wrong model can produce a misleading marginal.
+
+D is a **fingerprint**, meaning a compact summary of the pretrained weights. It is not a full lossless copy. The repaired default describes the whole pretrained model regardless of which weights we will update. Otherwise a head-versus-broader-update experiment would change two things at once: its allowed updates and its conditioning information.
+
+The fingerprint includes moments, quantiles, norms and retained singular-value summaries. A **quantile** is a cutoff in ordered values: the median is the 50% quantile. A **norm** measures size. A **singular value** describes how strongly a matrix stretches an input direction. We retain only the largest two values per matrix for part of this summary. The ratio derived from those retained values is a heuristic, not the matrix's true **condition number**, which needs the smallest relevant singular value too. Calling a statistic by the wrong mathematical name can lead us to defend a claim our code never measured.
+
+### Why descriptor versions matter
+
+A descriptor is part of the learned method. Two vectors of length 4,139 can mean different things if their fields or definitions changed.
+
+| Historical ambiguity | Repaired definition |
+| --- | --- |
+| A node with no outgoing links was called isolated | In v2, an isolated node has no incoming or outgoing links |
+| E/N was called density | It is mean stored outgoing degree; it also duplicates another degree summary numerically |
+| D's weights depended on update scope | v2 specifies the weight-description scope separately |
+| Short feature vectors were padded and long ones cropped silently | Unexpected feature/class dimensions are rejected |
+| A retained-spectrum ratio was described like a true condition number | Its exact heuristic definition is recorded |
+
+`v1` explicitly retains historical meanings needed for replay. `v2` is the new definition. The loader must not guess which one trained a saved generator.
+
+On a directed graph with one edge `0 -> 1` and a disconnected node 2, nodes 1 and 2 have no outgoing edges, but only node 2 is isolated. That is why direction matters even though the distinction disappears on our bidirected CSBM representation.
+
+### How does a generated delta become a prediction?
+
+1. Obtain the allowed graph input without labels.
+2. Compute the conditioning vector from that input and the frozen original model where needed.
+3. Generate the delta vector.
+4. Use its **schema**: the list of parameter names and shapes that says where each number belongs.
+5. Predict using original weights plus delta.
+6. Only after prediction, give the result to the offline scorer with permitted evaluation labels.
+
+Floating-point addition can round a requested update. Artifacts therefore keep the requested vector, actual final-minus-initial differences and final named weights. A nonzero requested change need not alter a float32 weight if it is too small to represent. Final named weights support exact reconstruction.
+
+The schema is like an address book. A correct-looking number sent to the wrong address is still a wrong update. Extra vector entries, missing names, duplicate names and wrong shapes now raise errors. They cannot silently disappear.
+
+**Head-only** updates change `conv2`, the second graph layer. With hidden width 32 and two classes, GCN's head has 66 parameters, GAT's 70 and GraphSAGE's 130. Their layer internals differ. A graph-layer head still processes neighbors; it is not necessarily just an ordinary dense classifier.
+
+The generator branch also supports direct `backbone` and `all` deltas. This is not LoRA. **LoRA** expresses a matrix change as a product of smaller matrices with a chosen rank. Our existing iterative LoRA baseline has that structure; the current generator's full-coordinate vector does not acquire it merely by updating both layers.
+
+### What was difficult, and what did we learn?
+
+**A plausible accuracy number can hide a broken calculation.** An audit deliberately supplied all-NaN updates. NaN means “not a number,” usually an invalid floating-point result. Argmax could still produce class choices and an ordinary-looking 50% accuracy. We now reject nonfinite values before scoring. We do not turn NaNs into zeros and pretend adaptation succeeded.
+
+**Freezing is different from disabling all gradients.** During generator training, original weights W must stay fixed, but the loss must still differentiate through the generated update delta. Writing the adapted weight as W+delta allows gradients to reach the generator even when W itself does not require gradients. Wrapping the whole adapted prediction in `no_grad` would break learning. During deployment, by contrast, we need no training gradient.
+
+**A passing test can assert nothing.** One fallback test's condition reduced to requiring negative baseline accuracy. Its assertion never ran. Repaired selection tests force better, tied and worse validation outcomes and check the chosen state each time.
+
+**A reasonable intuition need not be a universal theorem.** More cross-class edges need not produce higher energy after a random GCN has transformed and smoothed features. The old random-order assertion failed for some seeds. We now test the exact statistic; a sensitivity experiment is a different claim.
+
+**Saving weights is not saving a usable method.** Diffusion inference also needs its schedule, total timesteps, sampling steps, noise seed and normalization buffers. Conditioning needs a version and dimensions. We now save the complete inference recipe and verify reload. This is not a promise of exact optimizer-state training resumption.
+
+### What exactly is timed?
+
+Our headline measure is the time from an available canonical CPU target graph and loaded resident models to usable adapted predictions. A **resident model** has already been loaded into the intended execution environment. Loading it has a setup cost that we report separately.
+
+| Work | Deployment timer |
+| --- | --- |
+| Required device transfer and method setup | Included |
+| Target feature/edge summaries | Included |
+| Frozen GNN passes needed for conditioning | Included |
+| Generated update or all iterative optimizer steps | Included |
+| Applying the update and producing predictions | Included |
+| Candidate evaluation/selection, when a method requires it | Included |
+| Offline generator/teacher training | Separate cost |
+| Dataset download, common disk loading and artificial test-input construction | Separate cost |
+| Label-based scoring and saving reports | Outside deployment timer |
+
+A **worked arithmetic example**, not an experimental result: suppose summaries take 20ms, generation 1ms, application 1ms and prediction 8ms. The pipeline takes 30ms. If an iterative pipeline takes 120ms, the useful-output speedup is 120/30 = 4×. Dividing 120 by only the 1ms generator call would describe a component ratio, not the complete deployment speedup.
+
+A **warmup** lets libraries initialize runtime machinery before repeated measurements. It does not permit hiding a new target's preprocessing. We record the first measured event separately and reset adaptation for every independent event. A static pretrained-weight fingerprint can be explicitly prepared once; its setup time is recorded. A target descriptor is not a static model property.
+
+A **cache** stores work for reuse. Head-only fitting can cache first-layer hidden features because that layer stays fixed. Broader updates that change the first layer must recompute its adapted features. A cache must not cross different graphs or changed source weights accidentally. For head-only generated predictions, B-D conditioning already computed the needed frozen first-layer features; the final head prediction reuses those within the same target event. This does not remove their cost from the timer.
+
+On GPUs, work can execute **asynchronously**: Python may return before the device finishes. **Synchronization** waits for completion so a wall-clock timer measures completed work rather than just submission. GPU-only kernel timers also miss CPU preprocessing. Our main timer therefore covers the complete synchronized pipeline. CUDA/MPS numerical support still needs execution on those devices.
+
+### What did CPU profiling teach us?
+
+The paper-sized input has ten million feature values. On this laptop, a finite scan, a strided per-channel variance calculation and an integer zero-count reduction were each surprisingly expensive. These were measured bottlenecks, not guesses about the generator architecture.
+
+The repairs keep the same statistics/checks: a zero-copy NumPy finite scan for CPU float32 input, direct nonzero counting, bounded row/edge chunks and centered moment sums. NumPy is already a project dependency. The CPU finite scan does not modify the input or transfer it to another device. Accelerator inputs retain the native finite check.
+
+For a center c, population variance can be computed as `mean((x-c)^2) - mean(x-c)^2`. The second term corrects for a rounded center. Only tiny negative variance inside a documented floating-point round-off bound is floored to zero. Input features and deltas are not clipped. Tests include large feature offsets, small variation, constant inputs and different chunk sizes. Floating-point **round-off** means finite-precision arithmetic cannot represent every real number exactly; equivalent formulas need not give bit-for-bit identical results.
+
+A useful surprise: our generator can have more parameters than the GNN and still have a very cheap network call. It processes one summary vector; the GNN applies its weights across thousands of nodes. Parameter count is not the same as operation count. Also, a matrix multiplication can be highly optimized while gathering two full feature vectors for every edge mostly moves memory. GCN projects features before its graph aggregation; our GraphSAGE variant aggregates the input features first. With 2,000 input channels, that helps explain their different CPU costs. These are implementation/workload explanations, not proof that one architecture is universally faster.
+
+The unchanged iterative baseline is optimized too: its benchmark path reuses the existing cached adapter and avoids unnecessary export/final-prediction bookkeeping. We test its final predictions against the existing fitting API. A strong comparison should not deliberately slow the baseline.
+
+### How do we interpret the review results?
+
+The repair configuration uses three generator training seeds and multiple pretrained checkpoints. A **seed** initializes a pseudorandom number generator. Three seeds help reveal training variability; they do not turn related graph variants into independent experimental trials.
+
+We report accuracy gains in **percentage points**: 78% minus 77% is +1 percentage point. We report the fraction of cases made worse and unchanged-graph controls too. A positive average can coexist with harmful adaptation on many individual graphs.
+
+The unchanged control is important: adaptation should not be assumed harmless when no extra perturbation was applied. Validation can select an initial identity generator globally. At deployment we cannot read the target's true accuracy to decide whether to discard its update.
+
+Our hypernetwork learns directly through permitted supervised meta-training cross-entropy. Diffusion learns from supervised teacher deltas and receives a different number of optimization updates. Equal epochs do not mean equal work or identical training information. Therefore the repair review cannot prove that one generator family is inherently superior.
+
+The original 45×-style runner/results were subsequently published at c137e28. Their arithmetic checks out, but their timers stop before adapted prediction and the compact diffusion timer also excludes conditioning. This explains why that ratio differs from complete deployment timing. Matching artifacts/seeds are still needed for exact model replay. Historical viewed test results are development evidence, not an untouched final test set.
+
+**Memory caveat:** CPU RSS is the operating system's estimate of physical memory resident for the process. We sample it every 5ms when the optional installed system utility is available. A brief peak can fall between samples, so this is a lower bound, and it includes resident graphs/models and process setup. It is not an exact incremental tensor-allocation peak. Timing and memory profiling use separate passes.
+
+### When does the upfront cost pay off?
+
+If generator preparation costs an extra 100 seconds and saves 0.01 seconds per target, the approximate break-even point is 100/0.01 = 10,000 target events. These are illustrative numbers. If complete generated adaptation saves no time, there is no positive break-even argument. Accuracy and permitted label access must also be comparable.
+
+Offline reports therefore expose teacher collection, generator training and optimizer update counts separately from online time. A generated method that is faster but much less accurate is a tradeoff, not an automatic winner.
+
+### Short committee/interview answers
+
+| Question | Defensible answer |
+| --- | --- |
+| Is the research project finished? | The CSBM generator prototype is being repaired and verified. Real-data studies and generated LoRA are separate milestones. |
+| Why can zero-gradient adaptation still be slow? | It still processes the graph, computes conditioning and makes predictions; those can dominate generation. |
+| Is the generated update guaranteed to help? | No. The learned rule can fail, and confident unlabeled predictions can be wrong. We report regressions and controls. |
+| Why version a summary vector? | Its field meanings are part of the learned method. Equal dimensions do not imply compatible meanings. |
+| Why keep a supervised teacher? | It supplies permitted offline examples of useful updates. It must not read deployment evaluation labels. |
+| Why not select the best candidate by target accuracy? | That would use forbidden target labels. The planned five-candidate method uses label-free probability agreement and is not yet implemented here. |
+| Does copying a reference timer establish fairness? | No. We must inspect its boundaries, caching, synchronization and experimental setting. |
+
+### A second-opinion prompt you can paste into ChatGPT
+
+> We are building amortized weight adaptation for two-layer GCN, GAT and GraphSAGE under graph distribution shifts. The current prototype uses CSBM graphs with 5,000 nodes, 2,000 features and two classes. Hypernetworks learn direct head deltas through supervised meta-training CE; diffusion learns x0 deltas from supervised meta-training teachers. Deployment receives only unlabeled graph features/edges. A-D conditioning progressively adds raw graph statistics, frozen hidden summaries, predictive uncertainty and a 12-number full-model weight fingerprint. D's weight scope is independent of update sites. Direct all-weight deltas are not LoRA. Our main timing starts with a canonical CPU target graph and resident models and ends with usable predictions, including required conditioning, transfer, update generation/optimization and prediction. Offline preparation and static setup are reported separately. No persistent target descriptor cache is excluded from the timer. The numerical repair review uses multiple training checkpoints and three generator seeds, validation only, one diffusion candidate and a cached 30-step IM baseline. Explain this design from first principles, critique its accuracy/timing and label boundaries, explain why the generator objectives are not a definitive fair comparison, and identify what evidence is still needed before real-graph and five-candidate claims. Use primary sources; do not invent results. Ask me one reasoning question at a time.
+
+A check for your own understanding: if conditioning takes 50ms, generation 1ms and adapted prediction 9ms, while iterative adaptation plus prediction takes 45ms, is the generated method faster? Explain which number answers the deployment question and why.
+
+Timing references: [Matcha Appendix C.8](https://arxiv.org/abs/2410.06976), [GNN-Diff Appendix I.3](https://arxiv.org/abs/2410.05697), [HyperFlow Figure 4](https://arxiv.org/html/2504.15323), [computational-time-aware TTA](https://arxiv.org/html/2304.04795), [PyTorch benchmarking guidance](https://docs.pytorch.org/docs/2.13/benchmark_utils.html). These ground measurement choices; their reported speedups are not our measurements.
+
+
+### What the completed repair review actually showed
+
+The CPU verification finished with 392 tests, 72 generator configurations and 864 saved cases reconstructed independently. Replayed logits and accuracies matched exactly. These establish software/artifact behavior, not success of the whole research proposal.
+
+The table below uses D as a fixed reference, not as a winner chosen for the final study:
+
+| Architecture | Frozen | IM30 | Hypernetwork D | Diffusion D |
+| --- | ---: | ---: | ---: | ---: |
+| gcn | 77.255% | 78.167% | 78.061 ± 0.004% | 78.099 ± 0.011% |
+| gat | 77.447% | 77.445% | 77.684 ± 0.015% | 77.679 ± 0.017% |
+| graphsage | 79.316% | 80.251% | 81.033 ± 0.031% | 80.724 ± 0.029% |
+
+All A-D versions were slower end to end than the documented cached 30-step IM baseline in this paper-sized CPU setting. D took about 94/98/176 ms for the hypernetwork and 95/101/179 ms for diffusion on GCN/GAT/GraphSAGE respectively. Their ratios of baseline time to generated time were approximately 0.58/0.80/0.79. A ratio below 1 means the generated pipeline is slower. The raw-summary component became about 3.2× faster, but a faster component does not guarantee a faster complete system.
+
+GraphSAGE D improved shifted accuracy by about 1.72 pp (hypernetwork) and 1.41 pp (diffusion), yet its unchanged control lost 3.12 pp and 2.09 pp. That is why reporting only average shifted gains would hide an important failure. GCN/GAT control regressions and repeated shifted harms are also retained in the verified report.
+
+Interpret the comparison carefully: one validation GNN checkpoint and graph lineage per architecture; three generator seeds; GNN initialization 31 shared across training label subsets; head-only updates; one diffusion candidate. Hypernetwork uses 180 optimizer updates, while diffusion uses 15 denoiser updates plus 1,080 teacher steps. Neither maximum achievable accuracy nor a definitive generator-family advantage has been established. These cases are development evidence, not sealed final tests.
+
+Thirty already completed training checkpoints were reused only after exact delta and identity checks when we optimized within-event prediction reuse. All timings were rerun. This saves repeated experiment work without pretending to have resumed interrupted training or silently changing the measured outputs.
+
+The useful research lesson is that graph-summary cost can outweigh the optimization removed from a small binary classification head. More expensive update sites or different graph tasks might change that balance, but that is a hypothesis for the next experiments. We should measure it, not increase the baseline step count until a favorable speedup appears. Cheaper descriptors are also a possible future ablation, requiring validation of their accuracy cost.
+
+Full per-input, per-seed, per-shift and timing evidence is in the local ignored `runs/generator-repair-review-v5/VERIFIED_REVIEW.md` and `AGGREGATED_RESULTS.csv`; current status is summarized in PROJECT_STATE.md. These repair results do not implement the planned real-graph, LoRA or five-candidate experiments.
