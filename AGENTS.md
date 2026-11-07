@@ -1,6 +1,10 @@
 # Project instructions
 
-## Current approved integration milestone — 2026-11-07
+## Current timing-comparison request — 2026-11-08
+
+The owner requested committing existing changes and measuring speed across head-only, LoRA and other implemented methods, with a descriptive comparison table. Existing integration code was already committed at bf76f91; new local commits may record the benchmark extension and verified results. Keep complete-pipeline timings, objective/label access and update scope explicit. Generated LoRA is not currently implemented; clarification is pending and direct coordinate updates must never be relabelled as LoRA. Preserve the original checkouts and artifacts. No push/merge is authorized.
+
+## Prior approved integration milestone — 2026-11-07
 
 The owner approved combining the audited repairs with c137e28, portable shared experiment runners, consistent complete-pipeline timing and a bounded matched compact-versus-A-D study. Work on the new `integration/generator-audit-fixes` branch and commit reviewed milestones there. Preserve the original repair checkout, upstream scripts/results and all runtime evidence. This authorizes local commits, not a push or merge. Arxiv integration follows this checkpoint as a separate milestone.
 

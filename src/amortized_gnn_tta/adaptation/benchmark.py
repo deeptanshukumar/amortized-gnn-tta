@@ -107,13 +107,26 @@ def generated_predictions(model, graph, descriptor, generator, *, scope="head", 
     return PipelineResult(logits, delta, timer.times)
 
 
-def iterative_predictions(model, graph, *, steps=30, lr=.01, device="cpu", profile=False):
-    """Existing cached head IM algorithm without export/report bookkeeping.
+@torch.enable_grad()
+def iterative_predictions(model, graph, *, steps=30, lr=.01, device="cpu", profile=False,
+                          peft=None, objective="information_maximization", initialization_seed=801):
+    """Existing head/LoRA optimizer without export/report bookkeeping.
 
     Uses the same WeightAdapter and objective as fit_unlabeled. Separate parity
-    tests compare the final predictions with that public fitting interface.
+    tests compare final predictions with that public fitting interface. Only
+    head adaptation caches its frozen encoder; LoRA recomputes its changing
+    encoder. Full supervised fine-tuning remains a separate diagnostic.
     """
+    if torch.is_inference_mode_enabled():
+        raise ValueError("Adaptation needs autograd; do not use inference_mode")
     positive_int(steps, "steps")
+    peft = peft if peft is not None else PEFTConfig("head")
+    if peft.method not in {"head", "lora"}:
+        raise ValueError("Unlabeled timing supports head/LoRA; full is supervised only")
+    if objective not in {"entropy", "information_maximization"}:
+        raise ValueError("Unknown unlabeled objective")
+    if isinstance(lr, bool) or not math.isfinite(lr) or lr <= 0:
+        raise ValueError("Learning rate must be finite and positive")
     timer = StageTimer(device, profile)
     if profile:
         synchronize(device)
@@ -121,7 +134,7 @@ def iterative_predictions(model, graph, *, steps=30, lr=.01, device="cpu", profi
     with timer.stage("transfer_and_setup"):
         validate_input(graph)
         inputs = _inputs(graph, device)
-        adapter = WeightAdapter(model, PEFTConfig("head")).to(device).eval()
+        adapter = WeightAdapter(model, peft, seed=initialization_seed).to(device).eval()
         adapter.prepare_episode(inputs.x, inputs.edge_index)
         parameters = [p for p in adapter.parameters() if p.requires_grad]
         optimizer = torch.optim.Adam(parameters, lr=lr, weight_decay=0.)
@@ -130,7 +143,7 @@ def iterative_predictions(model, graph, *, steps=30, lr=.01, device="cpu", profi
             optimizer.zero_grad(set_to_none=True)
             logits = adapter(inputs.x, inputs.edge_index)
             validate_logits(logits, inputs.num_nodes, model.config.out_channels)
-            loss = unlabeled_objective(logits, "information_maximization")
+            loss = unlabeled_objective(logits, objective)
             checked_backward(loss, parameters)
             optimizer.step()
     if profile:

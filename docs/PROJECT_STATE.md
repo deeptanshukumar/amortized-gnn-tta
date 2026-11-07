@@ -2,6 +2,10 @@
 
 Last updated: 2026-11-07. Current milestone: **audited generator integration and matched compact comparison**, completed on `integration/generator-audit-fixes` after explicit owner approval. The actual system remains CSBM; generated LoRA, five-candidate diffusion selection and real-graph experiments remain future milestones. CUDA/MPS execution remains unverified.
 
+## Timing comparison in progress (2026-11-08)
+
+Owner requested local commits and an expanded head/LoRA comparison. Prior integration work is committed through bf76f91; no project changes remained from the read-only contributor-timer diagnostic. The complete-pipeline optimizer now supports the existing head/LoRA adapters and entropy/IM objectives without changing their update rules. Twelve architecture × adapter × objective parity checks passed. Full supervised fine-tuning stays a separate labeled diagnostic; generated LoRA is not yet implemented. No final-target scoring or push/merge is authorized.
+
 ## Completed integration checkpoint
 
 `integration/generator-audit-fixes` starts at c137e28. Local commits `8c6203a` (audited repairs) and `d81bb02` (portable shared comparisons) preserve the original repair checkout and all ten contributor scripts/result files. No push or merge is authorized. The combined implementation passed **408 CPU tests**, including 24 focused portable workflow checks.

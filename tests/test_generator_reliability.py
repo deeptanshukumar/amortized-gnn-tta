@@ -206,13 +206,18 @@ def test_cost_only_amortization_and_raw_weight_bypass_rejected(fixture):
 
 
 @pytest.mark.parametrize("architecture", ["gcn", "gat", "graphsage"])
-def test_benchmark_iterative_path_matches_existing_adapter(architecture, fixture):
+@pytest.mark.parametrize("method", ["head", "lora"])
+@pytest.mark.parametrize("objective", ["entropy", "information_maximization"])
+def test_benchmark_iterative_path_matches_existing_adapter(architecture, method, objective, fixture):
     from amortized_gnn_tta.adaptation import fit_unlabeled, AdaptationConfig
     from amortized_gnn_tta.adaptation.benchmark import iterative_predictions, generated_predictions, measure_methods
     model = model_for(architecture).eval()
     graph = fixture[0].unlabeled_input("validation")
-    expected = fit_unlabeled(model, graph, PEFTConfig("head"), AdaptationConfig(steps=3, learning_rate=.01), objective="information_maximization")
-    actual = iterative_predictions(model, graph, steps=3, profile=True)
+    initial = {name: value.clone() for name, value in model.state_dict().items()}
+    expected = fit_unlabeled(model, graph, PEFTConfig(method), AdaptationConfig(steps=3, learning_rate=.01), objective=objective)
+    with torch.no_grad():
+        actual = iterative_predictions(model, graph, steps=3, profile=True, peft=PEFTConfig(method), objective=objective)
+    assert all(torch.equal(value, initial[name]) for name, value in model.state_dict().items())
     torch.testing.assert_close(actual.logits, expected.model(graph.x, graph.edge_index), rtol=1e-5, atol=1e-6)
     assert actual.stages_seconds["adaptation_ready"] > 0
     descriptor = GraphShiftDescriptor(in_channels=8, hidden_channels=8, conditioning="A")
