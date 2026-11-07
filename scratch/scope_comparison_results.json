@@ -1,0 +1,1169 @@
+{
+  "gcn": {
+    "head": {
+      "train_time_sec": 85.69617243999892,
+      "target_dim": 66,
+      "total_pairs": 204,
+      "baseline_mean_acc": 0.5467303934342721,
+      "adapted_mean_acc": 0.546431372709134,
+      "mean_gain": -0.00029902072513804715,
+      "improved_pairs": 99,
+      "degraded_pairs": 99,
+      "unchanged_pairs": 6,
+      "mean_delta_norm": 2.5764684057703207,
+      "mean_latency_ms": 1.0110117990217415,
+      "family_breakdown": {
+        "attribute": {
+          "count": 18,
+          "baseline_acc": 0.5647222234143151,
+          "adapted_acc": 0.5620555579662323,
+          "gain": -0.0026666654480828177,
+          "delta_norm": 2.6057473023732505
+        },
+        "combined": {
+          "count": 90,
+          "baseline_acc": 0.543088890446557,
+          "adapted_acc": 0.5440444456206428,
+          "gain": 0.0009555551740858289,
+          "delta_norm": 2.5725696113374497
+        },
+        "control": {
+          "count": 6,
+          "baseline_acc": 0.5698333382606506,
+          "adapted_acc": 0.5626666645208994,
+          "gain": -0.00716667373975118,
+          "delta_norm": 2.6057293812433877
+        },
+        "structural": {
+          "count": 90,
+          "baseline_acc": 0.54523333410422,
+          "adapted_acc": 0.5446111099587546,
+          "gain": -0.000622224145465427,
+          "delta_norm": 2.572560689184401
+        }
+      },
+      "shift_breakdown": {
+        "attribute": {
+          "count": 18,
+          "baseline_acc": 0.5647222234143151,
+          "adapted_acc": 0.5620555579662323,
+          "gain": -0.0026666654480828177,
+          "delta_norm": 2.6057473023732505
+        },
+        "attribute_degree_high": {
+          "count": 18,
+          "baseline_acc": 0.595055553648207,
+          "adapted_acc": 0.5897777775923411,
+          "gain": -0.005277776055865818,
+          "delta_norm": 2.3644689321517944
+        },
+        "attribute_degree_low": {
+          "count": 18,
+          "baseline_acc": 0.5624444451597002,
+          "adapted_acc": 0.553166667620341,
+          "gain": -0.009277777539359199,
+          "delta_norm": 2.754400028122796
+        },
+        "attribute_homophily": {
+          "count": 18,
+          "baseline_acc": 0.5133333404858907,
+          "adapted_acc": 0.5255555609862009,
+          "gain": 0.012222220500310263,
+          "delta_norm": 2.6094366312026978
+        },
+        "attribute_homophily_degree_high": {
+          "count": 18,
+          "baseline_acc": 0.5139444470405579,
+          "adapted_acc": 0.515888887974951,
+          "gain": 0.001944440934393141,
+          "delta_norm": 2.3686610062917075
+        },
+        "attribute_homophily_degree_low": {
+          "count": 18,
+          "baseline_acc": 0.530666665898429,
+          "adapted_acc": 0.5358333339293798,
+          "gain": 0.005166668030950759,
+          "delta_norm": 2.7658814589182534
+        },
+        "degree_high": {
+          "count": 18,
+          "baseline_acc": 0.6026111112700568,
+          "adapted_acc": 0.5986111130979326,
+          "gain": -0.003999998172124227,
+          "delta_norm": 2.364504257837931
+        },
+        "degree_low": {
+          "count": 18,
+          "baseline_acc": 0.5630555583371056,
+          "adapted_acc": 0.5506111052301195,
+          "gain": -0.012444453106986152,
+          "delta_norm": 2.754337602191501
+        },
+        "homophily": {
+          "count": 18,
+          "baseline_acc": 0.5140555517541038,
+          "adapted_acc": 0.5230555550919639,
+          "gain": 0.009000003337860107,
+          "delta_norm": 2.6094235049353705
+        },
+        "homophily_degree_high": {
+          "count": 18,
+          "baseline_acc": 0.5162777768241035,
+          "adapted_acc": 0.5161666638321347,
+          "gain": -0.0001111129919687907,
+          "delta_norm": 2.368698689672682
+        },
+        "homophily_degree_low": {
+          "count": 18,
+          "baseline_acc": 0.5301666723357307,
+          "adapted_acc": 0.5346111125416226,
+          "gain": 0.004444440205891927,
+          "delta_norm": 2.7658393912845187
+        },
+        "none": {
+          "count": 6,
+          "baseline_acc": 0.5698333382606506,
+          "adapted_acc": 0.5626666645208994,
+          "gain": -0.00716667373975118,
+          "delta_norm": 2.6057293812433877
+        }
+      }
+    },
+    "backbone": {
+      "train_time_sec": 168.67692411999815,
+      "target_dim": 2080,
+      "total_pairs": 204,
+      "baseline_mean_acc": 0.5467303934342721,
+      "adapted_mean_acc": 0.5727892173271553,
+      "mean_gain": 0.026058823892883227,
+      "improved_pairs": 198,
+      "degraded_pairs": 4,
+      "unchanged_pairs": 2,
+      "mean_delta_norm": 4.3591689081753,
+      "mean_latency_ms": 3.2097774703431114,
+      "family_breakdown": {
+        "attribute": {
+          "count": 18,
+          "baseline_acc": 0.5647222234143151,
+          "adapted_acc": 0.5993333359559377,
+          "gain": 0.034611112541622586,
+          "delta_norm": 4.367759757571751
+        },
+        "combined": {
+          "count": 90,
+          "baseline_acc": 0.543088890446557,
+          "adapted_acc": 0.5690444462829166,
+          "gain": 0.02595555583635966,
+          "delta_norm": 4.357969676123725
+        },
+        "control": {
+          "count": 6,
+          "baseline_acc": 0.5698333382606506,
+          "adapted_acc": 0.6023333370685577,
+          "gain": 0.032499998807907104,
+          "delta_norm": 4.3678613503774
+        },
+        "structural": {
+          "count": 90,
+          "baseline_acc": 0.54523333410422,
+          "adapted_acc": 0.5692555566628774,
+          "gain": 0.024022222558657328,
+          "delta_norm": 4.358070474200779
+        }
+      },
+      "shift_breakdown": {
+        "attribute": {
+          "count": 18,
+          "baseline_acc": 0.5647222234143151,
+          "adapted_acc": 0.5993333359559377,
+          "gain": 0.034611112541622586,
+          "delta_norm": 4.367759757571751
+        },
+        "attribute_degree_high": {
+          "count": 18,
+          "baseline_acc": 0.595055553648207,
+          "adapted_acc": 0.6380555596616533,
+          "gain": 0.04300000601344638,
+          "delta_norm": 4.301542891396417
+        },
+        "attribute_degree_low": {
+          "count": 18,
+          "baseline_acc": 0.5624444451597002,
+          "adapted_acc": 0.5895555582311418,
+          "gain": 0.02711111307144165,
+          "delta_norm": 4.407168361875746
+        },
+        "attribute_homophily": {
+          "count": 18,
+          "baseline_acc": 0.5133333404858907,
+          "adapted_acc": 0.5322777794467078,
+          "gain": 0.018944438960817125,
+          "delta_norm": 4.368429554833306
+        },
+        "attribute_homophily_degree_high": {
+          "count": 18,
+          "baseline_acc": 0.5139444470405579,
+          "adapted_acc": 0.5278333293067085,
+          "gain": 0.01388888226615058,
+          "delta_norm": 4.302725156148274
+        },
+        "attribute_homophily_degree_low": {
+          "count": 18,
+          "baseline_acc": 0.530666665898429,
+          "adapted_acc": 0.5575000047683716,
+          "gain": 0.02683333886994256,
+          "delta_norm": 4.4099824163648815
+        },
+        "degree_high": {
+          "count": 18,
+          "baseline_acc": 0.6026111112700568,
+          "adapted_acc": 0.6455000009801652,
+          "gain": 0.04288888971010844,
+          "delta_norm": 4.301646524005466
+        },
+        "degree_low": {
+          "count": 18,
+          "baseline_acc": 0.5630555583371056,
+          "adapted_acc": 0.5891111128860049,
+          "gain": 0.026055554548899334,
+          "delta_norm": 4.407266828748915
+        },
+        "homophily": {
+          "count": 18,
+          "baseline_acc": 0.5140555517541038,
+          "adapted_acc": 0.5301111174954308,
+          "gain": 0.016055565741327073,
+          "delta_norm": 4.368530379401313
+        },
+        "homophily_degree_high": {
+          "count": 18,
+          "baseline_acc": 0.5162777768241035,
+          "adapted_acc": 0.5242777731683519,
+          "gain": 0.007999996344248453,
+          "delta_norm": 4.302827623155382
+        },
+        "homophily_degree_low": {
+          "count": 18,
+          "baseline_acc": 0.5301666723357307,
+          "adapted_acc": 0.557277778784434,
+          "gain": 0.02711110644870334,
+          "delta_norm": 4.410081015692817
+        },
+        "none": {
+          "count": 6,
+          "baseline_acc": 0.5698333382606506,
+          "adapted_acc": 0.6023333370685577,
+          "gain": 0.032499998807907104,
+          "delta_norm": 4.3678613503774
+        }
+      }
+    },
+    "all": {
+      "train_time_sec": 186.00961640900277,
+      "target_dim": 2146,
+      "total_pairs": 204,
+      "baseline_mean_acc": 0.5467303934342721,
+      "adapted_mean_acc": 0.5671274492553636,
+      "mean_gain": 0.020397055821091522,
+      "improved_pairs": 189,
+      "degraded_pairs": 15,
+      "unchanged_pairs": 0,
+      "mean_delta_norm": 5.962256183811262,
+      "mean_latency_ms": 2.826408289205146,
+      "family_breakdown": {
+        "attribute": {
+          "count": 18,
+          "baseline_acc": 0.5647222234143151,
+          "adapted_acc": 0.6003333230813345,
+          "gain": 0.035611099667019315,
+          "delta_norm": 5.96528434753418
+        },
+        "combined": {
+          "count": 90,
+          "baseline_acc": 0.543088890446557,
+          "adapted_acc": 0.5624333328670925,
+          "gain": 0.019344442420535617,
+          "delta_norm": 5.961862622367011
+        },
+        "control": {
+          "count": 6,
+          "baseline_acc": 0.5698333382606506,
+          "adapted_acc": 0.6009999910990397,
+          "gain": 0.03116665283838908,
+          "delta_norm": 5.965265274047852
+        },
+        "structural": {
+          "count": 90,
+          "baseline_acc": 0.54523333410422,
+          "adapted_acc": 0.5629222214221954,
+          "gain": 0.01768888731797536,
+          "delta_norm": 5.961843506495158
+        }
+      },
+      "shift_breakdown": {
+        "attribute": {
+          "count": 18,
+          "baseline_acc": 0.5647222234143151,
+          "adapted_acc": 0.6003333230813345,
+          "gain": 0.035611099667019315,
+          "delta_norm": 5.96528434753418
+        },
+        "attribute_degree_high": {
+          "count": 18,
+          "baseline_acc": 0.595055553648207,
+          "adapted_acc": 0.6289444466431936,
+          "gain": 0.03388889299498664,
+          "delta_norm": 5.951274421479967
+        },
+        "attribute_degree_low": {
+          "count": 18,
+          "baseline_acc": 0.5624444451597002,
+          "adapted_acc": 0.5845555464426676,
+          "gain": 0.022111101282967463,
+          "delta_norm": 5.970707178115845
+        },
+        "attribute_homophily": {
+          "count": 18,
+          "baseline_acc": 0.5133333404858907,
+          "adapted_acc": 0.5266111128860049,
+          "gain": 0.013277772400114272,
+          "delta_norm": 5.965034219953749
+        },
+        "attribute_homophily_degree_high": {
+          "count": 18,
+          "baseline_acc": 0.5139444470405579,
+          "adapted_acc": 0.5275000002649095,
+          "gain": 0.01355555322435167,
+          "delta_norm": 5.951512972513835
+        },
+        "attribute_homophily_degree_low": {
+          "count": 18,
+          "baseline_acc": 0.530666665898429,
+          "adapted_acc": 0.544555558098687,
+          "gain": 0.013888892200258043,
+          "delta_norm": 5.970784319771661
+        },
+        "degree_high": {
+          "count": 18,
+          "baseline_acc": 0.6026111112700568,
+          "adapted_acc": 0.6307777762413025,
+          "gain": 0.02816666497124566,
+          "delta_norm": 5.95125314924452
+        },
+        "degree_low": {
+          "count": 18,
+          "baseline_acc": 0.5630555583371056,
+          "adapted_acc": 0.5859999987814162,
+          "gain": 0.022944440444310505,
+          "delta_norm": 5.970690621270074
+        },
+        "homophily": {
+          "count": 18,
+          "baseline_acc": 0.5140555517541038,
+          "adapted_acc": 0.5288888944519891,
+          "gain": 0.014833342697885301,
+          "delta_norm": 5.965015014012654
+        },
+        "homophily_degree_high": {
+          "count": 18,
+          "baseline_acc": 0.5162777768241035,
+          "adapted_acc": 0.523555553621716,
+          "gain": 0.007277776797612508,
+          "delta_norm": 5.951491859224108
+        },
+        "homophily_degree_low": {
+          "count": 18,
+          "baseline_acc": 0.5301666723357307,
+          "adapted_acc": 0.5453888840145535,
+          "gain": 0.015222211678822836,
+          "delta_norm": 5.970766888724433
+        },
+        "none": {
+          "count": 6,
+          "baseline_acc": 0.5698333382606506,
+          "adapted_acc": 0.6009999910990397,
+          "gain": 0.03116665283838908,
+          "delta_norm": 5.965265274047852
+        }
+      }
+    }
+  },
+  "gat": {
+    "head": {
+      "train_time_sec": 122.46749581499898,
+      "target_dim": 70,
+      "total_pairs": 204,
+      "baseline_mean_acc": 0.544862745439305,
+      "adapted_mean_acc": 0.5422303924957911,
+      "mean_gain": -0.0026323529435139078,
+      "improved_pairs": 102,
+      "degraded_pairs": 99,
+      "unchanged_pairs": 3,
+      "mean_delta_norm": 2.537913599435021,
+      "mean_latency_ms": 1.945213411732659,
+      "family_breakdown": {
+        "attribute": {
+          "count": 18,
+          "baseline_acc": 0.563222222858005,
+          "adapted_acc": 0.5626111129919688,
+          "gain": -0.0006111098660363092,
+          "delta_norm": 2.546548008918762
+        },
+        "combined": {
+          "count": 90,
+          "baseline_acc": 0.5419333342048857,
+          "adapted_acc": 0.5388444450166491,
+          "gain": -0.0030888891882366602,
+          "delta_norm": 2.5369972480667964
+        },
+        "control": {
+          "count": 6,
+          "baseline_acc": 0.5660000046094259,
+          "adapted_acc": 0.5648333330949148,
+          "gain": -0.0011666715145111084,
+          "delta_norm": 2.546094536781311
+        },
+        "structural": {
+          "count": 90,
+          "baseline_acc": 0.542711110578643,
+          "adapted_acc": 0.5400333331690894,
+          "gain": -0.002677777409553528,
+          "delta_norm": 2.5365576730834114
+        }
+      },
+      "shift_breakdown": {
+        "attribute": {
+          "count": 18,
+          "baseline_acc": 0.563222222858005,
+          "adapted_acc": 0.5626111129919688,
+          "gain": -0.0006111098660363092,
+          "delta_norm": 2.546548008918762
+        },
+        "attribute_degree_high": {
+          "count": 18,
+          "baseline_acc": 0.5948333375983768,
+          "adapted_acc": 0.575611111190584,
+          "gain": -0.019222226407792833,
+          "delta_norm": 2.451057778464423
+        },
+        "attribute_degree_low": {
+          "count": 18,
+          "baseline_acc": 0.5587222245004442,
+          "adapted_acc": 0.5562222169505225,
+          "gain": -0.0025000075499216714,
+          "delta_norm": 2.6134770711263022
+        },
+        "attribute_homophily": {
+          "count": 18,
+          "baseline_acc": 0.5153888894451989,
+          "adapted_acc": 0.5169444498088624,
+          "gain": 0.0015555603636635675,
+          "delta_norm": 2.5486458275053234
+        },
+        "attribute_homophily_degree_high": {
+          "count": 18,
+          "baseline_acc": 0.5117777734994888,
+          "adapted_acc": 0.5115000026093589,
+          "gain": -0.0002777708901299371,
+          "delta_norm": 2.452265454663171
+        },
+        "attribute_homophily_degree_low": {
+          "count": 18,
+          "baseline_acc": 0.5289444459809197,
+          "adapted_acc": 0.5339444445239173,
+          "gain": 0.0049999985429975725,
+          "delta_norm": 2.6195401085747614
+        },
+        "degree_high": {
+          "count": 18,
+          "baseline_acc": 0.5980555514494578,
+          "adapted_acc": 0.583500001165602,
+          "gain": -0.014555550283855863,
+          "delta_norm": 2.450591173436907
+        },
+        "degree_low": {
+          "count": 18,
+          "baseline_acc": 0.5589444471730126,
+          "adapted_acc": 0.5572777721616957,
+          "gain": -0.0016666750113169353,
+          "delta_norm": 2.613070766131083
+        },
+        "homophily": {
+          "count": 18,
+          "baseline_acc": 0.513944438762135,
+          "adapted_acc": 0.5168888933128781,
+          "gain": 0.002944454550743103,
+          "delta_norm": 2.5481937991248236
+        },
+        "homophily_degree_high": {
+          "count": 18,
+          "baseline_acc": 0.5113888945844438,
+          "adapted_acc": 0.5116111073229048,
+          "gain": 0.00022221273846096464,
+          "delta_norm": 2.451795670721266
+        },
+        "homophily_degree_low": {
+          "count": 18,
+          "baseline_acc": 0.5312222209241655,
+          "adapted_acc": 0.5308888918823667,
+          "gain": -0.0003333290417989095,
+          "delta_norm": 2.6191369560029774
+        },
+        "none": {
+          "count": 6,
+          "baseline_acc": 0.5660000046094259,
+          "adapted_acc": 0.5648333330949148,
+          "gain": -0.0011666715145111084,
+          "delta_norm": 2.546094536781311
+        }
+      }
+    },
+    "backbone": {
+      "train_time_sec": 222.13561188899985,
+      "target_dim": 2144,
+      "total_pairs": 204,
+      "baseline_mean_acc": 0.544862745439305,
+      "adapted_mean_acc": 0.5705784305053598,
+      "mean_gain": 0.025715685066054848,
+      "improved_pairs": 197,
+      "degraded_pairs": 6,
+      "unchanged_pairs": 1,
+      "mean_delta_norm": 5.360572031899994,
+      "mean_latency_ms": 4.647962926534163,
+      "family_breakdown": {
+        "attribute": {
+          "count": 18,
+          "baseline_acc": 0.563222222858005,
+          "adapted_acc": 0.5984999934832255,
+          "gain": 0.0352777706252204,
+          "delta_norm": 5.360223717159695
+        },
+        "combined": {
+          "count": 90,
+          "baseline_acc": 0.5419333342048857,
+          "adapted_acc": 0.567411110136244,
+          "gain": 0.02547777593135834,
+          "delta_norm": 5.360546000798544
+        },
+        "control": {
+          "count": 6,
+          "baseline_acc": 0.5660000046094259,
+          "adapted_acc": 0.5964999993642172,
+          "gain": 0.03049999475479126,
+          "delta_norm": 5.360360066095988
+        },
+        "structural": {
+          "count": 90,
+          "baseline_acc": 0.542711110578643,
+          "adapted_acc": 0.5664333336883121,
+          "gain": 0.023722223109669156,
+          "delta_norm": 5.360681857003106
+        }
+      },
+      "shift_breakdown": {
+        "attribute": {
+          "count": 18,
+          "baseline_acc": 0.563222222858005,
+          "adapted_acc": 0.5984999934832255,
+          "gain": 0.0352777706252204,
+          "delta_norm": 5.360223717159695
+        },
+        "attribute_degree_high": {
+          "count": 18,
+          "baseline_acc": 0.5948333375983768,
+          "adapted_acc": 0.640666663646698,
+          "gain": 0.045833326048321195,
+          "delta_norm": 5.360509554545085
+        },
+        "attribute_degree_low": {
+          "count": 18,
+          "baseline_acc": 0.5587222245004442,
+          "adapted_acc": 0.5841666658719381,
+          "gain": 0.02544444137149387,
+          "delta_norm": 5.360650936762492
+        },
+        "attribute_homophily": {
+          "count": 18,
+          "baseline_acc": 0.5153888894451989,
+          "adapted_acc": 0.5319444404708015,
+          "gain": 0.016555551025602553,
+          "delta_norm": 5.360300461451213
+        },
+        "attribute_homophily_degree_high": {
+          "count": 18,
+          "baseline_acc": 0.5117777734994888,
+          "adapted_acc": 0.525500002834532,
+          "gain": 0.013722229335043166,
+          "delta_norm": 5.360517422358195
+        },
+        "attribute_homophily_degree_low": {
+          "count": 18,
+          "baseline_acc": 0.5289444459809197,
+          "adapted_acc": 0.5547777778572507,
+          "gain": 0.025833331876330905,
+          "delta_norm": 5.360751628875732
+        },
+        "degree_high": {
+          "count": 18,
+          "baseline_acc": 0.5980555514494578,
+          "adapted_acc": 0.6345000035232968,
+          "gain": 0.03644445207383898,
+          "delta_norm": 5.360647837320964
+        },
+        "degree_low": {
+          "count": 18,
+          "baseline_acc": 0.5589444471730126,
+          "adapted_acc": 0.5833888914850023,
+          "gain": 0.02444444431198968,
+          "delta_norm": 5.360784663094415
+        },
+        "homophily": {
+          "count": 18,
+          "baseline_acc": 0.513944438762135,
+          "adapted_acc": 0.5363888872994317,
+          "gain": 0.02244444853729672,
+          "delta_norm": 5.3604362275865345
+        },
+        "homophily_degree_high": {
+          "count": 18,
+          "baseline_acc": 0.5113888945844438,
+          "adapted_acc": 0.5227222210831113,
+          "gain": 0.011333326498667399,
+          "delta_norm": 5.3606555461883545
+        },
+        "homophily_degree_low": {
+          "count": 18,
+          "baseline_acc": 0.5312222209241655,
+          "adapted_acc": 0.5551666650507185,
+          "gain": 0.023944444126553006,
+          "delta_norm": 5.360885010825263
+        },
+        "none": {
+          "count": 6,
+          "baseline_acc": 0.5660000046094259,
+          "adapted_acc": 0.5964999993642172,
+          "gain": 0.03049999475479126,
+          "delta_norm": 5.360360066095988
+        }
+      }
+    },
+    "all": {
+      "train_time_sec": 216.40557866299787,
+      "target_dim": 2214,
+      "total_pairs": 204,
+      "baseline_mean_acc": 0.544862745439305,
+      "adapted_mean_acc": 0.5611617638199937,
+      "mean_gain": 0.016299018380688687,
+      "improved_pairs": 169,
+      "degraded_pairs": 33,
+      "unchanged_pairs": 2,
+      "mean_delta_norm": 6.579061003292308,
+      "mean_latency_ms": 4.40540038225128,
+      "family_breakdown": {
+        "attribute": {
+          "count": 18,
+          "baseline_acc": 0.563222222858005,
+          "adapted_acc": 0.588999996582667,
+          "gain": 0.02577777372466193,
+          "delta_norm": 6.578539901309544
+        },
+        "combined": {
+          "count": 90,
+          "baseline_acc": 0.5419333342048857,
+          "adapted_acc": 0.5565333310100767,
+          "gain": 0.01459999680519104,
+          "delta_norm": 6.578886434766981
+        },
+        "control": {
+          "count": 6,
+          "baseline_acc": 0.5660000046094259,
+          "adapted_acc": 0.593833327293396,
+          "gain": 0.027833322683970135,
+          "delta_norm": 6.578997770945231
+        },
+        "structural": {
+          "count": 90,
+          "baseline_acc": 0.542711110578643,
+          "adapted_acc": 0.5580444458458159,
+          "gain": 0.01533333526717292,
+          "delta_norm": 6.579344007703993
+        }
+      },
+      "shift_breakdown": {
+        "attribute": {
+          "count": 18,
+          "baseline_acc": 0.563222222858005,
+          "adapted_acc": 0.588999996582667,
+          "gain": 0.02577777372466193,
+          "delta_norm": 6.578539901309544
+        },
+        "attribute_degree_high": {
+          "count": 18,
+          "baseline_acc": 0.5948333375983768,
+          "adapted_acc": 0.615888880358802,
+          "gain": 0.021055542760425143,
+          "delta_norm": 6.5819399621751575
+        },
+        "attribute_degree_low": {
+          "count": 18,
+          "baseline_acc": 0.5587222245004442,
+          "adapted_acc": 0.5792222188578712,
+          "gain": 0.02049999435742696,
+          "delta_norm": 6.57610821723938
+        },
+        "attribute_homophily": {
+          "count": 18,
+          "baseline_acc": 0.5153888894451989,
+          "adapted_acc": 0.5258333384990692,
+          "gain": 0.010444449053870307,
+          "delta_norm": 6.5785202450222435
+        },
+        "attribute_homophily_degree_high": {
+          "count": 18,
+          "baseline_acc": 0.5117777734994888,
+          "adapted_acc": 0.5194999956422381,
+          "gain": 0.007722222142749363,
+          "delta_norm": 6.5820069842868385
+        },
+        "attribute_homophily_degree_low": {
+          "count": 18,
+          "baseline_acc": 0.5289444459809197,
+          "adapted_acc": 0.5422222216924032,
+          "gain": 0.013277775711483426,
+          "delta_norm": 6.575856765111287
+        },
+        "degree_high": {
+          "count": 18,
+          "baseline_acc": 0.5980555514494578,
+          "adapted_acc": 0.6161111195882162,
+          "gain": 0.018055568138758343,
+          "delta_norm": 6.5824001630147295
+        },
+        "degree_low": {
+          "count": 18,
+          "baseline_acc": 0.5589444471730126,
+          "adapted_acc": 0.5819444457689921,
+          "gain": 0.022999998595979478,
+          "delta_norm": 6.576563384797838
+        },
+        "homophily": {
+          "count": 18,
+          "baseline_acc": 0.513944438762135,
+          "adapted_acc": 0.5278888791799545,
+          "gain": 0.013944440417819552,
+          "delta_norm": 6.578978167639838
+        },
+        "homophily_degree_high": {
+          "count": 18,
+          "baseline_acc": 0.5113888945844438,
+          "adapted_acc": 0.5201666686269972,
+          "gain": 0.008777774042553373,
+          "delta_norm": 6.5824671851264105
+        },
+        "homophily_degree_low": {
+          "count": 18,
+          "baseline_acc": 0.5312222209241655,
+          "adapted_acc": 0.5441111160649194,
+          "gain": 0.012888895140753852,
+          "delta_norm": 6.576311137941149
+        },
+        "none": {
+          "count": 6,
+          "baseline_acc": 0.5660000046094259,
+          "adapted_acc": 0.593833327293396,
+          "gain": 0.027833322683970135,
+          "delta_norm": 6.578997770945231
+        }
+      }
+    }
+  },
+  "graphsage": {
+    "head": {
+      "train_time_sec": 103.59209864199875,
+      "target_dim": 130,
+      "total_pairs": 204,
+      "baseline_mean_acc": 0.5176666671154546,
+      "adapted_mean_acc": 0.5290441190203031,
+      "mean_gain": 0.01137745190484851,
+      "improved_pairs": 149,
+      "degraded_pairs": 51,
+      "unchanged_pairs": 4,
+      "mean_delta_norm": 2.266787426144469,
+      "mean_latency_ms": 1.6359310539865322,
+      "family_breakdown": {
+        "attribute": {
+          "count": 18,
+          "baseline_acc": 0.5350000063578287,
+          "adapted_acc": 0.5385000010331472,
+          "gain": 0.0034999946753184,
+          "delta_norm": 2.2502971159087286
+        },
+        "combined": {
+          "count": 90,
+          "baseline_acc": 0.5150000015894572,
+          "adapted_acc": 0.5282555566893683,
+          "gain": 0.01325555509991116,
+          "delta_norm": 2.2692156685723197
+        },
+        "control": {
+          "count": 6,
+          "baseline_acc": 0.5353333254655203,
+          "adapted_acc": 0.5378333330154419,
+          "gain": 0.0025000075499216714,
+          "delta_norm": 2.2498284379641214
+        },
+        "structural": {
+          "count": 90,
+          "baseline_acc": 0.5156888875696394,
+          "adapted_acc": 0.5273555573489931,
+          "gain": 0.011666669779353671,
+          "delta_norm": 2.2687878449757894
+        }
+      },
+      "shift_breakdown": {
+        "attribute": {
+          "count": 18,
+          "baseline_acc": 0.5350000063578287,
+          "adapted_acc": 0.5385000010331472,
+          "gain": 0.0034999946753184,
+          "delta_norm": 2.2502971159087286
+        },
+        "attribute_degree_high": {
+          "count": 18,
+          "baseline_acc": 0.5498333341545529,
+          "adapted_acc": 0.5473888946904076,
+          "gain": -0.0024444394641452366,
+          "delta_norm": 2.3748167289627924
+        },
+        "attribute_degree_low": {
+          "count": 18,
+          "baseline_acc": 0.5232222163014941,
+          "adapted_acc": 0.5403333339426253,
+          "gain": 0.017111117641131084,
+          "delta_norm": 2.177138818634881
+        },
+        "attribute_homophily": {
+          "count": 18,
+          "baseline_acc": 0.4946111175749037,
+          "adapted_acc": 0.519444442457623,
+          "gain": 0.024833324882719252,
+          "delta_norm": 2.2496383455064564
+        },
+        "attribute_homophily_degree_high": {
+          "count": 18,
+          "baseline_acc": 0.49427777859899735,
+          "adapted_acc": 0.5136111130317053,
+          "gain": 0.01933333443270789,
+          "delta_norm": 2.3728782335917153
+        },
+        "attribute_homophily_degree_low": {
+          "count": 18,
+          "baseline_acc": 0.5130555613173379,
+          "adapted_acc": 0.5204999993244807,
+          "gain": 0.007444438007142808,
+          "delta_norm": 2.1716062161657543
+        },
+        "degree_high": {
+          "count": 18,
+          "baseline_acc": 0.5521666606267294,
+          "adapted_acc": 0.5455555518468221,
+          "gain": -0.0066111087799072266,
+          "delta_norm": 2.3743902113702564
+        },
+        "degree_low": {
+          "count": 18,
+          "baseline_acc": 0.5233333342605166,
+          "adapted_acc": 0.5393333401944902,
+          "gain": 0.016000005933973525,
+          "delta_norm": 2.1767151090833874
+        },
+        "homophily": {
+          "count": 18,
+          "baseline_acc": 0.49494444330533344,
+          "adapted_acc": 0.5192222230964236,
+          "gain": 0.024277779791090224,
+          "delta_norm": 2.24918579392963
+        },
+        "homophily_degree_high": {
+          "count": 18,
+          "baseline_acc": 0.49472222559981877,
+          "adapted_acc": 0.5126666724681854,
+          "gain": 0.017944446868366666,
+          "delta_norm": 2.3724527425236173
+        },
+        "homophily_degree_low": {
+          "count": 18,
+          "baseline_acc": 0.5132777740557989,
+          "adapted_acc": 0.519999999139044,
+          "gain": 0.006722225083245171,
+          "delta_norm": 2.171195367972056
+        },
+        "none": {
+          "count": 6,
+          "baseline_acc": 0.5353333254655203,
+          "adapted_acc": 0.5378333330154419,
+          "gain": 0.0025000075499216714,
+          "delta_norm": 2.2498284379641214
+        }
+      }
+    },
+    "backbone": {
+      "train_time_sec": 282.6381846880031,
+      "target_dim": 4128,
+      "total_pairs": 204,
+      "baseline_mean_acc": 0.5176666671154546,
+      "adapted_mean_acc": 0.5469313721154251,
+      "mean_gain": 0.029264704999970456,
+      "improved_pairs": 201,
+      "degraded_pairs": 1,
+      "unchanged_pairs": 2,
+      "mean_delta_norm": 5.656477528459885,
+      "mean_latency_ms": 5.110809127490581,
+      "family_breakdown": {
+        "attribute": {
+          "count": 18,
+          "baseline_acc": 0.5350000063578287,
+          "adapted_acc": 0.5716111063957214,
+          "gain": 0.03661110003789266,
+          "delta_norm": 5.65403217739529
+        },
+        "combined": {
+          "count": 90,
+          "baseline_acc": 0.5150000015894572,
+          "adapted_acc": 0.5432222217321396,
+          "gain": 0.028222220142682393,
+          "delta_norm": 5.656827942530314
+        },
+        "control": {
+          "count": 6,
+          "baseline_acc": 0.5353333254655203,
+          "adapted_acc": 0.5751666724681854,
+          "gain": 0.0398333470026652,
+          "delta_norm": 5.653982400894165
+        },
+        "structural": {
+          "count": 90,
+          "baseline_acc": 0.5156888875696394,
+          "adapted_acc": 0.5438222222858005,
+          "gain": 0.02813333471616109,
+          "delta_norm": 5.65678252644009
+        }
+      },
+      "shift_breakdown": {
+        "attribute": {
+          "count": 18,
+          "baseline_acc": 0.5350000063578287,
+          "adapted_acc": 0.5716111063957214,
+          "gain": 0.03661110003789266,
+          "delta_norm": 5.65403217739529
+        },
+        "attribute_degree_high": {
+          "count": 18,
+          "baseline_acc": 0.5498333341545529,
+          "adapted_acc": 0.5766666630903879,
+          "gain": 0.026833328935835097,
+          "delta_norm": 5.67167149649726
+        },
+        "attribute_degree_low": {
+          "count": 18,
+          "baseline_acc": 0.5232222163014941,
+          "adapted_acc": 0.559166669845581,
+          "gain": 0.03594445354408688,
+          "delta_norm": 5.643892235226101
+        },
+        "attribute_homophily": {
+          "count": 18,
+          "baseline_acc": 0.4946111175749037,
+          "adapted_acc": 0.5223333338896433,
+          "gain": 0.027722216314739652,
+          "delta_norm": 5.654055277506511
+        },
+        "attribute_homophily_degree_high": {
+          "count": 18,
+          "baseline_acc": 0.49427777859899735,
+          "adapted_acc": 0.5253888848755095,
+          "gain": 0.031111106276512146,
+          "delta_norm": 5.6714854505327015
+        },
+        "attribute_homophily_degree_low": {
+          "count": 18,
+          "baseline_acc": 0.5130555613173379,
+          "adapted_acc": 0.5325555569595761,
+          "gain": 0.019499995642238192,
+          "delta_norm": 5.643035252888997
+        },
+        "degree_high": {
+          "count": 18,
+          "baseline_acc": 0.5521666606267294,
+          "adapted_acc": 0.5773333311080933,
+          "gain": 0.025166670481363933,
+          "delta_norm": 5.6716212961408825
+        },
+        "degree_low": {
+          "count": 18,
+          "baseline_acc": 0.5233333342605166,
+          "adapted_acc": 0.5597222215599484,
+          "gain": 0.036388887299431696,
+          "delta_norm": 5.64385011461046
+        },
+        "homophily": {
+          "count": 18,
+          "baseline_acc": 0.49494444330533344,
+          "adapted_acc": 0.5212777786784701,
+          "gain": 0.026333335373136733,
+          "delta_norm": 5.65400931570265
+        },
+        "homophily_degree_high": {
+          "count": 18,
+          "baseline_acc": 0.49472222559981877,
+          "adapted_acc": 0.5261111127005683,
+          "gain": 0.031388887100749545,
+          "delta_norm": 5.671436866124471
+        },
+        "homophily_degree_low": {
+          "count": 18,
+          "baseline_acc": 0.5132777740557989,
+          "adapted_acc": 0.5346666673819224,
+          "gain": 0.021388893326123554,
+          "delta_norm": 5.642995039621989
+        },
+        "none": {
+          "count": 6,
+          "baseline_acc": 0.5353333254655203,
+          "adapted_acc": 0.5751666724681854,
+          "gain": 0.0398333470026652,
+          "delta_norm": 5.653982400894165
+        }
+      }
+    },
+    "all": {
+      "train_time_sec": 268.6396457990013,
+      "target_dim": 4258,
+      "total_pairs": 204,
+      "baseline_mean_acc": 0.5176666671154546,
+      "adapted_mean_acc": 0.5182745127993471,
+      "mean_gain": 0.000607845683892568,
+      "improved_pairs": 121,
+      "degraded_pairs": 79,
+      "unchanged_pairs": 4,
+      "mean_delta_norm": 11.820559800839892,
+      "mean_latency_ms": 2.5052281420286424,
+      "family_breakdown": {
+        "attribute": {
+          "count": 18,
+          "baseline_acc": 0.5350000063578287,
+          "adapted_acc": 0.5265000098281436,
+          "gain": -0.008499996529685127,
+          "delta_norm": 11.80698373582628
+        },
+        "combined": {
+          "count": 90,
+          "baseline_acc": 0.5150000015894572,
+          "adapted_acc": 0.5167222238249249,
+          "gain": 0.0017222222354676988,
+          "delta_norm": 11.822447978125679
+        },
+        "control": {
+          "count": 6,
+          "baseline_acc": 0.5353333254655203,
+          "adapted_acc": 0.5271666646003723,
+          "gain": -0.008166660865147909,
+          "delta_norm": 11.806824525197348
+        },
+        "structural": {
+          "count": 90,
+          "baseline_acc": 0.5156888875696394,
+          "adapted_acc": 0.5175888922479418,
+          "gain": 0.001900004678302341,
+          "delta_norm": 11.822302521599664
+        }
+      },
+      "shift_breakdown": {
+        "attribute": {
+          "count": 18,
+          "baseline_acc": 0.5350000063578287,
+          "adapted_acc": 0.5265000098281436,
+          "gain": -0.008499996529685127,
+          "delta_norm": 11.80698373582628
+        },
+        "attribute_degree_high": {
+          "count": 18,
+          "baseline_acc": 0.5498333341545529,
+          "adapted_acc": 0.5284444491068522,
+          "gain": -0.02138888504770067,
+          "delta_norm": 11.904904418521458
+        },
+        "attribute_degree_low": {
+          "count": 18,
+          "baseline_acc": 0.5232222163014941,
+          "adapted_acc": 0.5253888931539323,
+          "gain": 0.002166676852438185,
+          "delta_norm": 11.75072463353475
+        },
+        "attribute_homophily": {
+          "count": 18,
+          "baseline_acc": 0.4946111175749037,
+          "adapted_acc": 0.5097777777247958,
+          "gain": 0.015166660149892172,
+          "delta_norm": 11.80647071202596
+        },
+        "attribute_homophily_degree_high": {
+          "count": 18,
+          "baseline_acc": 0.49427777859899735,
+          "adapted_acc": 0.5076111124621497,
+          "gain": 0.013333333863152398,
+          "delta_norm": 11.903360896640354
+        },
+        "attribute_homophily_degree_low": {
+          "count": 18,
+          "baseline_acc": 0.5130555613173379,
+          "adapted_acc": 0.5123888866768943,
+          "gain": -0.00066667464044359,
+          "delta_norm": 11.74677922990587
+        },
+        "degree_high": {
+          "count": 18,
+          "baseline_acc": 0.5521666606267294,
+          "adapted_acc": 0.5291111138131883,
+          "gain": -0.023055546813540988,
+          "delta_norm": 11.904748227861193
+        },
+        "degree_low": {
+          "count": 18,
+          "baseline_acc": 0.5233333342605166,
+          "adapted_acc": 0.5275555650393168,
+          "gain": 0.004222230778800117,
+          "delta_norm": 11.750589953528511
+        },
+        "homophily": {
+          "count": 18,
+          "baseline_acc": 0.49494444330533344,
+          "adapted_acc": 0.5095555583635966,
+          "gain": 0.014611115058263143,
+          "delta_norm": 11.80632119708591
+        },
+        "homophily_degree_high": {
+          "count": 18,
+          "baseline_acc": 0.49472222559981877,
+          "adapted_acc": 0.5089999983708063,
+          "gain": 0.014277772770987617,
+          "delta_norm": 11.903206295437283
+        },
+        "homophily_degree_low": {
+          "count": 18,
+          "baseline_acc": 0.5132777740557989,
+          "adapted_acc": 0.5127222256528007,
+          "gain": -0.0005555484029981825,
+          "delta_norm": 11.746646934085422
+        },
+        "none": {
+          "count": 6,
+          "baseline_acc": 0.5353333254655203,
+          "adapted_acc": 0.5271666646003723,
+          "gain": -0.008166660865147909,
+          "delta_norm": 11.806824525197348
+        }
+      }
+    }
+  }
+}

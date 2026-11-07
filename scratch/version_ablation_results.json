@@ -1,0 +1,362 @@
+{
+  "gcn": {
+    "baseline": {
+      "mean_acc": 0.5467303934342721
+    },
+    "fine_tuning": {
+      "mean_acc": 0.5467647046727293,
+      "mean_gain": 3.431123845717486e-05,
+      "mean_delta_norm": 2.41967492126951,
+      "mean_latency_ms": 65.18975942640728,
+      "win_rate": 0.4852941176470588
+    },
+    "hypernetwork": {
+      "A": {
+        "conditioning": "A",
+        "descriptor_dim": 145,
+        "train_time_sec": 57.32645273208618,
+        "mean_acc": 0.5417401965926675,
+        "mean_gain": -0.00499019684160457,
+        "win_rate": 0.35294117647058826,
+        "mean_delta_norm": 2.6642867186490227,
+        "desc_latency_ms": 0.6880628382835615,
+        "gen_latency_ms": 0.08205012747174467,
+        "total_latency_ms": 0.7701129657553062,
+        "speedup_vs_ft": 84.6496063892015
+      },
+      "B": {
+        "conditioning": "B",
+        "descriptor_dim": 246,
+        "train_time_sec": 68.31705522537231,
+        "mean_acc": 0.5419264706034287,
+        "mean_gain": -0.004803922830843458,
+        "win_rate": 0.3431372549019608,
+        "mean_delta_norm": 2.519359927551419,
+        "desc_latency_ms": 1.1901077206643738,
+        "gen_latency_ms": 0.03379562754251346,
+        "total_latency_ms": 1.2239033482068873,
+        "speedup_vs_ft": 53.263813292050635
+      },
+      "C": {
+        "conditioning": "C",
+        "descriptor_dim": 255,
+        "train_time_sec": 69.9352388381958,
+        "mean_acc": 0.5395833338592567,
+        "mean_gain": -0.007147059575015423,
+        "win_rate": 0.29411764705882354,
+        "mean_delta_norm": 2.351399810290804,
+        "desc_latency_ms": 2.2066270589229866,
+        "gen_latency_ms": 0.13548098999593755,
+        "total_latency_ms": 2.342108048918924,
+        "speedup_vs_ft": 27.833796761211648
+      },
+      "D": {
+        "conditioning": "D",
+        "descriptor_dim": 267,
+        "train_time_sec": 71.94373798370361,
+        "mean_acc": 0.5417254898770183,
+        "mean_gain": -0.005004903557253819,
+        "win_rate": 0.37745098039215685,
+        "mean_delta_norm": 2.3702964157450435,
+        "desc_latency_ms": 2.6467809267499023,
+        "gen_latency_ms": 0.1479642599174529,
+        "total_latency_ms": 2.794745186667355,
+        "speedup_vs_ft": 23.325832973038946
+      }
+    },
+    "diffusion": {
+      "A": {
+        "conditioning": "A",
+        "descriptor_dim": 145,
+        "train_time_sec": 63.372084856033325,
+        "mean_acc": 0.5491127419997665,
+        "mean_gain": 0.002382348565494313,
+        "win_rate": 0.6078431372549019,
+        "mean_delta_norm": 1.3909513354301453,
+        "desc_latency_ms": 1.3144751420779857,
+        "gen_latency_ms": 3.2809643281307572,
+        "total_latency_ms": 4.595439470208743,
+        "speedup_vs_ft": 14.185750862135956
+      },
+      "B": {
+        "conditioning": "B",
+        "descriptor_dim": 246,
+        "train_time_sec": 76.96851897239685,
+        "mean_acc": 0.5517892140675994,
+        "mean_gain": 0.00505882063332726,
+        "win_rate": 0.7107843137254902,
+        "mean_delta_norm": 1.5185066227819406,
+        "desc_latency_ms": 1.2834629457810318,
+        "gen_latency_ms": 0.8390240390701151,
+        "total_latency_ms": 2.1224869848511467,
+        "speedup_vs_ft": 30.71385591133749
+      },
+      "C": {
+        "conditioning": "C",
+        "descriptor_dim": 255,
+        "train_time_sec": 74.73691821098328,
+        "mean_acc": 0.5491715678397346,
+        "mean_gain": 0.002441174405462602,
+        "win_rate": 0.6470588235294118,
+        "mean_delta_norm": 1.0708569898909213,
+        "desc_latency_ms": 2.6295077697760267,
+        "gen_latency_ms": 1.1497589266404176,
+        "total_latency_ms": 3.7792666964164443,
+        "speedup_vs_ft": 17.24931439430331
+      },
+      "D": {
+        "conditioning": "D",
+        "descriptor_dim": 267,
+        "train_time_sec": 72.55380487442017,
+        "mean_acc": 0.5471127459815904,
+        "mean_gain": 0.0003823525473183277,
+        "win_rate": 0.5098039215686274,
+        "mean_delta_norm": 0.9931893935974907,
+        "desc_latency_ms": 2.643709632227946,
+        "gen_latency_ms": 1.017516127652854,
+        "total_latency_ms": 3.6612257598808,
+        "speedup_vs_ft": 17.805446509403367
+      }
+    }
+  },
+  "gat": {
+    "baseline": {
+      "mean_acc": 0.544862745439305
+    },
+    "fine_tuning": {
+      "mean_acc": 0.543137256275205,
+      "mean_gain": -0.0017254891640999738,
+      "mean_delta_norm": 2.5612978374256805,
+      "mean_latency_ms": 47.61735067657747,
+      "win_rate": 0.4019607843137255
+    },
+    "hypernetwork": {
+      "A": {
+        "conditioning": "A",
+        "descriptor_dim": 145,
+        "train_time_sec": 67.5339777469635,
+        "mean_acc": 0.544862745439305,
+        "mean_gain": 0.0,
+        "win_rate": 0.0,
+        "mean_delta_norm": 0.0,
+        "desc_latency_ms": 0.6365356912996789,
+        "gen_latency_ms": 0.04461874496151794,
+        "total_latency_ms": 0.6811544362611969,
+        "speedup_vs_ft": 69.9068348404884
+      },
+      "B": {
+        "conditioning": "B",
+        "descriptor_dim": 246,
+        "train_time_sec": 73.77238655090332,
+        "mean_acc": 0.544862745439305,
+        "mean_gain": 0.0,
+        "win_rate": 0.0,
+        "mean_delta_norm": 0.0,
+        "desc_latency_ms": 1.90725585789729,
+        "gen_latency_ms": 0.04824901004087901,
+        "total_latency_ms": 1.955504867938169,
+        "speedup_vs_ft": 24.350412753911428
+      },
+      "C": {
+        "conditioning": "C",
+        "descriptor_dim": 255,
+        "train_time_sec": 83.85336232185364,
+        "mean_acc": 0.544862745439305,
+        "mean_gain": 0.0,
+        "win_rate": 0.0,
+        "mean_delta_norm": 0.0,
+        "desc_latency_ms": 3.2584377745033457,
+        "gen_latency_ms": 0.04765937253479006,
+        "total_latency_ms": 3.3060971470381357,
+        "speedup_vs_ft": 14.402889134469891
+      },
+      "D": {
+        "conditioning": "D",
+        "descriptor_dim": 267,
+        "train_time_sec": 93.20571756362915,
+        "mean_acc": 0.5409411773377774,
+        "mean_gain": -0.003921568101527644,
+        "win_rate": 0.46568627450980393,
+        "mean_delta_norm": 2.3009670774141946,
+        "desc_latency_ms": 3.569956813960601,
+        "gen_latency_ms": 0.1410897203444905,
+        "total_latency_ms": 3.7110465343050913,
+        "speedup_vs_ft": 12.83124591308689
+      }
+    },
+    "diffusion": {
+      "A": {
+        "conditioning": "A",
+        "descriptor_dim": 145,
+        "train_time_sec": 94.46088433265686,
+        "mean_acc": 0.544862745439305,
+        "mean_gain": 0.0,
+        "win_rate": 0.0,
+        "mean_delta_norm": 0.0,
+        "desc_latency_ms": 0.6674749362776079,
+        "gen_latency_ms": 1.0217914946135316,
+        "total_latency_ms": 1.6892664308911396,
+        "speedup_vs_ft": 28.188182637038413
+      },
+      "B": {
+        "conditioning": "B",
+        "descriptor_dim": 246,
+        "train_time_sec": 93.30313611030579,
+        "mean_acc": 0.544862745439305,
+        "mean_gain": 0.0,
+        "win_rate": 0.0,
+        "mean_delta_norm": 0.0,
+        "desc_latency_ms": 1.9679147355026205,
+        "gen_latency_ms": 1.0495564705457119,
+        "total_latency_ms": 3.0174712060483326,
+        "speedup_vs_ft": 15.780548487465751
+      },
+      "C": {
+        "conditioning": "C",
+        "descriptor_dim": 255,
+        "train_time_sec": 98.3838746547699,
+        "mean_acc": 0.546867647737849,
+        "mean_gain": 0.0020049022985439676,
+        "win_rate": 0.5637254901960784,
+        "mean_delta_norm": 1.646115841818791,
+        "desc_latency_ms": 3.3813753187703197,
+        "gen_latency_ms": 1.0431118771164478,
+        "total_latency_ms": 4.424487195886767,
+        "speedup_vs_ft": 10.762230416407359
+      },
+      "D": {
+        "conditioning": "D",
+        "descriptor_dim": 267,
+        "train_time_sec": 100.13619828224182,
+        "mean_acc": 0.544862745439305,
+        "mean_gain": 0.0,
+        "win_rate": 0.0,
+        "mean_delta_norm": 0.0,
+        "desc_latency_ms": 3.6716562693019275,
+        "gen_latency_ms": 1.0615667400926732,
+        "total_latency_ms": 4.7332230093946,
+        "speedup_vs_ft": 10.060238146832624
+      }
+    }
+  },
+  "graphsage": {
+    "baseline": {
+      "mean_acc": 0.5176666671154546
+    },
+    "fine_tuning": {
+      "mean_acc": 0.5253480402570144,
+      "mean_gain": 0.0076813731415599,
+      "mean_delta_norm": 3.5748613944240644,
+      "mean_latency_ms": 29.683533098232502,
+      "win_rate": 0.7450980392156863
+    },
+    "hypernetwork": {
+      "A": {
+        "conditioning": "A",
+        "descriptor_dim": 145,
+        "train_time_sec": 59.973329305648804,
+        "mean_acc": 0.5215294092309242,
+        "mean_gain": 0.00386274211546954,
+        "win_rate": 0.6029411764705882,
+        "mean_delta_norm": 1.9729847031481125,
+        "desc_latency_ms": 0.5801925340789489,
+        "gen_latency_ms": 0.09498374004347258,
+        "total_latency_ms": 0.6751762741224214,
+        "speedup_vs_ft": 43.96412349769618
+      },
+      "B": {
+        "conditioning": "B",
+        "descriptor_dim": 246,
+        "train_time_sec": 64.80951976776123,
+        "mean_acc": 0.5282058825387674,
+        "mean_gain": 0.010539215423312842,
+        "win_rate": 0.696078431372549,
+        "mean_delta_norm": 2.131006433098924,
+        "desc_latency_ms": 1.3143668528238206,
+        "gen_latency_ms": 0.13216802946379747,
+        "total_latency_ms": 1.446534882287618,
+        "speedup_vs_ft": 20.52044057955213
+      },
+      "C": {
+        "conditioning": "C",
+        "descriptor_dim": 255,
+        "train_time_sec": 75.25966191291809,
+        "mean_acc": 0.5264803927903082,
+        "mean_gain": 0.008813725674853605,
+        "win_rate": 0.6813725490196079,
+        "mean_delta_norm": 2.04464606385605,
+        "desc_latency_ms": 1.983279402196001,
+        "gen_latency_ms": 0.1321261716286387,
+        "total_latency_ms": 2.11540557382464,
+        "speedup_vs_ft": 14.032076621867297
+      },
+      "D": {
+        "conditioning": "D",
+        "descriptor_dim": 267,
+        "train_time_sec": 70.10552406311035,
+        "mean_acc": 0.526294118049098,
+        "mean_gain": 0.008627450933643416,
+        "win_rate": 0.6764705882352942,
+        "mean_delta_norm": 2.0078777659173106,
+        "desc_latency_ms": 2.2870982450637944,
+        "gen_latency_ms": 0.13278494564064222,
+        "total_latency_ms": 2.4198831907044367,
+        "speedup_vs_ft": 12.266514851731962
+      }
+    },
+    "diffusion": {
+      "A": {
+        "conditioning": "A",
+        "descriptor_dim": 145,
+        "train_time_sec": 51.9750292301178,
+        "mean_acc": 0.5172450992406583,
+        "mean_gain": -0.0004215678747962503,
+        "win_rate": 0.5049019607843137,
+        "mean_delta_norm": 1.7627300164278816,
+        "desc_latency_ms": 0.6688561031350058,
+        "gen_latency_ms": 1.023837333466908,
+        "total_latency_ms": 1.6926934366019137,
+        "speedup_vs_ft": 17.536272343456513
+      },
+      "B": {
+        "conditioning": "B",
+        "descriptor_dim": 246,
+        "train_time_sec": 52.35830211639404,
+        "mean_acc": 0.5096617653673771,
+        "mean_gain": -0.008004901748077543,
+        "win_rate": 0.4019607843137255,
+        "mean_delta_norm": 2.1950663509322146,
+        "desc_latency_ms": 1.42788861750673,
+        "gen_latency_ms": 1.0203145929171666,
+        "total_latency_ms": 2.4482032104238964,
+        "speedup_vs_ft": 12.124619791301114
+      },
+      "C": {
+        "conditioning": "C",
+        "descriptor_dim": 255,
+        "train_time_sec": 51.24537229537964,
+        "mean_acc": 0.5244215687408167,
+        "mean_gain": 0.006754901625362097,
+        "win_rate": 0.6568627450980392,
+        "mean_delta_norm": 1.375689633921081,
+        "desc_latency_ms": 2.1134814166597446,
+        "gen_latency_ms": 1.0261660193232363,
+        "total_latency_ms": 3.139647435982981,
+        "speedup_vs_ft": 9.454416046220487
+      },
+      "D": {
+        "conditioning": "D",
+        "descriptor_dim": 267,
+        "train_time_sec": 53.536452770233154,
+        "mean_acc": 0.5162352938570228,
+        "mean_gain": -0.0014313732584317525,
+        "win_rate": 0.43137254901960786,
+        "mean_delta_norm": 1.9666166182826548,
+        "desc_latency_ms": 2.3549084165935317,
+        "gen_latency_ms": 1.0223050487861745,
+        "total_latency_ms": 3.377213465379706,
+        "speedup_vs_ft": 8.789356492422705
+      }
+    }
+  }
+}
