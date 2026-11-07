@@ -57,8 +57,9 @@ def main():
             device=device, max_models=args.max_models)
         sample = next(iter(grouped["validation"].values()))
         generator, descriptor, payload = load_generator_checkpoint(args.checkpoint, model=sample, device=device)
-        if payload["target_scope"] != "head":
-            raise ValueError("Matched iterative head benchmark requires a head checkpoint")
+        scope = payload["target_scope"]
+        provenance["target_scope"] = scope
+        provenance["iterative_comparison"] = "matched head IM" if scope == "head" else "omitted: no matched broader direct-update optimizer in this benchmark"
         for key, path in (("bank_manifest_sha256", args.bank / "bank.json"),
                           ("model_partition_sha256", args.model_partition), ("environment_manifest_sha256", args.manifest)):
             expected = payload["provenance"].get(key)
@@ -80,16 +81,17 @@ def main():
                 descriptor.prepare_model(model)
                 static_setup_seconds = time.perf_counter() - static_start
                 calls = {"frozen": lambda: frozen_predictions(model, graph, device=device),
-                         "iterative_im": lambda: iterative_predictions(model, graph, steps=args.steps, device=device),
-                         "generated": lambda: generated_predictions(model, graph, descriptor, generator, device=device)}
+                         "generated": lambda: generated_predictions(model, graph, descriptor, generator, scope=scope, device=device)}
+                if scope == "head":
+                    calls["iterative_im"] = lambda: iterative_predictions(model, graph, steps=args.steps, device=device)
                 timing = measure_methods(calls, device=device, warmups=args.warmups, repeats=args.repeats)
                 outputs = {name: call() for name, call in calls.items()}
-                profile = generated_predictions(model, graph, descriptor, generator, device=device, profile=True).stages_seconds
-                iterative_profile = iterative_predictions(model, graph, steps=args.steps, device=device, profile=True).stages_seconds
+                profile = generated_predictions(model, graph, descriptor, generator, scope=scope, device=device, profile=True).stages_seconds
+                iterative_profile = (iterative_predictions(model, graph, steps=args.steps, device=device, profile=True).stages_seconds if scope == "head" else None)
                 with torch.no_grad():
                     inputs = graph.clone().to(device)
                     prepared_descriptor = descriptor(model, inputs)
-                    prepared_weights, _ = extract_target_parameters(model)
+                    prepared_weights, _ = extract_target_parameters(model, scope)
                     micro = measure_methods({"generator_only_prepared": lambda: generator(prepared_descriptor, prepared_weights)}, device=device, warmups=args.warmups, repeats=args.repeats)
                 memory = {name: memory_observation(call, device=device) for name, call in calls.items()}
                 # No scoring labels are consulted until prediction/selection finishes.
@@ -100,10 +102,12 @@ def main():
                        "nodes": graph.num_nodes, "stored_edges": graph.num_edges, "features": graph.num_features,
                        "timing": timing, "scores": scores, "generator_only_microbenchmark": micro, "static_model_setup_seconds": static_setup_seconds, "generated_profile": profile, "iterative_profile": iterative_profile,
                        "profile_note": "separate instrumented pass; not a decomposition of the independently measured median",
-                       "memory": memory, "speedup": timing["iterative_im"]["median_seconds"] / timing["generated"]["median_seconds"]}
+                       "memory": memory, "target_scope": scope, "target_parameter_count": len(prepared_weights),
+                       "speedup": timing["iterative_im"]["median_seconds"] / timing["generated"]["median_seconds"] if scope == "head" else None}
                 rows.append(row)
                 atomic_json(args.output_dir / "results.json", rows)
-                print(f"{model_id} {env['id']}: speedup {row['speedup']:.3f}x; gain {100*(scores['generated']['accuracy']-scores['frozen']['accuracy']):+.3f} pp", flush=True)
+                ratio = f"{row['speedup']:.3f}x" if row["speedup"] is not None else "not compared (different update sites)"
+                print(f"{model_id} {env['id']}: speedup {ratio}; gain {100*(scores['generated']['accuracy']-scores['frozen']['accuracy']):+.3f} pp", flush=True)
         atomic_json(args.output_dir / "run.json", {"status": "complete", **provenance})
     except BaseException as error:
         atomic_json(args.output_dir / "run.json", {"status": "failed", "error": str(error), **provenance})

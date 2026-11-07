@@ -4,7 +4,7 @@ Last updated: 2026-11-07. Current milestone: **generator prototype repair and va
 
 ## Integration in progress
 
-Owner approved a new local integration branch and reviewed commits. `integration/generator-audit-fixes` starts at c137e28 and carries the previously verified repairs without changing the original repair checkout. Its combined repair tree passed 392 CPU tests. Portable shared comparisons and a matched compact-descriptor validation study are next; push/merge remain unauthorized.
+Owner approved a new local integration branch and reviewed commits. `integration/generator-audit-fixes` starts at c137e28 and carries the previously verified repairs without changing the original repair checkout. Its combined repair tree passed 392 CPU tests. Repair checkpoint committed locally as `8c6203a`. Portable shared comparisons are implemented: 24 focused workflow tests and the full 408-test CPU suite passed. The bounded matched compact study is next. Push/merge remain unauthorized.
 
 The c137e28 upload adds five experiment scripts and five result files, with no core changes. Independent arithmetic checks passed 2,205 relationships across 612 full-comparison records. The 44.49× GCN ratio is traceable, but generator timers omit adapted prediction and the compact diffusion timer also omits conditioning. The 64-feature experiment and our 2,000-feature validation study are different workloads.
 

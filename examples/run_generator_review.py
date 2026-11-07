@@ -20,9 +20,10 @@ import time
 import torch
 
 from train_adapter import load_experiment, file_hash, code_provenance
-from amortized_gnn_tta.adaptation import (GraphShiftDescriptor, HeadAdapterGenerator, DiffusionHeadGenerator,
+from amortized_gnn_tta.adaptation import (HeadAdapterGenerator, DiffusionHeadGenerator,
     extract_target_parameters, apply_target_delta, train_adaptation_generator,
     train_diffusion_generator)
+from amortized_gnn_tta.adaptation.experiments import make_descriptor, review_run_name, training_recipe, CONDITIONING_CHOICES
 from amortized_gnn_tta.adaptation.benchmark import (measure_methods, generated_predictions, iterative_predictions,
     frozen_predictions, memory_observation, amortization_break_even)
 from amortized_gnn_tta.adaptation.checkpoints import save_generator_checkpoint, load_generator_checkpoint, atomic_json
@@ -42,8 +43,8 @@ def summarize(output, records):
         writer.writeheader()
         writer.writerows(records)
     lines = ["# CSBM repaired-generator development review", "",
-             "Head-only direct updates, one diffusion candidate. Validation only. Hypernetwork CE and diffusion teacher-MSE are different training objectives/budgets.", "",
-             "Accuracy excludes unchanged controls; timing averages per-condition medians over control, attribute, homophily and combined cases. SD is across generator seeds.", "",
+             "Direct coordinate updates, one diffusion candidate; scope is recorded in each row. Validation only. Hypernetwork CE and diffusion teacher-MSE are different training objectives/budgets.", "",
+             f"Update scope: {records[0].get('update_scope', 'head')}. IM is a head-only reference; no matched speedup is claimed for broader updates. Accuracy excludes unchanged controls; timing averages per-condition medians over control, attribute, homophily and combined cases. SD is across generator seeds.", "",
              "| Model | Method | Inputs | Frozen accuracy | IM accuracy | Adapted accuracy | Gain (pp) | Harmed shifted cases | Control gain (pp) | Pipeline (ms) | IM / generated |",
              "| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |"]
     groups = {}
@@ -51,15 +52,19 @@ def summarize(output, records):
         groups.setdefault((row["architecture"], row["method"], row["conditioning"]), []).append(row)
     for key, rows in groups.items():
         mean = lambda field: statistics.mean(row[field] for row in rows)
+        ratio = f"{mean('speedup'):.3f}×" if rows[0].get("update_scope", "head") == "head" else "not matched"
         sd = statistics.stdev(row["adapted_accuracy_percent"] for row in rows) if len(rows) > 1 else 0.
-        lines.append(f"| {' | '.join(key)} | {mean('frozen_accuracy_percent'):.3f} | {mean('iterative_accuracy_percent'):.3f} | {mean('adapted_accuracy_percent'):.3f} ± {sd:.3f} | {mean('gain_pp'):+.3f} | {sum(row['harm_cases'] for row in rows)}/{sum(row['shift_cases'] for row in rows)} | {mean('control_gain_pp'):+.3f} | {mean('pipeline_ms'):.3f} | {mean('speedup'):.3f}× |")
+        lines.append(f"| {' | '.join(key)} | {mean('frozen_accuracy_percent'):.3f} | {mean('iterative_accuracy_percent'):.3f} | {mean('adapted_accuracy_percent'):.3f} ± {sd:.3f} | {mean('gain_pp'):+.3f} | {sum(row['harm_cases'] for row in rows)}/{sum(row['shift_cases'] for row in rows)} | {mean('control_gain_pp'):+.3f} | {mean('pipeline_ms'):.3f} | {ratio} |")
     (output / "REVIEW.md").write_text("\n".join(lines) + "\n")
 
 
 def run(args):
     plan = json.loads(args.config.read_text())
-    if plan["candidate_count"] != 1 or plan["update_scope"] != "head" or plan["device"] != "cpu":
-        raise ValueError("This executed review profile supports CPU head updates and one diffusion candidate")
+    scope = plan["update_scope"]
+    if plan["candidate_count"] != 1 or scope not in {"head", "backbone", "all"} or plan["device"] != "cpu":
+        raise ValueError("This review supports CPU direct updates and one diffusion candidate")
+    if not plan["conditioning"] or any(c not in CONDITIONING_CHOICES for c in plan["conditioning"]):
+        raise ValueError("Unknown or empty conditioning grid")
     if plan["diffusion_batch_size"] != 16 or plan["target_std_floor"] != .001:
         raise ValueError("Review records the prototype fixed diffusion batch size 16 and target std floor 1e-3")
     torch.set_num_threads(plan["threads"])
@@ -68,8 +73,8 @@ def run(args):
     reuse_root = getattr(args, "reuse_completed_from", None)
     if reuse_root is not None:
         original = json.loads((reuse_root / "PLAN.json").read_text())
-        if original["plan"] != plan:
-            raise ValueError("Completed-checkpoint reuse requires an identical scientific configuration")
+        if training_recipe(original["plan"]) != training_recipe(plan):
+            raise ValueError("Completed-checkpoint reuse requires an identical training recipe")
     code = code_provenance()
     provenance = {"plan": plan, "plan_sha256": file_hash(args.config), "code": code,
                   "software": software_versions(), "artifact_root": str(args.artifact_root.resolve()),
@@ -147,34 +152,35 @@ def run(args):
             for method in plan["methods"]:
                 for conditioning in plan["conditioning"]:
                     for seed in plan["generator_seeds"]:
-                        name = f"{architecture}-{method}-{conditioning}-{seed}"
+                        name = review_run_name(architecture, method, conditioning, seed, scope)
                         directory = output / name
                         directory.mkdir()
                         print("START", name, flush=True)
                         seed_model(seed)
-                        descriptor = GraphShiftDescriptor(in_channels=validation_model.config.in_channels,
-                            hidden_channels=validation_model.config.hidden_channels, out_channels=validation_model.config.out_channels,
-                            conditioning=conditioning, descriptor_version=plan["descriptor_version"],
-                            weight_scope=plan["weight_scope"], chunk_size=plan["chunk_size"])
-                        flat, schema = extract_target_parameters(validation_model)
-                        kwargs = dict(descriptor_dim=descriptor.output_dim, head_dim=len(flat), hidden_dim=plan["hidden_dim"], num_layers=plan["num_layers"], include_head_weights=False)
+                        descriptor, include_weights = make_descriptor(validation_model, conditioning, scope=scope,
+                            descriptor_version=plan["descriptor_version"], weight_scope=plan["weight_scope"], chunk_size=plan["chunk_size"])
+                        flat, schema = extract_target_parameters(validation_model, scope)
+                        kwargs = dict(descriptor_dim=descriptor.output_dim, head_dim=len(flat), hidden_dim=plan["hidden_dim"], num_layers=plan["num_layers"], include_head_weights=include_weights)
                         generator = (HeadAdapterGenerator(**kwargs) if method == "hypernetwork" else
                             DiffusionHeadGenerator(**kwargs, diffusion_steps=plan["diffusion_steps"], sampling_steps=plan["sampling_steps"], default_seed=plan["sampling_seed"], time_dim=plan["time_dim"], schedule=plan["noise_schedule"]))
                         run_context = {**context, "method": method, "conditioning": conditioning, "generator_seed": seed,
                                        "training_seed": seed+plan["training_seed_offset"], "code": code, "plan": plan}
                         def checkpoint(state, history):
                             save_generator_checkpoint(directory / "generator_best.pt", generator, descriptor, schema,
-                                provenance=run_context, history=history, state_dict=state, overwrite=True)
+                                target_scope=scope, provenance=run_context, history=history, state_dict=state, overwrite=True)
                         seed_model(run_context["training_seed"])
                         common = dict(models=models, manifest=manifest, load_env_fn=loader, descriptor=descriptor,
                             generator=generator, epochs=plan["epochs"], lr=plan["learning_rate"], delta_l2_reg=plan["delta_l2"],
-                            val_models=validation_models, verbose=False, checkpoint_callback=checkpoint)
+                            val_models=validation_models, verbose=False, checkpoint_callback=checkpoint, target_scope=scope)
                         old_directory = reuse_root / name if reuse_root is not None else None
                         reuse = old_directory is not None and (old_directory / "summary.json").is_file()
                         if reuse:
                             old_payload = torch.load(old_directory / "generator_best.pt", map_location="cpu", weights_only=True)
                             for field in ("bank_manifest_sha256", "model_partition_sha256", "environment_manifest_sha256", "source_hashes", "validation_state_sha256", "training_model_ids", "validation_model_id", "selected_environment_ids", "method", "conditioning", "generator_seed", "training_seed", "plan"):
-                                if old_payload["provenance"][field] != run_context[field]:
+                                actual, expected = old_payload["provenance"][field], run_context[field]
+                                if field == "plan":
+                                    actual, expected = training_recipe(actual), training_recipe(expected)
+                                if actual != expected:
                                     raise ValueError(f"Completed checkpoint identity mismatch: {field}")
                             old_summary = json.loads((old_directory / "summary.json").read_text())
                             shutil.copyfile(old_directory / "generator_best.pt", directory / "generator_best.pt")
@@ -195,13 +201,13 @@ def run(args):
                         for index, env in enumerate(validation):
                             bundle = loader(manifest, env["id"])
                             graph = bundle.unlabeled_input(env["id"])
-                            generated = generated_predictions(validation_model, graph, descriptor, generator)
+                            generated = generated_predictions(validation_model, graph, descriptor, generator, scope=scope)
                             if reuse:
                                 old_pair = torch.load(old_directory / f"pair_{index:02d}.pt", map_location="cpu", weights_only=True)
                                 if old_pair["context"]["environment_id"] != env["id"] or not torch.equal(old_pair["delta"], generated.delta):
                                     raise ValueError("Inference optimization changed a completed run's generated delta")
                                 torch.testing.assert_close(generated.logits, old_pair["logits"], rtol=1e-5, atol=1e-6)
-                            flat, schema = extract_target_parameters(validation_model)
+                            flat, schema = extract_target_parameters(validation_model, scope)
                             adapted = apply_target_delta(validation_model, generated.delta, schema).eval()
                             with torch.no_grad():
                                 replay_logits = adapted(graph.x, graph.edge_index)
@@ -214,10 +220,11 @@ def run(args):
                                     "frozen_accuracy": base, "adapted_accuracy": score.accuracy,
                                     "gain_pp": 100*(score.accuracy-base), "delta_norm": float(generated.delta.norm())}
                             pairs.append(pair)
-                            payload = {"context": pair, "graph_sha256": graph_fingerprint(graph), "generator_sha256": checkpoint_sha,
+                            target_names = {"conv2."+name if scope == "head" else name for name, _ in schema}
+                            payload = {"context": pair, "target_scope": scope, "graph_sha256": graph_fingerprint(graph), "generator_sha256": checkpoint_sha,
                                        "source_state_sha256": validation_hash, "schema": schema, "delta": generated.delta.cpu(),
-                                       "adapted_head_state": {k: v.cpu() for k, v in adapted.state_dict().items() if k.startswith("conv2.")},
-                                       "actual_head_delta": {k: (v-validation_model.state_dict()[k]).cpu() for k, v in adapted.state_dict().items() if k.startswith("conv2.")},
+                                       "adapted_target_state": {k: v.cpu() for k, v in adapted.state_dict().items() if k in target_names},
+                                       "actual_target_delta": {k: (v-validation_model.state_dict()[k]).cpu() for k, v in adapted.state_dict().items() if k in target_names},
                                        "logits": generated.logits.cpu()}
                             torch.save(payload, directory / f"pair_{index:02d}.pt")
                             # Replay the saved bytes, not just the live tensors.
@@ -225,18 +232,18 @@ def run(args):
                             replay_model = apply_target_delta(validation_model, saved["delta"], saved["schema"]).eval()
                             with torch.no_grad():
                                 torch.testing.assert_close(replay_model(graph.x, graph.edge_index), saved["logits"], rtol=1e-5, atol=1e-6)
-                            assert all(torch.equal(v, replay_model.state_dict()[k]) for k, v in saved["adapted_head_state"].items())
+                            assert all(torch.equal(v, replay_model.state_dict()[k]) for k, v in saved["adapted_target_state"].items())
                             replay_count += 1
                             if env["shift"] in plan["timed_shifts"] or env["family"] == "control":
                                 methods = {"frozen": lambda: frozen_predictions(validation_model, graph),
                                     "iterative": lambda: iterative_predictions(validation_model, graph, steps=plan["iterative_steps"], lr=plan["iterative_lr"]),
-                                    "generated": lambda: generated_predictions(validation_model, graph, descriptor, generator)}
+                                    "generated": lambda: generated_predictions(validation_model, graph, descriptor, generator, scope=scope)}
                                 measured = measure_methods(methods, warmups=plan["warmups"], repeats=plan["repeats"])
-                                profile = generated_predictions(validation_model, graph, descriptor, generator, profile=True).stages_seconds
+                                profile = generated_predictions(validation_model, graph, descriptor, generator, scope=scope, profile=True).stages_seconds
                                 iterative_profile = iterative_predictions(validation_model, graph, steps=plan["iterative_steps"], lr=plan["iterative_lr"], profile=True).stages_seconds
                                 with torch.no_grad():
                                     prepared = descriptor(validation_model, graph)
-                                    weights, _ = extract_target_parameters(validation_model)
+                                    weights, _ = extract_target_parameters(validation_model, scope)
                                     micro = measure_methods({"generator_only_prepared": lambda: generator(prepared, weights)}, warmups=plan["warmups"], repeats=plan["repeats"])
                                 timing.append({"generator_only_microbenchmark": micro,"environment_id": env["id"], "timing": measured, "generated_profile": profile,
                                     "iterative_profile": iterative_profile,
@@ -250,18 +257,19 @@ def run(args):
                         pipeline = statistics.mean(row["timing"]["generated"]["median_seconds"] for row in timing)
                         iterative = statistics.mean(row["timing"]["iterative"]["median_seconds"] for row in timing)
                         result = {"architecture": architecture, "method": method, "conditioning": conditioning, "seed": seed,
+                            "update_scope": scope, "target_parameter_count": len(flat), "generator_parameter_count": sum(p.numel() for p in generator.parameters()),
                             "frozen_accuracy_percent": 100*statistics.mean(row["frozen_accuracy"] for row in shifted),
                             "iterative_accuracy_percent": 100*statistics.mean(base_by_env[row["environment_id"]]["iterative"]["accuracy"] for row in shifted),
                             "adapted_accuracy_percent": 100*statistics.mean(row["adapted_accuracy"] for row in shifted),
                             "gain_pp": statistics.mean(row["gain_pp"] for row in shifted),
                             "harm_cases": sum(row["gain_pp"] < 0 for row in shifted), "shift_cases": len(shifted),
                             "control_gain_pp": statistics.mean(row["gain_pp"] for row in pairs if row["family"] == "control"),
-                            "pipeline_ms": 1000*pipeline, "iterative_ms": 1000*iterative, "speedup": iterative/pipeline,
+                            "pipeline_ms": 1000*pipeline, "iterative_ms": 1000*iterative, "speedup": iterative/pipeline if scope == "head" else None,
                             "training_reused_from": str(old_directory.resolve()) if reuse else None,
                             "offline_wall_seconds": offline_seconds, "teacher_wall_seconds": fit.teacher_time_seconds,
                             "selected_epoch": fit.selected_epoch, "static_model_setup_seconds": static_seconds,
                             "optimizer_updates": fit.optimizer_steps,
-                            "break_even_events_cost_only": amortization_break_even(offline_generated=offline_seconds+static_seconds, offline_iterative=0., online_generated=pipeline, online_iterative=iterative)}
+                            "break_even_events_cost_only": amortization_break_even(offline_generated=offline_seconds+static_seconds, offline_iterative=0., online_generated=pipeline, online_iterative=iterative) if scope == "head" else None}
                         atomic_json(directory / "summary.json", result)
                         results.append(result)
                         summarize(output, results)

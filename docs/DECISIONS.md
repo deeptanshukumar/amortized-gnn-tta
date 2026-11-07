@@ -190,6 +190,19 @@ Alternatives considered: generator-only headlines omit conditioning; per-step ad
 
 Grounding: [Matcha Appendix C.8/Table 9](https://arxiv.org/abs/2410.06976) separates initial inference/cache creation and adaptation steps; [GNN-Diff Appendix I.3](https://arxiv.org/abs/2410.05697) includes collection/training/inference; [HyperFlow Figure 4](https://arxiv.org/html/2504.15323) plots inference plus adaptation; [computationally constrained TTA](https://arxiv.org/html/2304.04795) accounts for adaptation-aware prediction speed; [PyTorch Timer](https://docs.pytorch.org/docs/2.13/benchmark_utils.html) documents warmups, repetitions, threads and synchronization. Reference repositories were inspected separately; no upstream timing helper was copied blindly or installed as a new dependency.
 
+## Implemented decision D13 — audited experiment integration (2026-11-07)
+
+Authority: owner approved the five-step integration/checkpoint proposal, requested a new branch, and explicitly authorized commits there. No push or merge is authorized. The branch starts at c137e28, preserving upstream scratch scripts/results and the original uncommitted repair checkout. Repair checkpoint: 8c6203a, verified with 392 tests on the combined tree.
+
+- Reuse the repaired training/checkpoint/review/benchmark framework for compact/structural/A-D inputs and head/backbone/all direct-coordinate updates. Keep historical scratch code intact and document its different timer boundaries. No dataset/dependency/optimizer algorithm change.
+- Compact/structural retain the original separate raw update-site weights; A-D forbid that extra input. This compares a legacy reference method with the planned nested inputs, not an isolated one-field ablation. D's weight fingerprint remains independent of update sites.
+- Preserve the complete graph-to-prediction timer, per-stage diagnostics and offline costs. The current iterative optimizer is head-only. Broader generated scopes therefore have no matched speedup or break-even; their generated cost and IM-head reference accuracy/latency remain visible.
+- `generator_compact_matched_gcn.json` freezes a bounded validation study: the previous GCN training recipe, compact+A-D, both generators, three seeds. Train six compact fits and reuse 24 compatible completed A-D fits. No new final-test scoring and no attempt to recreate the contributor's missing small-profile artifacts.
+- Completed-fit reuse may change the selected grid or timing repetitions, not the fitting recipe. Check all source/environment IDs/hashes, layout, method and seeds; verify regenerated deltas and predictions. Preserve original checkpoint provenance/offline costs. Partial training is not resumed.
+- Teacher-trained hypernetwork controls, broader-site scientific comparisons, generated LoRA, five-candidate selection and the Arxiv/MAG milestones remain separate research work. Software verification of every direct scope is not evidence that one scope is scientifically best. Unchanged-control harms and seed variation must be reported, not filtered.
+
+Alternatives: re-running all 72 fits wastes compatible completed work; accepting the old 45x as complete latency uses unequal endpoints; removing expensive descriptors silently changes the experiment. The selected approach preserves both historical evidence and fair current measurement.
+
 ## Established instructions
 
 The owner approved investigation, separate reference clones, and Markdown project context in the initial request. Loader implementation and dependency changes require discussion and approval. Foundation/completion commits 30af4f9 and 3c7976e were explicitly approved and then pushed after a separate explicit request. The owner subsequently authorized committing and pushing the verified architecture extension. These approvals do not cover later changes. These are owner instructions, not new research decisions.

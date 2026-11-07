@@ -397,6 +397,48 @@ For an inference-equivalent optimization, `--reuse-completed-from /path/to/prior
 
 It spans three architectures, A-D, both generators and three generator seeds; training uses one seed-31 model from each permitted source-subset group. An independent validation checkpoint and validation lineage are used. Hypernetwork CE and diffusion teacher-MSE have different budgets, so this is development verification rather than a definitive generator ranking. The historical +2.34 run remains under-specified. Commit c137e28 published the timing scripts/results: their arithmetic is verified, but their component timings are not complete-pipeline speedups. Exact replay still needs matching artifacts and recorded initialization/hardware; do not substitute this review for that experiment. Run `python examples/replay_generator_review.py --review-dir runs/generator-repair-review-v2` after completion for independent named-weight reconstruction, metric/timing checks, and `VERIFIED_REVIEW.md`/`AGGREGATED_RESULTS.csv`. See [D12](docs/DECISIONS.md#implemented-decision-d12--generator-reliability-descriptors-and-runtime-2026-11-07).
 
+### Portable comparisons and matched compact baseline
+
+The shared runner supports `conditioning` values `compact`, `structural`, A-D,
+and `update_scope` values `head`, `backbone`, `all`. Select architectures and
+methods in the JSON plan; use separate scope plans. This covers the experiments
+in the contributor's five scripts without adopting their hardcoded paths or
+partial timers. The original scripts/results remain in [scratch/](scratch/README.md).
+
+`compact` means hidden means/stds and E/N, plus separate raw update-site weights.
+`structural` adds hidden edge/dispersion statistics and also retains those weights.
+A-D disable the extra raw-weight input. Compact is a reference method alongside
+A-D, not another step in the nested A-D ablation. Neither direct `backbone` nor
+`all` deltas are generated LoRA.
+
+All scopes report complete generated latency. The standalone benchmark omits
+an iterative ratio for broader scopes because its optimizer updates only the
+head. Review tables retain IM-head accuracy/latency as a clearly named reference,
+with matched speedup and break-even left blank for broader generated updates.
+Training CLI `--threads` defaults to one and is recorded.
+
+The bounded matched study keeps the previous scientific training recipe and
+adds only the compact baseline for GCN:
+
+~~~bash
+python examples/run_generator_review.py \
+  --config configs/generator_compact_matched_gcn.json \
+  --artifact-root /path/to/checkout-containing-existing-runs \
+  --reuse-completed-from /path/to/completed-generator-repair-review-v5 \
+  --output-dir runs/generator-compact-matched-gcn-v1
+python examples/replay_generator_review.py \
+  --review-dir runs/generator-compact-matched-gcn-v1
+~~~
+
+Without the reuse option, the runner trains every selected fit. With it, a
+smaller/extended grid or new timing repetitions may reuse a completed fit only
+when its training recipe, source/environment identities, method/input/seeds and
+regenerated deltas agree. Unknown configuration fields are conservatively part
+of the recipe check. Original checkpoints and their training costs/provenance
+are preserved; every prediction and timing measurement reruns. Six new compact
+fits plus 24 existing A-D fits constitute the planned 30-configuration study.
+This does not choose the later Arxiv inputs or establish a diffusion advantage.
+
 ### Verified repair checkpoint
 
 **392 CPU tests; 72 development configurations; 864 independently replayed saved cases with zero logit/accuracy mismatch.** All tested A-D groups are slower end to end than the documented cached IM30 baseline on this 5,000-node/2,000-feature CPU workload, despite faster preprocessing. Average shifted accuracy improves modestly; unchanged controls can regress. No final-test, generated-LoRA, five-candidate or real-graph result is implied.

@@ -2666,3 +2666,28 @@ Thirty already completed training checkpoints were reused only after exact delta
 The useful research lesson is that graph-summary cost can outweigh the optimization removed from a small binary classification head. More expensive update sites or different graph tasks might change that balance, but that is a hypothesis for the next experiments. We should measure it, not increase the baseline step count until a favorable speedup appears. Cheaper descriptors are also a possible future ablation, requiring validation of their accuracy cost.
 
 Full per-input, per-seed, per-shift and timing evidence is in the local ignored `runs/generator-repair-review-v5/VERIFIED_REVIEW.md` and `AGGREGATED_RESULTS.csv`; current status is summarized in PROJECT_STATE.md. These repair results do not implement the planned real-graph, LoRA or five-candidate experiments.
+
+
+### Integration lesson: compare the same job and preserve the fitted model
+
+The original screenshot's roughly 45x is traceable: divide its reported iterative time by its reported generator component time. The arithmetic is correct, but that timer stops before adapted prediction. Its compact diffusion timer also borrows a descriptor computed by the hypernetwork. If those methods are alternatives, each must pay for its own required inputs.
+
+Our older 9x result and newer below-1 A-D ratios measure different recipes. A **compact descriptor** summarizes hidden features; A-D also summarize raw features/edges, which can cost more than adapting a small binary head. The repaired compact path still showed complete-pipeline speedups in diagnostic probes. That does not make compact the automatically best input on Arxiv.
+
+| Question | Answer |
+| --- | --- |
+| Why keep the friend's scripts? | They document what produced the original results. Historical evidence should not be rewritten. |
+| Why use one new runner? | Settings, saving, label permissions and timers should have one maintained implementation. |
+| Does compact belong to A-D? | No. It retains the legacy hidden summary plus raw update-site weights. It is an extra reference method. |
+| Can backbone timing be divided by head-IM timing and called matched? | Those methods change different weights. We show broader generated cost, but leave the matched speedup blank. |
+| Why reuse old A-D checkpoints? | Their fitting recipe is unchanged. We verify their identities and deltas, then rerun prediction/timing. |
+| Are we resuming interrupted training? | No. We reuse only completed fits and keep their original provenance and cost. |
+| Why do three seeds not prove generalization? | They repeat generator training. The validation graph lineage and GNN checkpoint are still the same. |
+
+A **training recipe** specifies what could change the learned weights: data/model identities, initialization/training seeds, fitting steps, loss settings, descriptor definitions and update sites. A grid chooses which recipes to run. Timing repetitions decide how often to measure the already fitted model. Changing a timing repeat count does not require retraining; changing teacher steps does.
+
+Self-check: explain why generating updates quickly can coexist with slow complete predictions, and why backbone-only full-coordinate updates are not LoRA.
+
+Second-opinion prompt:
+
+> We integrate a CSBM GNN-TTA prototype with compact/structural descriptors and nested A-D inputs, using two-layer GCN/GAT/GraphSAGE. Compact/structural retain separate raw update-site weights, while A-D disable them. We measure canonical target graph plus resident models through conditioning, update generation/application and usable predictions. An iterative IM baseline updates only the head. Direct generated backbone/all updates are not LoRA; their matched speedup is left blank. We reuse completed A-D fits only with the same training recipe/identities and agreeing regenerated deltas, then remeasure every event. Six newly trained compact fits complete a GCN three-seed development comparison. Explain the fairness and reproducibility assumptions, why its results do not select formal Arxiv inputs or establish a diffusion advantage, and how to diagnose unchanged-control harm without consulting deployment labels. Do not invent results.

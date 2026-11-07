@@ -18,6 +18,7 @@ import torch
 
 from train_adapter import file_hash, code_provenance
 from amortized_gnn_tta.adaptation.checkpoints import load_generator_checkpoint, atomic_json
+from amortized_gnn_tta.adaptation.experiments import review_run_name
 from amortized_gnn_tta.adaptation_artifacts import state_sha256
 from amortized_gnn_tta.data import load_environment_manifest, load_shift_environment
 from amortized_gnn_tta.data.api import graph_fingerprint
@@ -45,7 +46,8 @@ def write_verified_summary(review_dir, records, plan, provenance):
             "gain_pp": mean("gain_pp"), "control_gain_pp": mean("control_gain_pp"),
             "harm_cases": sum(row["harm_cases"] for row in seeds), "repeated_shift_cases": sum(row["shift_cases"] for row in seeds),
             "generated_pipeline_ms": pipeline, "iterative_pipeline_ms": iterative,
-            "speedup_ratio_of_mean_latencies": iterative/pipeline,
+            "speedup_ratio_of_mean_latencies": iterative/pipeline if plan["update_scope"] == "head" else None,
+            "update_scope": plan["update_scope"], "target_parameter_count": seeds[0].get("target_parameter_count"),
             "offline_wall_seconds": mean("offline_wall_seconds"), "teacher_wall_seconds": mean("teacher_wall_seconds"),
             "static_setup_seconds": mean("static_model_setup_seconds"),
             "completed_training_checkpoints_reused": sum(bool(row.get("training_reused_from")) for row in seeds)})
@@ -55,19 +57,21 @@ def write_verified_summary(review_dir, records, plan, provenance):
         writer.writerows(rows)
     lines = ["# Verified CSBM generator development results", "",
         "All named initial/final/delta tensors, graph/source/checkpoint hashes, predictions, accuracies and raw-timing medians passed the independent replay audit.", "",
-        "This is validation evidence: one held-out GNN checkpoint and graph lineage per architecture. Three generator seeds are repeated training runs, not independent graph samples. GNN seed 31 is shared across the three training source-label subsets. Controls participate in checkpoint selection; accuracy tables exclude controls and report their gains separately.", "",
-        "Hypernetwork CE and diffusion teacher-MSE use different objectives/update budgets. These results do not select the formal Arxiv input design or establish a definitive generator ranking. Current updates are direct head coordinates, with one diffusion candidate. Final target labels were not accessed.", "",
+        f"This is validation evidence: one held-out GNN checkpoint and graph lineage per architecture. {len(plan['generator_seeds'])} generator seeds are repeated training runs, not independent graph samples. GNN seed 31 is shared across the three training source-label subsets. Controls participate in checkpoint selection; accuracy tables exclude controls and report their gains separately.", "",
+        "Hypernetwork CE and diffusion teacher-MSE use different objectives/update budgets. These results do not select the formal Arxiv input design or establish a definitive generator ranking. Updates are direct coordinates at the recorded scope, with one diffusion candidate. IM is a head-only reference; broader updates have no matched speed ratio. Final target labels were not accessed.", "",
+        f"Update scope: {plan['update_scope']}. Target parameter counts are recorded in AGGREGATED_RESULTS.csv.", "",
         "## Accuracy", "",
-        "| Model | Method | Input | Frozen (%) | IM30 (%) | Generated mean ± seed SD (%) | Gain (pp) | Harmed / repeated shifted cases | Control gain (pp) |",
+        f"| Model | Method | Input | Frozen (%) | IM-head{plan['iterative_steps']} (%) | Generated mean ± seed SD (%) | Gain (pp) | Harmed / repeated shifted cases | Control gain (pp) |",
         "| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |"]
     for row in rows:
         lines.append(f"| {row['architecture']} | {row['method']} | {row['conditioning']} | {row['frozen_accuracy_percent']:.3f} | {row['iterative_accuracy_percent']:.3f} | {row['adapted_accuracy_percent']:.3f} ± {row['adapted_accuracy_sd_percent']:.3f} | {row['gain_pp']:+.3f} | {row['harm_cases']}/{row['repeated_shift_cases']} | {row['control_gain_pp']:+.3f} |")
     lines += ["", "## Deployment and offline cost", "",
-        "Primary latency includes target processing, update work and predictions. Each seed's cost is the mean of four condition medians (control/attribute/homophily/combined), each from the declared warmups/repetitions. The group speedup is the ratio of mean IM and generated latencies across those same conditions/seeds; >1 is faster, <1 is slower. This differs slightly from averaging per-seed ratios in the original incremental REVIEW.md.", "",
-        "| Model | Method | Input | Pipeline (ms) | IM30 (ms) | IM / generated | Offline wall (s) | Teacher subset (s) |",
+        "Primary latency includes target processing, update work and predictions. Each seed's cost is the mean of the declared condition medians, each from the configured warmups/repetitions. The group speedup is the ratio of mean IM and generated latencies across those same conditions/seeds; >1 is faster, <1 is slower. This differs slightly from averaging per-seed ratios in the original incremental REVIEW.md.", "",
+        f"| Model | Method | Input | Pipeline (ms) | IM-head{plan['iterative_steps']} (ms) | IM / generated | Offline wall (s) | Teacher subset (s) |",
         "| --- | --- | --- | ---: | ---: | ---: | ---: | ---: |"]
     for row in rows:
-        lines.append(f"| {row['architecture']} | {row['method']} | {row['conditioning']} | {row['generated_pipeline_ms']:.3f} | {row['iterative_pipeline_ms']:.3f} | {row['speedup_ratio_of_mean_latencies']:.3f}× | {row['offline_wall_seconds']:.2f} | {row['teacher_wall_seconds']:.2f} |")
+        ratio = f"{row['speedup_ratio_of_mean_latencies']:.3f}×" if row["speedup_ratio_of_mean_latencies"] is not None else "not matched"
+        lines.append(f"| {row['architecture']} | {row['method']} | {row['conditioning']} | {row['generated_pipeline_ms']:.3f} | {row['iterative_pipeline_ms']:.3f} | {ratio} | {row['offline_wall_seconds']:.2f} | {row['teacher_wall_seconds']:.2f} |")
     reused = sum(row["completed_training_checkpoints_reused"] for row in rows)
     lines += ["", f"{reused} completed training checkpoints were reused from the explicitly recorded parent run after identity checks and exact generated-delta agreement. Every prediction/timing check was rerun. Offline times for reused checkpoints are their original measured training costs, not new training runs. Partial training was never resumed.", "",
         "Static-model fingerprint setup and canonical dataset preparation are reported separately in seed/selection records. The per-seed break-even field is a training-plus-static-setup cost-only illustration; it excludes common dataset/bank preparation and research search costs. Accuracy and label-access differences remain relevant. If online savings are nonpositive, there is no positive amortization argument from repeated deployments.", "",
@@ -81,6 +85,7 @@ def replay(review_dir):
     review_dir = Path(review_dir)
     plan_record = json.loads((review_dir / "PLAN.json").read_text())
     plan = plan_record["plan"]
+    scope = plan["update_scope"]
     progress = json.loads((review_dir / "progress.json").read_text())
     if progress["status"] != "complete":
         raise ValueError("Only a completed review can receive a complete replay audit")
@@ -117,14 +122,19 @@ def replay(review_dir):
             initial = {name: value.detach().clone() for name, value in source.state_dict().items()}
             if state_sha256(initial) != selection["validation_state_sha256"]:
                 raise ValueError("Source state identity mismatch")
-            expected_schema = [(name, tuple(parameter.shape)) for name, parameter in source.conv2.named_parameters()]
-            weights = torch.cat([parameter.detach().flatten() for parameter in source.conv2.parameters()])
+            # Derive names directly, independently of adaptation schema helpers.
+            named = list(source.conv2.named_parameters()) if scope == "head" else [
+                (name, p) for name, p in source.named_parameters() if scope == "all" or name.startswith("conv1.")]
+            expected_schema = [(name, tuple(parameter.shape)) for name, parameter in named]
+            weights = torch.cat([parameter.detach().flatten() for _, parameter in named])
             for method in plan["methods"]:
                 for conditioning in plan["conditioning"]:
                     for seed in plan["generator_seeds"]:
-                        directory = review_dir / f"{architecture}-{method}-{conditioning}-{seed}"
+                        directory = review_dir / review_run_name(architecture, method, conditioning, seed, scope)
                         checkpoint_path = directory / "generator_best.pt"
                         generator, descriptor, payload = load_generator_checkpoint(checkpoint_path, model=source)
+                        if payload["target_scope"] != scope:
+                            raise ValueError("Checkpoint update scope differs from review")
                         checkpoint_sha = file_hash(checkpoint_path)
                         pair_rows = json.loads((directory / "pair_results.json").read_text())
                         files = sorted(directory.glob("pair_*.pt"))
@@ -145,13 +155,15 @@ def replay(review_dir):
                                 raise ValueError("Graph identity mismatch")
                             schema = [(name, tuple(shape)) for name, shape in saved["schema"]]
                             if schema != expected_schema:
-                                raise ValueError("Saved schema is not this model's complete head")
+                                raise ValueError("Saved schema is not this model's complete target scope")
                             with torch.no_grad():
                                 generated_delta = generator(descriptor(source, graph), weights)
                             torch.testing.assert_close(generated_delta, saved["delta"], rtol=1e-5, atol=1e-7)
-                            expected_head_names = {"conv2."+name for name, _ in expected_schema}
-                            if set(saved["adapted_head_state"]) != expected_head_names or set(saved["actual_head_delta"]) != expected_head_names:
-                                raise ValueError("Saved head tensors do not cover exactly the head")
+                            expected_target_names = {"conv2."+name if scope == "head" else name for name, _ in expected_schema}
+                            target_state = saved.get("adapted_target_state", saved.get("adapted_head_state"))
+                            target_delta = saved.get("actual_target_delta", saved.get("actual_head_delta"))
+                            if set(target_state) != expected_target_names or set(target_delta) != expected_target_names:
+                                raise ValueError("Saved tensors do not cover exactly the target scope")
                             delta = saved["delta"]
                             if delta.ndim != 1 or not torch.isfinite(delta).all():
                                 raise ValueError("Invalid saved delta")
@@ -160,14 +172,14 @@ def replay(review_dir):
                             final = {name: value.clone() for name, value in initial.items()}
                             offset = 0
                             for name, shape in expected_schema:
-                                full_name = "conv2." + name
+                                full_name = "conv2." + name if scope == "head" else name
                                 count = initial[full_name].numel()
                                 requested = delta[offset:offset+count].reshape(shape)
                                 final[full_name] = initial[full_name] + requested
-                                if not torch.equal(final[full_name], saved["adapted_head_state"][full_name]):
+                                if not torch.equal(final[full_name], target_state[full_name]):
                                     raise ValueError("Requested update does not produce saved final weights")
                                 actual = final[full_name]-initial[full_name]
-                                if not torch.equal(actual, saved["actual_head_delta"][full_name]):
+                                if not torch.equal(actual, target_delta[full_name]):
                                     raise ValueError("Saved effective delta is not final minus initial")
                                 summary["max_requested_vs_actual_delta_error"] = max(summary["max_requested_vs_actual_delta_error"], float((actual-requested).abs().max()))
                                 offset += count
@@ -213,8 +225,13 @@ def replay(review_dir):
                                     raise ValueError("Timing median differs from raw repetitions")
                         generated = 1000*statistics.mean(case["timing"]["generated"]["median_seconds"] for case in timed_cases)
                         iterative = 1000*statistics.mean(case["timing"]["iterative"]["median_seconds"] for case in timed_cases)
-                        if not math.isclose(run_summary["pipeline_ms"], generated, rel_tol=1e-10) or not math.isclose(run_summary["iterative_ms"], iterative, rel_tol=1e-10) or not math.isclose(run_summary["speedup"], iterative/generated, rel_tol=1e-10):
-                            raise ValueError("Reported speedup differs from raw timing evidence")
+                        if not math.isclose(run_summary["pipeline_ms"], generated, rel_tol=1e-10) or not math.isclose(run_summary["iterative_ms"], iterative, rel_tol=1e-10):
+                            raise ValueError("Reported latency differs from raw timing evidence")
+                        if scope == "head":
+                            if not math.isclose(run_summary["speedup"], iterative/generated, rel_tol=1e-10):
+                                raise ValueError("Reported speedup differs from raw timing evidence")
+                        elif run_summary["speedup"] is not None:
+                            raise ValueError("Broader updates must not claim matched head-IM speedup")
                         verified_runs.append(run_summary)
                         summary["runs"] += 1
                         atomic_json(output, summary)

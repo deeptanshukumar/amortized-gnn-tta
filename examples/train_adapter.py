@@ -14,10 +14,11 @@ import sys
 import torch
 
 from amortized_gnn_tta.adaptation import (
-    DiffusionHeadGenerator, GraphShiftDescriptor, HeadAdapterGenerator,
+    DiffusionHeadGenerator, HeadAdapterGenerator,
     evaluate_adaptation, extract_target_parameters, train_adaptation_generator, subsample_environments,
     train_diffusion_generator,
 )
+from amortized_gnn_tta.adaptation.experiments import CONDITIONING_CHOICES, make_descriptor
 from amortized_gnn_tta.adaptation.checkpoints import atomic_json, save_generator_checkpoint, load_generator_checkpoint
 from amortized_gnn_tta.adaptation._validation import training_options
 from amortized_gnn_tta.bank_artifacts import artifact_path, load_model_partition, load_verified_bank
@@ -38,8 +39,8 @@ def parse_args():
                         help="Path to environment manifest JSON (from prepare_shift_environments.py)")
     parser.add_argument("--output-dir", type=Path, required=True,
                         help="New directory for durable checkpoints, configuration and results; must not exist")
-    parser.add_argument("--conditioning", type=str, default="D", choices=["A", "B", "C", "D"],
-                        help="Conditioning version: 'A' (target graph only), 'B' (+hidden rep), 'C' (+predictive uncertainty), 'D' (+compact weights)")
+    parser.add_argument("--conditioning", type=str, default="D", choices=CONDITIONING_CHOICES,
+                        help="compact/structural baselines or conditioning version: 'A' (target graph only), 'B' (+hidden rep), 'C' (+predictive uncertainty), 'D' (+compact weights)")
     parser.add_argument("--generator", type=str, default="hypernetwork", choices=["hypernetwork", "diffusion"],
                         help="Generator architecture: 'hypernetwork' (direct MLP) or 'diffusion' (conditional DDPM/DDIM)")
     parser.add_argument("--scope", type=str, default="head", choices=["head", "backbone", "all"],
@@ -54,6 +55,7 @@ def parse_args():
                         help="Limit the number of environments per role (for quick runs)")
     parser.add_argument("--max-models", type=int, default=None,
                         help="Limit the number of models per role (for quick runs)")
+    parser.add_argument("--threads", type=int, default=1, help="Recorded PyTorch CPU thread count")
     parser.add_argument("--device", type=str, default="cpu",
                         help="Device to run adaptation on ('cpu' or 'cuda')")
     parser.add_argument("--diffusion-steps", type=int, default=50,
@@ -120,6 +122,9 @@ def code_provenance():
 
 
 def run(args):
+    from amortized_gnn_tta.adaptation._validation import positive_int
+    positive_int(args.threads, "threads")
+    torch.set_num_threads(args.threads)
     training_options(args.epochs, args.lr, args.delta_l2, args.max_models, args.max_environments)
     device = str(select_device(args.device))
     if type(args.seed) is not int or not 0 <= args.seed < 2**32:
@@ -131,14 +136,12 @@ def run(args):
         device=device, max_models=args.max_models, final_evaluation=args.final_evaluation)
     sample = next(iter(grouped["meta_train"].values()))
     flat, schema = extract_target_parameters(sample, args.scope)
-    descriptor = GraphShiftDescriptor(in_channels=sample.config.in_channels,
-        hidden_channels=sample.config.hidden_channels, out_channels=sample.config.out_channels,
-        conditioning=args.conditioning, target_scope=args.scope, descriptor_version=args.descriptor_version,
-        weight_scope="all", chunk_size=args.chunk_size)
+    descriptor, include_weights = make_descriptor(sample, args.conditioning, scope=args.scope,
+        descriptor_version=args.descriptor_version, weight_scope="all", chunk_size=args.chunk_size)
     # Bank reconstruction consumes RNG for temporary models; generator
     # initialization must depend on its own seed, not on caps or bank size.
     seed_model(args.seed)
-    kwargs = dict(descriptor_dim=descriptor.output_dim, head_dim=len(flat), hidden_dim=128, include_head_weights=False)
+    kwargs = dict(descriptor_dim=descriptor.output_dim, head_dim=len(flat), hidden_dim=128, include_head_weights=include_weights)
     if args.generator == "diffusion":
         generator = DiffusionHeadGenerator(**kwargs, diffusion_steps=args.diffusion_steps,
             sampling_steps=args.sampling_steps, default_seed=args.sampling_seed)
