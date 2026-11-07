@@ -2,13 +2,13 @@
 
 Research project for Advanced Foundations of Machine Learning (UE24AM342AA1), PES University.
 
-We investigate whether an offline-trained generator can predict small parameter updates for a pretrained GNN on an unlabeled shifted target graph, without target-time gradient optimization. This branch implements a CSBM direct-update hypernetwork/diffusion prototype alongside the existing iterative head/LoRA baselines. Generated LoRA and the planned real-graph studies remain future work.
+We investigate whether an offline-trained generator can predict small parameter updates for a pretrained GNN on an unlabeled shifted target graph, without target-time gradient optimization. This branch implements a CSBM direct-update hypernetwork/diffusion prototype alongside the existing iterative head/LoRA baselines. Generated LoRA has passed component/CLI validation on this integration branch; the planned real-graph studies remain future work.
 
 Deeptanshu owns GCN experiments; teammates handle GAT and GraphSAGE. At the owner's request, the shared codebase now implements all three architectures with the same data/training/bank interfaces.
 
 ## Implemented and verified
 
-- **Latest integration:** 408 CPU tests; portable shared comparisons; 30 matched GCN configurations and 360 independently replayed cases. Compact complete-pipeline ratios were 3.89× hypernetwork / 3.51× diffusion, with unchanged-control losses. See [current results and limits](docs/PROJECT_STATE.md#completed-integration-checkpoint).
+- **Latest integration:** generated-LoRA support and 431 CPU tests; the full matched head/LoRA study is pending. The preceding integration had 408 tests; portable shared comparisons; 30 matched GCN configurations and 360 independently replayed cases. Compact complete-pipeline ratios were 3.89× hypernetwork / 3.51× diffusion, with unchanged-control losses. See [current results and limits](docs/PROJECT_STATE.md#completed-integration-checkpoint).
 - **CSBM only:** balanced two-class Gaussian graphs with explicit connection probabilities, independent edge/feature/split RNG streams, and recorded generation settings.
 - CPU PyG graphs, separate ground truth, named split indices, explicit source/meta-training/validation/target roles.
 - Stratified source splits, initially 60/20/20; held-out graphs expose an eval-only split. Full graph context is preserved; split indices select supervision, not induced subgraphs.
@@ -18,7 +18,7 @@ Deeptanshu owns GCN experiments; teammates handle GAT and GraphSAGE. At the owne
 - The historical core milestone had **227 tests**, including the supervised full-fine-tuning diagnostic. Current generator-repair verification and results are recorded in [project state](docs/PROJECT_STATE.md); numerical execution is CPU-verified. A Colab notebook/device probe is provided; CUDA is not yet verified here.
 - Small and paper-sized (5,000 nodes × 2,000 features per graph) data/interface examples executed successfully.
 
-**The CSBM pretraining/bank foundation is verified for GCN, GAT and GraphSAGE:** shared loading/training/evaluation, a full-budget 30-model bank per architecture, validated artifact loading, saved 18/6/6 partitions, and weight/prediction/representation diagnostics. PEFT and the CSBM generator prototype are described below; real datasets and generated LoRA remain later work. These development runs are not final paper benchmarks.
+**The CSBM pretraining/bank foundation is verified for GCN, GAT and GraphSAGE:** shared loading/training/evaluation, a full-budget 30-model bank per architecture, validated artifact loading, saved 18/6/6 partitions, and weight/prediction/representation diagnostics. PEFT and the CSBM generator prototype are described below; real datasets remain later work; the current generated-LoRA milestone is recorded in project state. These development runs are not final paper benchmarks.
 
 GAT and GraphSAGE implementations now use those same entry points. Architecture-specific definitions and commands are below; matching hidden dimensions does not imply matching parameter budgets or optimal tuning for each model.
 
@@ -504,3 +504,19 @@ This preserves a released-code distribution, not its exact seeded artifacts or t
 The PDFs edit.pdf, Biased_Bozos_OnePager-3-1.pdf, and AFML_Papers_and_Videos_Link_Sheet_Minimal.pdf live in the parent research directory. Upstream checkouts live separately under its references/ directory. Neither is a runtime dependency.
 
 Held-out target labels must never enter adaptation, conditioning, or model selection. Supervised oracles and label-aware offline benchmark construction must be identified separately. No commits or pushes without explicit owner authorization.
+
+## Matched generated head/LoRA comparison
+
+Generated LoRA uses the existing rank/scaling convention and predicts `[dA, B]` around seeded A0, preserving identity initialization. Checkpoints save the explicit factor representation; independent replay reconstructs both factors and effective dense changes. Both generators support GCN/GAT/GraphSAGE. The matched compact-only configurations disable the historical extra raw-weight input. See decision D14 and the learning handbook for initialization/factor-distance assumptions.
+
+Run each study serially to a fresh directory, with `PYTHONPATH=src` when multiple editable checkouts exist:
+
+```bash
+python examples/run_generator_review.py --config configs/generator_matched_head.json --artifact-root /path/to/bank-checkout --output-dir runs/matched-head
+python examples/replay_generator_review.py --review-dir runs/matched-head
+python examples/run_generator_review.py --config configs/generator_matched_lora.json --artifact-root /path/to/bank-checkout --output-dir runs/matched-lora
+python examples/replay_generator_review.py --review-dir runs/matched-lora
+python examples/compare_adapter_studies.py --head-study runs/matched-head --lora-study runs/matched-lora --output-dir runs/matched-comparison
+```
+
+These are validation development runs: three generator seeds, one candidate, no final-target scoring. Primary latency includes every method-required step through prediction; compare generated LoRA with iterative LoRA, rather than head IM. Full supervised fine-tuning remains a separate labeled reference. The supplied configs measure CPU; CUDA/MPS timing is unverified.

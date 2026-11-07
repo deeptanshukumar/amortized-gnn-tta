@@ -2707,3 +2707,47 @@ Frozen shifted accuracy was 77.255%; iterative IM30 was 78.167%. Thus compact sa
 One subtle fairness point: compact/structural also receive the raw weights at the sites they update. Changing head to backbone changes that input too. Such a scope comparison cannot isolate the effect of update sites alone. Our planned A-D comparison keeps input definitions independent of update sites; direct backbone/all coordinates still are not LoRA.
 
 Do not translate this result into a claim that a generator will always help or that compact is the chosen Arxiv design. Keep controls and the frozen model in the report. The immediate research checkpoint establishes reproducible software and a measured speed/accuracy trade-off on this CSBM workload.
+
+### Generated LoRA: what changed and why initialization matters
+
+**This new milestone was explicitly approved on 8 November.** The earlier generators predicted direct changes to the last graph layer. The new generators can predict LoRA factors for both graph layers. Old results do not become LoRA results retroactively.
+
+A **matrix** is a rectangular table of numbers. A layer's weight matrix W transforms incoming features. LoRA keeps W fixed and represents its change using two smaller matrices, A and B. Their **rank** limits the number of independent directions the update can express. Our first graph layer uses rank 4; the last uses rank 1. GraphSAGE has two linear matrices per layer, so it has more factor entries than GCN/GAT.
+
+| Object | Meaning | Changed during deployment? |
+| --- | --- | --- |
+| W | Original pretrained GNN weights | Kept as the starting reference |
+| A0 | Seeded random initial A matrix | Fixed reference for every episode |
+| dA | Generator's proposed change to A | Predicted from unlabeled graph summaries |
+| B | Generator's proposed second factor | Predicted from the same summaries |
+| alpha/r | Recorded scale; r is the rank | Fixed configuration |
+| Effective weight | `W + (alpha/r) B(A0+dA)` | Used for the adapted prediction |
+
+The generator outputs a vector: a one-dimensional list containing all dA and B entries in a recorded order. We reshape its pieces into matrices and multiply them. The resulting **dense delta** is the full rectangular weight change, even though it was made from small factors. It is not an unrestricted full-model update: biases and GAT attention vectors remain unchanged. We save both the factors and the actual final-minus-initial weights.
+
+**Why not generate two zero matrices initially?** If A=0 and B=0, the product BA is zero. Its gradient with respect to either factor is also zero: changing just A while B stays zero does nothing, and vice versa. A gradient is the direction the training algorithm uses to improve its loss. Our nonzero A0 and zero B still give zero effective change, but allow a useful gradient into B. At the very first step dA can have zero gradient; that is expected. Once B changes, dA can learn too. This follows the initialization idea in Microsoft's original LoRA implementation, adapted to generator outputs.
+
+**How does diffusion learn factors?** A supervised teacher fits LoRA on permitted meta-training labels. We save its `A_teacher-A0` and `B_teacher`. The diffusion model learns to denoise these factor vectors, then uses the existing fixed-seed DDIM sampler to propose one vector at deployment. **Denoise** means recover a clean example from a version with random noise added. DDIM is the particular repeated denoising procedure used here. It is ten denoising steps, not ten gradient-training steps on the deployment graph. Five-candidate selection is still a separate feature.
+
+**A subtle limitation: factors are not unique.** If we double B and halve A, BA stays the same. Two factor vectors can therefore disagree while producing identical weights and predictions. Training every teacher from the same A0 makes their coordinates traceable, but does not remove this ambiguity. A lower factor mean-squared error is not proof of higher accuracy. Our independent replay checks the product, effective weights and predictions too.
+
+**What makes the timing comparison fair?** Each method starts with the same target graph and original GNN. Each pays for its required work. Head adaptation can reuse the frozen first-layer output within one episode. LoRA changes that first layer, so its final prediction must recompute it. A generated-LoRA speedup is divided by iterative **LoRA** time; a generated-head speedup is divided by iterative **head** time. A larger LoRA ratio can reflect the expensive optimization avoided, and does not automatically mean its absolute prediction time or accuracy is better.
+
+For the new comparison, head and LoRA generators receive the same compact hidden-feature summary and **no separate raw weights**. This differs from the older compact-plus-head-weights results. Keep their numbers in separate tables. The small tests establish software correctness; the measured validation study must establish the observed accuracy/time tradeoff. Neither proves performance on new real datasets.
+
+| Likely review/interview question | Clear answer |
+| --- | --- |
+| Are you fine-tuning the graph itself? | No. The graph is an input. We change the GNN's effective weights; controlled graph shifts were constructed separately. |
+| Is generated LoRA iterative adaptation? | The generator is trained offline. At deployment it predicts factors without gradient optimization on target labels. Diffusion still performs repeated denoising. |
+| Are the original weights frozen? | Yes as a reference; inference uses their sum with the low-rank change. We preserve the original state for replay. |
+| Does diffusion need labels at deployment? | No. Its teacher used permitted labels offline; deployment takes unlabeled graph summaries. These are different stages. |
+| Is the hypernetwork trained the same way as diffusion? | Not in this prototype. It learns through classification loss; diffusion learns teacher factor targets. That prevents a clean claim that one generator family is inherently better. |
+| What do three seeds tell us? | How generator training varies with its random initialization/training. They do not replace testing independent graphs or checkpoints. |
+| Why might an unchanged graph get worse? | The generator can predict an unnecessary update. We report this control separately rather than hiding it in an average. |
+| Why save dense deltas if factors are smaller? | Factors show the parameter-efficient representation. Dense deltas verify the actual weight changes and ordinary-model replay. |
+
+Self-check: explain why a zero B with a random A0 is different from two zero factors, and why a faster generated LoRA model could still have worse accuracy. These are questions to practise, not proof that the topic is already understood.
+
+Second-opinion prompt:
+
+> We implement CSBM GNN test-time adaptation with two-layer GCN, GAT and GraphSAGE. Existing iterative LoRA freezes original weights and updates rank-4 first-layer/rank-1 last-layer linear factors. We now generate [dA, B] around a fixed local-seed Kaiming A0, applying W' = W + (alpha/r) B(A0+dA); biases and GAT attention remain fixed. Hypernetwork training uses permitted meta-training classification labels and a dense-update L2 penalty. Diffusion learns standardized supervised teacher factor targets, with identical teacher initialization but nonunique factor coordinates, and uses one ten-step DDIM sample at deployment. Target inputs contain no labels. Our matched head/LoRA generators use the same compact hidden-moment summary without separate raw weights. Timing includes required conditioning, generation/optimization, applying updates and final prediction; head may reuse its frozen encoder, LoRA must recompute its changing encoder. Explain initialization gradients, factor nonuniqueness, leakage risks, meaningful tests and fair speed/accuracy reporting. Distinguish software correctness from scientific efficacy, and do not invent results.

@@ -13,7 +13,8 @@ import time
 import torch
 
 from train_adapter import load_experiment, file_hash, code_provenance
-from amortized_gnn_tta.adaptation import subsample_environments, extract_target_parameters
+from amortized_gnn_tta.adaptation import subsample_environments, extract_target_parameters, PEFTConfig
+from amortized_gnn_tta.adaptation.lora_generator import LoRAGenerator
 from amortized_gnn_tta.adaptation.benchmark import generated_predictions, iterative_predictions, frozen_predictions, measure_methods, memory_observation
 from amortized_gnn_tta.adaptation.checkpoints import load_generator_checkpoint, atomic_json
 from amortized_gnn_tta.data import load_shift_environment
@@ -58,8 +59,13 @@ def main():
         sample = next(iter(grouped["validation"].values()))
         generator, descriptor, payload = load_generator_checkpoint(args.checkpoint, model=sample, device=device)
         scope = payload["target_scope"]
+        is_lora = isinstance(generator, LoRAGenerator)
+        matched = scope == "head" or is_lora
+        peft = generator.update_space.peft if is_lora else PEFTConfig("head")
+        initialization_seed = generator.update_space.initialization_seed if is_lora else 801
+        provenance["update_representation"] = payload.get("update_representation", "direct")
         provenance["target_scope"] = scope
-        provenance["iterative_comparison"] = "matched head IM" if scope == "head" else "omitted: no matched broader direct-update optimizer in this benchmark"
+        provenance["iterative_comparison"] = "matched LoRA IM" if is_lora else "matched head IM" if scope == "head" else "omitted: no matched broader direct-update optimizer in this benchmark"
         for key, path in (("bank_manifest_sha256", args.bank / "bank.json"),
                           ("model_partition_sha256", args.model_partition), ("environment_manifest_sha256", args.manifest)):
             expected = payload["provenance"].get(key)
@@ -82,12 +88,12 @@ def main():
                 static_setup_seconds = time.perf_counter() - static_start
                 calls = {"frozen": lambda: frozen_predictions(model, graph, device=device),
                          "generated": lambda: generated_predictions(model, graph, descriptor, generator, scope=scope, device=device)}
-                if scope == "head":
-                    calls["iterative_im"] = lambda: iterative_predictions(model, graph, steps=args.steps, device=device)
+                if matched:
+                    calls["iterative_im"] = lambda: iterative_predictions(model, graph, steps=args.steps, device=device, peft=peft, initialization_seed=initialization_seed)
                 timing = measure_methods(calls, device=device, warmups=args.warmups, repeats=args.repeats)
                 outputs = {name: call() for name, call in calls.items()}
                 profile = generated_predictions(model, graph, descriptor, generator, scope=scope, device=device, profile=True).stages_seconds
-                iterative_profile = (iterative_predictions(model, graph, steps=args.steps, device=device, profile=True).stages_seconds if scope == "head" else None)
+                iterative_profile = (iterative_predictions(model, graph, steps=args.steps, device=device, peft=peft, initialization_seed=initialization_seed, profile=True).stages_seconds if matched else None)
                 with torch.no_grad():
                     inputs = graph.clone().to(device)
                     prepared_descriptor = descriptor(model, inputs)
@@ -102,8 +108,8 @@ def main():
                        "nodes": graph.num_nodes, "stored_edges": graph.num_edges, "features": graph.num_features,
                        "timing": timing, "scores": scores, "generator_only_microbenchmark": micro, "static_model_setup_seconds": static_setup_seconds, "generated_profile": profile, "iterative_profile": iterative_profile,
                        "profile_note": "separate instrumented pass; not a decomposition of the independently measured median",
-                       "memory": memory, "target_scope": scope, "target_parameter_count": len(prepared_weights),
-                       "speedup": timing["iterative_im"]["median_seconds"] / timing["generated"]["median_seconds"] if scope == "head" else None}
+                       "memory": memory, "target_scope": scope, "target_parameter_count": sum(dict(model.named_parameters())[n].numel() for n in generator.update_space.targets) if is_lora else len(prepared_weights), "factor_parameter_count": generator.latent_dim if is_lora else None,
+                       "speedup": timing["iterative_im"]["median_seconds"] / timing["generated"]["median_seconds"] if matched else None}
                 rows.append(row)
                 atomic_json(args.output_dir / "results.json", rows)
                 ratio = f"{row['speedup']:.3f}x" if row["speedup"] is not None else "not compared (different update sites)"

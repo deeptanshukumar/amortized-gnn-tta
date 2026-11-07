@@ -2,7 +2,7 @@
 
 ## Current timing-comparison request — 2026-11-08
 
-The owner requested committing existing changes and measuring speed across head-only, LoRA and other implemented methods, with a descriptive comparison table. Existing integration code was already committed at bf76f91; new local commits may record the benchmark extension and verified results. Keep complete-pipeline timings, objective/label access and update scope explicit. Generated LoRA is not currently implemented; clarification is pending and direct coordinate updates must never be relabelled as LoRA. Preserve the original checkouts and artifacts. No push/merge is authorized.
+The owner requested committing existing changes and measuring speed across head-only, LoRA and other implemented methods, with a descriptive comparison table. Existing integration code was already committed at bf76f91; new local commits may record the benchmark extension and verified results. Keep complete-pipeline timings, objective/label access and update scope explicit. The owner explicitly approved implementing and validating both hypernetwork- and diffusion-generated LoRA before benchmarking. Use shared seeded LoRA initialization and record factor representation, dense effective deltas and matched timing; direct coordinate updates must never be relabelled as LoRA. Preserve the original checkouts and artifacts. No push/merge is authorized.
 
 ## Prior approved integration milestone — 2026-11-07
 

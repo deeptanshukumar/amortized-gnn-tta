@@ -46,8 +46,9 @@ def write_verified_summary(review_dir, records, plan, provenance):
             "gain_pp": mean("gain_pp"), "control_gain_pp": mean("control_gain_pp"),
             "harm_cases": sum(row["harm_cases"] for row in seeds), "repeated_shift_cases": sum(row["shift_cases"] for row in seeds),
             "generated_pipeline_ms": pipeline, "iterative_pipeline_ms": iterative,
-            "speedup_ratio_of_mean_latencies": iterative/pipeline if plan["update_scope"] == "head" else None,
-            "update_scope": plan["update_scope"], "target_parameter_count": seeds[0].get("target_parameter_count"),
+            "speedup_ratio_of_mean_latencies": iterative/pipeline if plan["update_scope"] == "head" or plan.get("update_representation") == "lora-offset-factors-v1" else None,
+            "update_scope": seeds[0].get("update_scope", plan["update_scope"]), "target_parameter_count": seeds[0].get("target_parameter_count"),
+            "factor_parameter_count": seeds[0].get("factor_parameter_count"), "generator_parameter_count": seeds[0].get("generator_parameter_count"),
             "offline_wall_seconds": mean("offline_wall_seconds"), "teacher_wall_seconds": mean("teacher_wall_seconds"),
             "static_setup_seconds": mean("static_model_setup_seconds"),
             "completed_training_checkpoints_reused": sum(bool(row.get("training_reused_from")) for row in seeds)})
@@ -55,19 +56,20 @@ def write_verified_summary(review_dir, records, plan, provenance):
         writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
         writer.writeheader()
         writer.writerows(rows)
+    baseline_scope = "LoRA" if plan.get("update_representation") == "lora-offset-factors-v1" else "head"
     lines = ["# Verified CSBM generator development results", "",
         "All named initial/final/delta tensors, graph/source/checkpoint hashes, predictions, accuracies and raw-timing medians passed the independent replay audit.", "",
         f"This is validation evidence: one held-out GNN checkpoint and graph lineage per architecture. {len(plan['generator_seeds'])} generator seeds are repeated training runs, not independent graph samples. GNN seed 31 is shared across the three training source-label subsets. Controls participate in checkpoint selection; accuracy tables exclude controls and report their gains separately.", "",
-        "Hypernetwork CE and diffusion teacher-MSE use different objectives/update budgets. These results do not select the formal Arxiv input design or establish a definitive generator ranking. Updates are direct coordinates at the recorded scope, with one diffusion candidate. IM is a head-only reference; broader updates have no matched speed ratio. Final target labels were not accessed.", "",
-        f"Update scope: {plan['update_scope']}. Target parameter counts are recorded in AGGREGATED_RESULTS.csv.", "",
+        "Hypernetwork CE and diffusion teacher-MSE use different objectives/update budgets. These results do not select the formal Arxiv input design or establish a definitive generator ranking. Updates use the recorded direct or LoRA-factor representation, with one diffusion candidate. IM uses matched head/LoRA sites; broader direct updates keep an unmatched head reference. Final target labels were not accessed.", "",
+        f"Functional schema: {plan['update_scope']}; representation: {plan.get('update_representation', 'direct')}. Target parameter counts are recorded in AGGREGATED_RESULTS.csv.", "",
         "## Accuracy", "",
-        f"| Model | Method | Input | Frozen (%) | IM-head{plan['iterative_steps']} (%) | Generated mean ± seed SD (%) | Gain (pp) | Harmed / repeated shifted cases | Control gain (pp) |",
+        f"| Model | Method | Input | Frozen (%) | IM-{baseline_scope}{plan['iterative_steps']} (%) | Generated mean ± seed SD (%) | Gain (pp) | Harmed / repeated shifted cases | Control gain (pp) |",
         "| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |"]
     for row in rows:
         lines.append(f"| {row['architecture']} | {row['method']} | {row['conditioning']} | {row['frozen_accuracy_percent']:.3f} | {row['iterative_accuracy_percent']:.3f} | {row['adapted_accuracy_percent']:.3f} ± {row['adapted_accuracy_sd_percent']:.3f} | {row['gain_pp']:+.3f} | {row['harm_cases']}/{row['repeated_shift_cases']} | {row['control_gain_pp']:+.3f} |")
     lines += ["", "## Deployment and offline cost", "",
         "Primary latency includes target processing, update work and predictions. Each seed's cost is the mean of the declared condition medians, each from the configured warmups/repetitions. The group speedup is the ratio of mean IM and generated latencies across those same conditions/seeds; >1 is faster, <1 is slower. This differs slightly from averaging per-seed ratios in the original incremental REVIEW.md.", "",
-        f"| Model | Method | Input | Pipeline (ms) | IM-head{plan['iterative_steps']} (ms) | IM / generated | Offline wall (s) | Teacher subset (s) |",
+        f"| Model | Method | Input | Pipeline (ms) | IM-{baseline_scope}{plan['iterative_steps']} (ms) | IM / generated | Offline wall (s) | Teacher subset (s) |",
         "| --- | --- | --- | ---: | ---: | ---: | ---: | ---: |"]
     for row in rows:
         ratio = f"{row['speedup_ratio_of_mean_latencies']:.3f}×" if row["speedup_ratio_of_mean_latencies"] is not None else "not matched"
@@ -75,7 +77,7 @@ def write_verified_summary(review_dir, records, plan, provenance):
     reused = sum(row["completed_training_checkpoints_reused"] for row in rows)
     lines += ["", f"{reused} completed training checkpoints were reused from the explicitly recorded parent run after identity checks and exact generated-delta agreement. Every prediction/timing check was rerun. Offline times for reused checkpoints are their original measured training costs, not new training runs. Partial training was never resumed.", "",
         "Static-model fingerprint setup and canonical dataset preparation are reported separately in seed/selection records. The per-seed break-even field is a training-plus-static-setup cost-only illustration; it excludes common dataset/bank preparation and research search costs. Accuracy and label-access differences remain relevant. If online savings are nonpositive, there is no positive amortization argument from repeated deployments.", "",
-        "The iterative baseline is the documented existing frozen-first-layer-cache IM algorithm, with unnecessary export/extra-prediction work removed. Architecture-specific head aggregation caching is not implemented; these ratios are implementation comparisons, not an optimal computational lower bound.", "",
+        "The iterative baseline is the documented existing IM algorithm (frozen-first-layer caching only for head adaptation), with unnecessary export/extra-prediction work removed. Architecture-specific head aggregation caching is not implemented; these ratios are implementation comparisons, not an optimal computational lower bound.", "",
         "CPU RSS samples include resident review datasets/training models and are lower bounds at 5ms sampling, not minimal deployment or exact incremental allocation peaks. Memory profiling is separate from latency timing. CUDA/MPS execution is unverified.", "",
         f"Independent audit: {provenance['runs']} generator configurations, {provenance['pairs']} saved cases, maximum logit replay error {provenance['max_logit_error']}, accuracy mismatches {provenance['accuracy_mismatches']}.", ""]
     (review_dir / "VERIFIED_REVIEW.md").write_text("\n".join(lines), encoding="utf-8")
@@ -159,6 +161,34 @@ def replay(review_dir):
                             with torch.no_grad():
                                 generated_delta = generator(descriptor(source, graph), weights)
                             torch.testing.assert_close(generated_delta, saved["delta"], rtol=1e-5, atol=1e-7)
+                            if plan.get("update_representation") == "lora-offset-factors-v1":
+                                # Independent LoRA reconstruction: no space.dense_delta/factors helper.
+                                recipe = saved["lora_space"]
+                                if recipe != payload["lora_space"] or saved["update_representation"] != "lora-offset-factors-v1":
+                                    raise ValueError("LoRA factor recipe changed")
+                                offsets = saved["factor_offsets"]
+                                with torch.no_grad():
+                                    torch.testing.assert_close(generator.core(descriptor(source, graph)), offsets, rtol=0, atol=0)
+                                rng = torch.Generator().manual_seed(recipe["initialization_seed"])
+                                dense_updates, position = {}, 0
+                                for name in recipe["targets"]:
+                                    rows, columns = initial[name].shape
+                                    layer = "backbone" if name.startswith("conv1.") else "head"
+                                    rank = recipe["peft_config"][layer+"_rank"]
+                                    alpha = recipe["peft_config"][layer+"_alpha"]
+                                    reference = torch.empty(rank, columns)
+                                    torch.nn.init.kaiming_uniform_(reference, a=math.sqrt(5), generator=rng)
+                                    count = rank*columns
+                                    a = reference + offsets[position:position+count].view(rank, columns)
+                                    position += count
+                                    count = rows*rank
+                                    b = offsets[position:position+count].view(rows, rank)
+                                    position += count
+                                    dense_updates[name] = (b@a)*(alpha/rank)
+                                if position != offsets.numel():
+                                    raise ValueError("Unexpected factor coordinates")
+                                reconstructed = torch.cat([(dense_updates.get(name, torch.zeros(shape))).flatten() for name,shape in expected_schema])
+                                torch.testing.assert_close(reconstructed, saved["delta"], rtol=0, atol=0)
                             expected_target_names = {"conv2."+name if scope == "head" else name for name, _ in expected_schema}
                             target_state = saved.get("adapted_target_state", saved.get("adapted_head_state"))
                             target_delta = saved.get("actual_target_delta", saved.get("actual_head_delta"))
@@ -227,7 +257,7 @@ def replay(review_dir):
                         iterative = 1000*statistics.mean(case["timing"]["iterative"]["median_seconds"] for case in timed_cases)
                         if not math.isclose(run_summary["pipeline_ms"], generated, rel_tol=1e-10) or not math.isclose(run_summary["iterative_ms"], iterative, rel_tol=1e-10):
                             raise ValueError("Reported latency differs from raw timing evidence")
-                        if scope == "head":
+                        if scope == "head" or plan.get("update_representation") == "lora-offset-factors-v1":
                             if not math.isclose(run_summary["speedup"], iterative/generated, rel_tol=1e-10):
                                 raise ValueError("Reported speedup differs from raw timing evidence")
                         elif run_summary["speedup"] is not None:

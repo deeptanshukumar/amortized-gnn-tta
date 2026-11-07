@@ -23,6 +23,8 @@ from train_adapter import load_experiment, file_hash, code_provenance
 from amortized_gnn_tta.adaptation import (HeadAdapterGenerator, DiffusionHeadGenerator,
     extract_target_parameters, apply_target_delta, train_adaptation_generator,
     train_diffusion_generator)
+from amortized_gnn_tta.adaptation.lora_generator import LoRAUpdateSpace, LoRAGenerator
+from amortized_gnn_tta.adaptation.iterative import PEFTConfig
 from amortized_gnn_tta.adaptation.experiments import make_descriptor, review_run_name, training_recipe, CONDITIONING_CHOICES
 from amortized_gnn_tta.adaptation.benchmark import (measure_methods, generated_predictions, iterative_predictions,
     frozen_predictions, memory_observation, amortization_break_even)
@@ -43,8 +45,8 @@ def summarize(output, records):
         writer.writeheader()
         writer.writerows(records)
     lines = ["# CSBM repaired-generator development review", "",
-             "Direct coordinate updates, one diffusion candidate; scope is recorded in each row. Validation only. Hypernetwork CE and diffusion teacher-MSE are different training objectives/budgets.", "",
-             f"Update scope: {records[0].get('update_scope', 'head')}. IM is a head-only reference; no matched speedup is claimed for broader updates. Accuracy excludes unchanged controls; timing averages per-condition medians over control, attribute, homophily and combined cases. SD is across generator seeds.", "",
+             "One diffusion candidate; explicit direct or LoRA-factor representation and scope are recorded in each row. Validation only. Hypernetwork CE and diffusion teacher-MSE are different training objectives/budgets.", "",
+             f"Update scope: {records[0].get('update_scope', 'head')}. IM uses matched head/LoRA sites when available; broader direct-coordinate scopes keep head IM as an unmatched reference. Accuracy excludes unchanged controls; timing averages per-condition medians over control, attribute, homophily and combined cases. SD is across generator seeds.", "",
              "| Model | Method | Inputs | Frozen accuracy | IM accuracy | Adapted accuracy | Gain (pp) | Harmed shifted cases | Control gain (pp) | Pipeline (ms) | IM / generated |",
              "| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |"]
     groups = {}
@@ -52,7 +54,7 @@ def summarize(output, records):
         groups.setdefault((row["architecture"], row["method"], row["conditioning"]), []).append(row)
     for key, rows in groups.items():
         mean = lambda field: statistics.mean(row[field] for row in rows)
-        ratio = f"{mean('speedup'):.3f}×" if rows[0].get("update_scope", "head") == "head" else "not matched"
+        ratio = f"{mean('speedup'):.3f}×" if rows[0].get("update_scope", "head") in {"head", "lora"} else "not matched"
         sd = statistics.stdev(row["adapted_accuracy_percent"] for row in rows) if len(rows) > 1 else 0.
         lines.append(f"| {' | '.join(key)} | {mean('frozen_accuracy_percent'):.3f} | {mean('iterative_accuracy_percent'):.3f} | {mean('adapted_accuracy_percent'):.3f} ± {sd:.3f} | {mean('gain_pp'):+.3f} | {sum(row['harm_cases'] for row in rows)}/{sum(row['shift_cases'] for row in rows)} | {mean('control_gain_pp'):+.3f} | {mean('pipeline_ms'):.3f} | {ratio} |")
     (output / "REVIEW.md").write_text("\n".join(lines) + "\n")
@@ -61,6 +63,13 @@ def summarize(output, records):
 def run(args):
     plan = json.loads(args.config.read_text())
     scope = plan["update_scope"]
+    is_lora = plan.get("update_representation", "direct") == "lora-offset-factors-v1"
+    if plan.get("update_representation", "direct") not in {"direct", "lora-offset-factors-v1"}:
+        raise ValueError("Unknown update representation")
+    if is_lora and (scope != "all" or plan.get("include_raw_weights", True)):
+        raise ValueError("Generated LoRA uses full functional schema and no raw-weight input")
+    peft = PEFTConfig(**plan["lora_config"]) if is_lora else PEFTConfig("head")
+    matched = scope == "head" or is_lora
     if plan["candidate_count"] != 1 or scope not in {"head", "backbone", "all"} or plan["device"] != "cpu":
         raise ValueError("This review supports CPU direct updates and one diffusion candidate")
     if not plan["conditioning"] or any(c not in CONDITIONING_CHOICES for c in plan["conditioning"]):
@@ -141,7 +150,7 @@ def run(args):
                 bundle = loader(manifest, env["id"])
                 graph = bundle.unlabeled_input(env["id"])
                 before = frozen_predictions(validation_model, graph)
-                after = iterative_predictions(validation_model, graph, steps=plan["iterative_steps"], lr=plan["iterative_lr"])
+                after = iterative_predictions(validation_model, graph, steps=plan["iterative_steps"], lr=plan["iterative_lr"], peft=peft, initialization_seed=plan.get("lora_initialization_seed", 801))
                 indices, labels = bundle.select(env["id"], "eval"), bundle.evaluation_labels(env["id"], "eval")
                 row = {"architecture": architecture, "environment_id": env["id"],
                        "frozen": asdict(score_logits(before.logits, indices, labels)),
@@ -159,10 +168,15 @@ def run(args):
                         seed_model(seed)
                         descriptor, include_weights = make_descriptor(validation_model, conditioning, scope=scope,
                             descriptor_version=plan["descriptor_version"], weight_scope=plan["weight_scope"], chunk_size=plan["chunk_size"])
+                        if "include_raw_weights" in plan:
+                            include_weights = plan["include_raw_weights"]
+                        space = LoRAUpdateSpace.from_model(validation_model, peft, plan.get("lora_initialization_seed", 801)) if is_lora else None
                         flat, schema = extract_target_parameters(validation_model, scope)
-                        kwargs = dict(descriptor_dim=descriptor.output_dim, head_dim=len(flat), hidden_dim=plan["hidden_dim"], num_layers=plan["num_layers"], include_head_weights=include_weights)
+                        kwargs = dict(descriptor_dim=descriptor.output_dim, head_dim=space.factor_dim if space is not None else len(flat), hidden_dim=plan["hidden_dim"], num_layers=plan["num_layers"], include_head_weights=include_weights)
                         generator = (HeadAdapterGenerator(**kwargs) if method == "hypernetwork" else
                             DiffusionHeadGenerator(**kwargs, diffusion_steps=plan["diffusion_steps"], sampling_steps=plan["sampling_steps"], default_seed=plan["sampling_seed"], time_dim=plan["time_dim"], schedule=plan["noise_schedule"]))
+                        if space is not None:
+                            generator = LoRAGenerator(generator, space)
                         run_context = {**context, "method": method, "conditioning": conditioning, "generator_seed": seed,
                                        "training_seed": seed+plan["training_seed_offset"], "code": code, "plan": plan}
                         def checkpoint(state, history):
@@ -226,6 +240,11 @@ def run(args):
                                        "adapted_target_state": {k: v.cpu() for k, v in adapted.state_dict().items() if k in target_names},
                                        "actual_target_delta": {k: (v-validation_model.state_dict()[k]).cpu() for k, v in adapted.state_dict().items() if k in target_names},
                                        "logits": generated.logits.cpu()}
+                            if is_lora:
+                                with torch.no_grad():
+                                    payload["factor_offsets"] = generator.forward_factors(descriptor(validation_model, graph)).cpu()
+                                payload["update_representation"] = generator.representation
+                                payload["lora_space"] = generator.update_space.configuration()
                             torch.save(payload, directory / f"pair_{index:02d}.pt")
                             # Replay the saved bytes, not just the live tensors.
                             saved = torch.load(directory / f"pair_{index:02d}.pt", weights_only=True)
@@ -236,11 +255,11 @@ def run(args):
                             replay_count += 1
                             if env["shift"] in plan["timed_shifts"] or env["family"] == "control":
                                 methods = {"frozen": lambda: frozen_predictions(validation_model, graph),
-                                    "iterative": lambda: iterative_predictions(validation_model, graph, steps=plan["iterative_steps"], lr=plan["iterative_lr"]),
+                                    "iterative": lambda: iterative_predictions(validation_model, graph, steps=plan["iterative_steps"], lr=plan["iterative_lr"], peft=peft, initialization_seed=plan.get("lora_initialization_seed", 801)),
                                     "generated": lambda: generated_predictions(validation_model, graph, descriptor, generator, scope=scope)}
                                 measured = measure_methods(methods, warmups=plan["warmups"], repeats=plan["repeats"])
                                 profile = generated_predictions(validation_model, graph, descriptor, generator, scope=scope, profile=True).stages_seconds
-                                iterative_profile = iterative_predictions(validation_model, graph, steps=plan["iterative_steps"], lr=plan["iterative_lr"], profile=True).stages_seconds
+                                iterative_profile = iterative_predictions(validation_model, graph, steps=plan["iterative_steps"], lr=plan["iterative_lr"], peft=peft, initialization_seed=plan.get("lora_initialization_seed", 801), profile=True).stages_seconds
                                 with torch.no_grad():
                                     prepared = descriptor(validation_model, graph)
                                     weights, _ = extract_target_parameters(validation_model, scope)
@@ -257,19 +276,22 @@ def run(args):
                         pipeline = statistics.mean(row["timing"]["generated"]["median_seconds"] for row in timing)
                         iterative = statistics.mean(row["timing"]["iterative"]["median_seconds"] for row in timing)
                         result = {"architecture": architecture, "method": method, "conditioning": conditioning, "seed": seed,
-                            "update_scope": scope, "target_parameter_count": len(flat), "generator_parameter_count": sum(p.numel() for p in generator.parameters()),
+                            "update_scope": "lora" if is_lora else scope,
+                            "update_representation": "lora-offset-factors-v1" if is_lora else "direct",
+                            "factor_parameter_count": space.factor_dim if space is not None else None,
+                            "target_parameter_count": sum(dict(validation_model.named_parameters())[n].numel() for n in space.targets) if space is not None else len(flat), "generator_parameter_count": sum(p.numel() for p in generator.parameters()),
                             "frozen_accuracy_percent": 100*statistics.mean(row["frozen_accuracy"] for row in shifted),
                             "iterative_accuracy_percent": 100*statistics.mean(base_by_env[row["environment_id"]]["iterative"]["accuracy"] for row in shifted),
                             "adapted_accuracy_percent": 100*statistics.mean(row["adapted_accuracy"] for row in shifted),
                             "gain_pp": statistics.mean(row["gain_pp"] for row in shifted),
                             "harm_cases": sum(row["gain_pp"] < 0 for row in shifted), "shift_cases": len(shifted),
                             "control_gain_pp": statistics.mean(row["gain_pp"] for row in pairs if row["family"] == "control"),
-                            "pipeline_ms": 1000*pipeline, "iterative_ms": 1000*iterative, "speedup": iterative/pipeline if scope == "head" else None,
+                            "pipeline_ms": 1000*pipeline, "iterative_ms": 1000*iterative, "speedup": iterative/pipeline if matched else None,
                             "training_reused_from": str(old_directory.resolve()) if reuse else None,
                             "offline_wall_seconds": offline_seconds, "teacher_wall_seconds": fit.teacher_time_seconds,
                             "selected_epoch": fit.selected_epoch, "static_model_setup_seconds": static_seconds,
                             "optimizer_updates": fit.optimizer_steps,
-                            "break_even_events_cost_only": amortization_break_even(offline_generated=offline_seconds+static_seconds, offline_iterative=0., online_generated=pipeline, online_iterative=iterative) if scope == "head" else None}
+                            "break_even_events_cost_only": amortization_break_even(offline_generated=offline_seconds+static_seconds, offline_iterative=0., online_generated=pipeline, online_iterative=iterative) if matched else None}
                         atomic_json(directory / "summary.json", result)
                         results.append(result)
                         summarize(output, results)

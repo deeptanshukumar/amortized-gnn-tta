@@ -1,10 +1,10 @@
 # Project state
 
-Last updated: 2026-11-07. Current milestone: **audited generator integration and matched compact comparison**, completed on `integration/generator-audit-fixes` after explicit owner approval. The actual system remains CSBM; generated LoRA, five-candidate diffusion selection and real-graph experiments remain future milestones. CUDA/MPS execution remains unverified.
+Last updated: 2026-11-08. Current milestone: **generated LoRA and matched adaptation comparisons**, explicitly approved on `integration/generator-audit-fixes`. The actual system remains CSBM; five-candidate diffusion selection and real-graph experiments remain future milestones. CUDA/MPS execution remains unverified.
 
 ## Timing comparison in progress (2026-11-08)
 
-Owner requested local commits and an expanded head/LoRA comparison. Prior integration work is committed through bf76f91; no project changes remained from the read-only contributor-timer diagnostic. The complete-pipeline optimizer now supports the existing head/LoRA adapters and entropy/IM objectives without changing their update rules. Twelve architecture × adapter × objective parity checks passed. Full supervised fine-tuning stays a separate labeled diagnostic; generated LoRA is not yet implemented. No final-target scoring or push/merge is authorized.
+Owner requested local commits and an expanded head/LoRA comparison. Prior integration work is committed through bf76f91; no project changes remained from the read-only contributor-timer diagnostic. The complete-pipeline optimizer now supports the existing head/LoRA adapters and entropy/IM objectives without changing their update rules. Twelve architecture × adapter × objective parity checks passed. Full supervised fine-tuning stays a separate labeled diagnostic; the owner subsequently approved generated LoRA for both generator families. The new factor representation and complete checkpoint path pass all-architecture component/CLI replay checks; the full matched numerical study is pending. Verification: 431 full-suite CPU tests passed, followed by three all-architecture CLI/replay/comparison checks covering the final supervised-reference reporting path. Compileall and whitespace review passed. The matched head/LoRA configs use compact-only conditioning, three generator seeds, five epochs and one ten-step DDIM candidate. The comparison also measures entropy/IM and keeps supervised head/LoRA/full references in their own meta-training report. No final-target scoring or push/merge is authorized.
 
 ## Completed integration checkpoint
 

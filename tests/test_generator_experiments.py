@@ -94,3 +94,52 @@ def test_completed_checkpoint_reuse_does_not_relax_fitting_settings():
     assert training_recipe(base) == training_recipe({**base, "conditioning": ["compact", "A"], "repeats": 3})
     for key, value in [("epochs", 6), ("teacher_steps", 40), ("update_scope", "all"), ("threads", 4), ("new_fitting_option", True)]:
         assert training_recipe(base) != training_recipe({**base, key: value})
+
+
+def test_generated_lora_review_and_factor_replay(prepared):
+    root, architecture = prepared
+    repo = Path(__file__).resolve().parents[1]
+    plan = json.loads((repo / "configs/generator_matched_lora.json").read_text())
+    plan.update(architectures=[architecture], epochs=1, generator_seeds=[2101],
+        diffusion_steps=7, sampling_steps=3, teacher_steps=1, iterative_steps=2,
+        warmups=0, repeats=2, banks={architecture:["bank", "partition.json"]},
+        environment_manifest="environments.json")
+    plan["lora_config"]["backbone_rank"] = 2
+    config = root / "lora-plan.json"
+    config.write_text(json.dumps(plan))
+    output = root / "review-generated-lora"
+    run = command("run_generator_review.py", "--config", config, "--artifact-root", root, "--output-dir", output)
+    assert run.returncode == 0, run.stdout+run.stderr
+    replay = command("replay_generator_review.py", "--review-dir", output)
+    assert replay.returncode == 0, replay.stdout+replay.stderr
+    audit = json.loads((output/"INDEPENDENT_REPLAY.json").read_text())
+    assert audit["pairs"] == 4 and audit["runs"] == 2 and audit["max_logit_error"] == 0
+    for directory in output.glob("*/summary.json"):
+        row = json.loads(directory.read_text())
+        assert row["update_scope"] == "lora" and row["speedup"] > 0
+        assert row["factor_parameter_count"] > 0 and row["target_parameter_count"] > row["factor_parameter_count"]
+        saved = torch.load(directory.parent/"pair_00.pt", weights_only=True)
+        assert saved["factor_offsets"].numel() == row["factor_parameter_count"]
+        assert saved["update_representation"] == "lora-offset-factors-v1"
+    head_plan = {**plan, "update_scope":"head", "update_representation":"direct"}
+    head_config = root/"matched-head-plan.json"
+    head_config.write_text(json.dumps(head_plan))
+    head_output = root/"matched-head-study"
+    result = command("run_generator_review.py", "--config", head_config, "--artifact-root", root, "--output-dir", head_output)
+    assert result.returncode == 0, result.stdout+result.stderr
+    replay = command("replay_generator_review.py", "--review-dir", head_output)
+    assert replay.returncode == 0, replay.stdout+replay.stderr
+    compared = root/"matched-comparison"
+    result = command("compare_adapter_studies.py", "--head-study", head_output, "--lora-study", output, "--output-dir", compared)
+    assert result.returncode == 0, result.stdout+result.stderr
+    progress = json.loads((compared/"progress.json").read_text())
+    assert progress["status"] == "complete" and progress["iterative_saved_replays"] == 8 and progress["rows"] == 9
+    if architecture == "gcn":
+        timing_dir = root/"lora-saved-benchmark"
+        checkpoint = next(output.glob("*/generator_best.pt"))
+        result = command("benchmark_adapters.py", "--bank", root/"bank", "--manifest", root/"environments.json",
+            "--model-partition", root/"partition.json", "--checkpoint", checkpoint, "--output-dir", timing_dir,
+            "--steps", "2", "--max-environments", "1", "--warmups", "0", "--repeats", "2")
+        assert result.returncode == 0, result.stdout+result.stderr
+        row = json.loads((timing_dir/"results.json").read_text())[0]
+        assert row["speedup"] > 0 and row["factor_parameter_count"] > 0

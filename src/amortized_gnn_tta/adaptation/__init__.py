@@ -24,6 +24,7 @@ from .diffusion import (
     fit_oracle_deltas,
     train_diffusion_generator,
 )
+from .lora_generator import LoRAUpdateSpace, LoRAGenerator
 from .meta_trainer import train_adaptation_generator
 from .evaluator import (
     AdaptationRecord,
@@ -39,6 +40,8 @@ __all__ = [
     "DiffusionHeadGenerator",
     "GraphShiftDescriptor",
     "HeadAdapterGenerator",
+    "LoRAUpdateSpace",
+    "LoRAGenerator",
     "NoiseSchedule",
     "adapted_forward",
     "apply_head_delta",

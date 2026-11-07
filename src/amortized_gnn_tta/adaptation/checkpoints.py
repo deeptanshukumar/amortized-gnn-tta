@@ -12,6 +12,7 @@ from ..training import software_versions
 from ._validation import finite
 from .descriptors import GraphShiftDescriptor
 from .diffusion import DiffusionHeadGenerator
+from .lora_generator import LoRAGenerator, LoRAUpdateSpace
 from .generator import HeadAdapterGenerator, extract_target_parameters, unflatten_head_delta
 
 PROTOCOL = "csbm-direct-generator-v2"
@@ -36,6 +37,12 @@ def save_generator_checkpoint(path, generator, descriptor, schema, *, target_sco
     path.parent.mkdir(parents=True, exist_ok=True)
     if path.exists() and not overwrite:
         raise FileExistsError(path)
+    lora = isinstance(generator, LoRAGenerator)
+    original = generator
+    if lora:
+        if target_scope != "all" or list(schema) != generator.update_space.schema:
+            raise ValueError("Generated LoRA requires its full functional output schema")
+        generator = generator.core
     config = {name: getattr(generator, name) for name in
               ("descriptor_dim", "head_dim", "hidden_dim", "num_layers", "include_head_weights")}
     if isinstance(generator, DiffusionHeadGenerator):
@@ -50,9 +57,9 @@ def save_generator_checkpoint(path, generator, descriptor, schema, *, target_sco
         raise ValueError("A-D must not receive a separate raw-weight input")
     if descriptor.output_dim != generator.descriptor_dim:
         raise ValueError("Generator and descriptor dimensions disagree")
-    unflatten_head_delta(torch.zeros(generator.head_dim), schema)
+    unflatten_head_delta(torch.zeros(original.head_dim), schema)
     state = {name: value.detach().cpu().clone() for name, value in
-             (state_dict if state_dict is not None else generator.state_dict()).items()}
+             (state_dict if state_dict is not None else original.state_dict()).items()}
     for value in state.values():
         finite(value, "checkpoint state")
     # Keep metadata weights_only-compatible and ensure NaNs cannot enter JSON.
@@ -61,6 +68,9 @@ def save_generator_checkpoint(path, generator, descriptor, schema, *, target_sco
                "descriptor_config": descriptor.configuration(), "target_scope": target_scope,
                "schema": list(schema), "state_dict": state, "state_sha256": state_sha256(state),
                "software": software_versions(), **metadata}
+    if lora:
+        payload["update_representation"] = original.representation
+        payload["lora_space"] = original.update_space.configuration()
     with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as handle:
         temporary = Path(handle.name)
     try:
@@ -96,14 +106,28 @@ def load_generator_checkpoint(path, *, model=None, device="cpu"):
     # Reconstructing weights should not perturb the caller's CPU initialization RNG.
     with torch.random.fork_rng(devices=[]):
         generator = constructors[payload["generator_type"]](**payload["generator_config"])
+    if "update_representation" in payload:
+        if payload["update_representation"] != LoRAGenerator.representation or payload["target_scope"] != "all":
+            raise ValueError("Unknown/inconsistent generated update representation")
+        generator = LoRAGenerator(generator, LoRAUpdateSpace(**payload["lora_space"]))
+        if generator.update_space.schema != [(n, tuple(s)) for n, s in payload["schema"]]:
+            raise ValueError("LoRA space/schema disagreement")
     if generator.descriptor_dim != descriptor.output_dim or (descriptor.conditioning and generator.include_head_weights):
         raise ValueError("Inconsistent conditioning recipe")
+    references = ({name: value.clone() for name, value in generator.update_space.named_buffers()}
+                  if isinstance(generator, LoRAGenerator) else {})
     generator.load_state_dict(state, strict=True)
+    if references and any(not torch.equal(value, dict(generator.update_space.named_buffers())[name]) for name, value in references.items()):
+        raise ValueError("LoRA seeded reference disagrees with saved recipe")
     unflatten_head_delta(torch.zeros(generator.head_dim), payload["schema"])
     if model is not None:
         flat, schema = extract_target_parameters(model, payload["target_scope"])
         if schema != [(name, tuple(shape)) for name, shape in payload["schema"]] or len(flat) != generator.head_dim:
             raise ValueError("Source model disagrees with checkpoint schema")
+        if isinstance(generator, LoRAGenerator):
+            expected = LoRAUpdateSpace.from_model(model, generator.update_space.peft, generator.update_space.initialization_seed)
+            if expected.configuration() != generator.update_space.configuration():
+                raise ValueError("Source model disagrees with LoRA targets")
         if ((descriptor.conditioning != "A" and model.config.hidden_channels != descriptor.hidden_channels) or
                 (descriptor.conditioning is not None and model.config.in_channels != descriptor.in_channels) or
                 (descriptor.conditioning in {"C", "D"} and model.config.out_channels != descriptor.out_channels)):

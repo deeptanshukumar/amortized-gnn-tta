@@ -374,6 +374,7 @@ def fit_oracle_deltas(
     device: str = "cpu",
     verbose: bool = True,
     target_scope: str = "head",
+    update_space=None,
 ) -> list[OracleTargetRecord]:
     """Precompute supervised teacher updates (Delta*) for all meta-training pairs.
 
@@ -412,6 +413,26 @@ def fit_oracle_deltas(
             with torch.no_grad():
                 init_logits = model(unlabeled.x, unlabeled.edge_index)[train_idx]
                 base_acc = float((init_logits.argmax(-1) == train_y).float().mean().item())
+
+            if update_space is not None:
+                if target_scope != "all":
+                    raise ValueError("LoRA functional output uses the complete dense schema")
+                from .iterative import WeightAdapter
+                adapter = WeightAdapter(model, update_space.peft, seed=update_space.initialization_seed).to(device)
+                parameters = [p for p in adapter.parameters() if p.requires_grad]
+                optimizer = torch.optim.Adam(parameters, lr=lr)
+                for _ in range(steps):
+                    optimizer.zero_grad(set_to_none=True)
+                    logits = adapter(unlabeled.x, unlabeled.edge_index)[train_idx]
+                    dense = torch.cat([v.flatten() for v in adapter.updates().values()])
+                    loss = F.cross_entropy(logits, train_y) + delta_l2_reg*dense.square().sum()
+                    checked_backward(loss, parameters)
+                    optimizer.step()
+                with torch.no_grad():
+                    oracle_acc = float((adapter(unlabeled.x, unlabeled.edge_index)[train_idx].argmax(-1) == train_y).float().mean())
+                    vector = update_space.encode_adapter(adapter).cpu()
+                records.append(OracleTargetRecord(model_id, env_id, desc.detach().cpu(), flat_w.detach().cpu(), vector, base_acc, oracle_acc))
+                continue
 
             # Exact first-layer reuse applies only when updates leave it frozen.
             with torch.no_grad():
@@ -504,6 +525,7 @@ def train_diffusion_generator(
         device=device,
         verbose=verbose,
         target_scope=target_scope,
+        update_space=getattr(generator, "update_space", None),
     )
 
     teacher_seconds = time.perf_counter() - teacher_start
@@ -515,7 +537,7 @@ def train_diffusion_generator(
     if len(targets) > 1:
         std_delta = all_targets.std(dim=0)
     else:
-        std_delta = torch.ones(generator.head_dim)
+        std_delta = torch.ones(getattr(generator, "latent_dim", generator.head_dim))
     std_delta = torch.clamp(std_delta, min=1e-3)
     generator.set_target_normalizer(std=std_delta)
 
