@@ -290,6 +290,8 @@ if __name__ == "__main__":
     parser.add_argument("--lora-study",type=Path,required=True)
     parser.add_argument("--output-dir",type=Path,required=True)
     args=parser.parse_args()
+    if args.output_dir.exists():
+        parser.error("Output directory already exists; choose a fresh path")
     try:
         run(args.head_study,args.lora_study,args.output_dir)
     except BaseException as error:

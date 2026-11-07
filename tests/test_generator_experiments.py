@@ -134,6 +134,17 @@ def test_generated_lora_review_and_factor_replay(prepared):
     assert result.returncode == 0, result.stdout+result.stderr
     progress = json.loads((compared/"progress.json").read_text())
     assert progress["status"] == "complete" and progress["iterative_saved_replays"] == 8 and progress["rows"] == 9
+    full_output = root/"matched-full-diagnostic"
+    result = command("compare_full_references.py", "--comparison-dir", compared, "--output-dir", full_output)
+    assert result.returncode == 0, result.stdout+result.stderr
+    full_progress = json.loads((full_output/"progress.json").read_text())
+    assert full_progress["status"] == "complete" and full_progress["rows"] == 10 and full_progress["saved_replays"] == 12
+    again = command("compare_full_references.py", "--comparison-dir", compared, "--output-dir", full_output)
+    assert again.returncode != 0 and json.loads((full_output/"progress.json").read_text()) == full_progress
+    again = command("compare_adapter_studies.py", "--head-study", head_output, "--lora-study", output, "--output-dir", compared)
+    assert again.returncode != 0 and json.loads((compared/"progress.json").read_text()) == progress
+    for case in json.loads((full_output/"cases.json").read_text()):
+        assert all(name in case["scores"] for name in ("frozen", "IM_head", "IM_lora", "supervised_head", "supervised_lora", "supervised_full"))
     if architecture == "gcn":
         timing_dir = root/"lora-saved-benchmark"
         checkpoint = next(output.glob("*/generator_best.pt"))

@@ -8,7 +8,7 @@ Deeptanshu owns GCN experiments; teammates handle GAT and GraphSAGE. At the owne
 
 ## Implemented and verified
 
-- **Latest integration:** generated-LoRA support and 431 CPU tests; the full matched head/LoRA study is pending. The preceding integration had 408 tests; portable shared comparisons; 30 matched GCN configurations and 360 independently replayed cases. Compact complete-pipeline ratios were 3.89× hypernetwork / 3.51× diffusion, with unchanged-control losses. See [current results and limits](docs/PROJECT_STATE.md#completed-integration-checkpoint).
+- **Latest integration:** generated-LoRA support and 431 CPU tests; 36 matched head/LoRA fits and 432 saved cases passed independent replay; the additional same-checkpoint full-fine-tuning diagnostic is next. The preceding integration had 408 tests; portable shared comparisons; 30 matched GCN configurations and 360 independently replayed cases. Compact complete-pipeline ratios were 3.89× hypernetwork / 3.51× diffusion, with unchanged-control losses. See [current results and limits](docs/PROJECT_STATE.md#completed-integration-checkpoint).
 - **CSBM only:** balanced two-class Gaussian graphs with explicit connection probabilities, independent edge/feature/split RNG streams, and recorded generation settings.
 - CPU PyG graphs, separate ground truth, named split indices, explicit source/meta-training/validation/target roles.
 - Stratified source splits, initially 60/20/20; held-out graphs expose an eval-only split. Full graph context is preserved; split indices select supervision, not induced subgraphs.
@@ -517,6 +517,9 @@ python examples/replay_generator_review.py --review-dir runs/matched-head
 python examples/run_generator_review.py --config configs/generator_matched_lora.json --artifact-root /path/to/bank-checkout --output-dir runs/matched-lora
 python examples/replay_generator_review.py --review-dir runs/matched-lora
 python examples/compare_adapter_studies.py --head-study runs/matched-head --lora-study runs/matched-lora --output-dir runs/matched-comparison
+python examples/compare_full_references.py --comparison-dir runs/matched-comparison --output-dir runs/matched-full-development
 ```
 
 These are validation development runs: three generator seeds, one candidate, no final-target scoring. Primary latency includes every method-required step through prediction; compare generated LoRA with iterative LoRA, rather than head IM. Full supervised fine-tuning remains a separate labeled reference. The supplied configs measure CPU; CUDA/MPS timing is unverified.
+
+The final command compares every method on the supervised references' identical permitted meta-training checkpoint/graphs, with native test nodes reserved for scoring. Those checkpoint/environment pairs participated in generator fitting: this is an in-sample development diagnostic, kept separate from the held-out validation report. Supervised references retain their public fitting/validation/selection/materialization time; no cross-label-access ratio is presented as a matched unlabeled speedup. Existing output directories are rejected before status logging, preserving completed evidence.
