@@ -22,6 +22,7 @@ from .generator import (
     adapted_forward,
     apply_head_delta,
     extract_head_parameters,
+    extract_target_parameters,
 )
 
 
@@ -50,6 +51,7 @@ def evaluate_adaptation_pair(
     descriptor: GraphShiftDescriptor,
     generator: HeadAdapterGenerator,
     device: str = "cpu",
+    target_scope: str = "head",
 ) -> AdaptationRecord:
     """Evaluate one model on one environment with and without adaptation.
 
@@ -70,14 +72,14 @@ def evaluate_adaptation_pair(
         base_pred = base_logits[eval_idx].argmax(dim=-1)
         base_acc = float((base_pred == labels).float().mean().item())
 
-    # 3. Extract shift descriptor and current head weights
-    head_weights, schema = extract_head_parameters(model)
-    head_weights = head_weights.to(device)
+    # 3. Extract shift descriptor and current target weights
+    target_weights, schema = extract_target_parameters(model, scope=target_scope)
+    target_weights = target_weights.to(device)
     desc_vec = descriptor(model, unlabeled).to(device)
 
     # 4. Predict weight delta via generator
     with torch.no_grad():
-        delta = generator(desc_vec, head_weights)
+        delta = generator(desc_vec, target_weights)
         delta_norm = float(torch.linalg.vector_norm(delta).item())
         # Run adapted model
         adapted_logits = adapted_forward(model, unlabeled, delta, schema)
@@ -220,6 +222,7 @@ def evaluate_adaptation(
     role: str = "target_test",
     max_environments: int | None = None,
     device: str = "cpu",
+    target_scope: str = "head",
 ) -> tuple[list[AdaptationRecord], str]:
     """Run full evaluation across multiple models and environments in a declared role.
 
@@ -246,6 +249,7 @@ def evaluate_adaptation(
                 descriptor=descriptor,
                 generator=generator,
                 device=device,
+                target_scope=target_scope,
             )
             records.append(record)
 

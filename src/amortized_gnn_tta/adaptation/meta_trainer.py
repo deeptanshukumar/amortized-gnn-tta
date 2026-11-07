@@ -21,6 +21,7 @@ from .generator import (
     HeadAdapterGenerator,
     adapted_forward,
     extract_head_parameters,
+    extract_target_parameters,
 )
 
 
@@ -51,6 +52,7 @@ def train_adaptation_generator(
     val_models: dict[str, nn.Module] | None = None,
     device: str = "cpu",
     verbose: bool = True,
+    target_scope: str = "head",
 ) -> MetaTrainResult:
     """Train the HeadAdapterGenerator across (pretrained_model, shifted_graph) pairs.
 
@@ -111,7 +113,7 @@ def train_adaptation_generator(
             v_bundle = load_env_fn(manifest, v_env["id"])
             for v_mid, v_m in val_models.items():
                 r = evaluate_adaptation_pair(
-                    v_m, v_mid, v_bundle, v_env["id"], v_env, descriptor, generator, device=device
+                    v_m, v_mid, v_bundle, v_env["id"], v_env, descriptor, generator, device=device, target_scope=target_scope
                 )
                 baseline_records.append(r)
         baseline_summary = summarize_records(baseline_records)
@@ -139,14 +141,14 @@ def train_adaptation_generator(
 
             for model_id, model in model_items:
                 model.eval()
-                head_weights, schema = extract_head_parameters(model)
-                head_weights = head_weights.to(device)
+                target_weights, schema = extract_target_parameters(model, scope=target_scope)
+                target_weights = target_weights.to(device)
 
                 # 1. Compute size-invariant shift descriptor
                 desc = descriptor(model, unlabeled).to(device)
 
                 # 2. Generator predicts delta
-                delta = generator(desc, head_weights)
+                delta = generator(desc, target_weights)
 
                 # 3. Forward pass with dynamic delta through adapted GNN
                 logits = adapted_forward(model, unlabeled, delta, schema)
@@ -182,7 +184,7 @@ def train_adaptation_generator(
                 v_bundle = load_env_fn(manifest, v_env["id"])
                 for v_mid, v_m in val_models.items():
                     r = evaluate_adaptation_pair(
-                        v_m, v_mid, v_bundle, v_env["id"], v_env, descriptor, generator, device=device
+                        v_m, v_mid, v_bundle, v_env["id"], v_env, descriptor, generator, device=device, target_scope=target_scope
                     )
                     val_records.append(r)
 

@@ -27,6 +27,7 @@ from amortized_gnn_tta.adaptation import (
     HeadAdapterGenerator,
     evaluate_adaptation,
     extract_head_parameters,
+    extract_target_parameters,
     train_adaptation_generator,
     train_diffusion_generator,
 )
@@ -51,14 +52,18 @@ def parse_args():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     root = Path(__file__).resolve().parents[1]
 
-    parser.add_argument("--config", type=Path, default=root / "configs" / "phase1_csbm_gcn.json",
-                        help="Path to Phase 1 reference protocol JSON")
     parser.add_argument("--bank", type=Path, default=root / "runs" / "phase1-bank",
                         help="Directory containing the completed 30-model source weight bank")
     parser.add_argument("--manifest", type=Path, default=root / "runs" / "controlled-shifts-small" / "environment_manifest.json",
                         help="Path to environment manifest JSON (from prepare_shift_environments.py)")
     parser.add_argument("--output-dir", type=Path, default=None,
                         help="Directory to save the trained generator and report (optional; if omitted, results are dumped to terminal only)")
+    parser.add_argument("--conditioning", type=str, default="D", choices=["A", "B", "C", "D"],
+                        help="Conditioning version: 'A' (target graph only), 'B' (+hidden rep), 'C' (+predictive uncertainty), 'D' (+compact weights)")
+    parser.add_argument("--generator", type=str, default="hypernetwork", choices=["hypernetwork", "diffusion"],
+                        help="Generator architecture: 'hypernetwork' (direct MLP) or 'diffusion' (conditional DDPM/DDIM)")
+    parser.add_argument("--scope", type=str, default="head", choices=["head", "backbone", "all"],
+                        help="Parameter adaptation scope: 'head' (conv2 only, default), 'backbone' (conv1 only), or 'all' (conv1 + conv2)")
     parser.add_argument("--epochs", type=int, default=5,
                         help="Number of meta-training sweeps over (model, graph) pairs")
     parser.add_argument("--lr", type=float, default=1e-3,
@@ -71,13 +76,11 @@ def parse_args():
                         help="Limit the number of models per role (for quick runs)")
     parser.add_argument("--device", type=str, default="cpu",
                         help="Device to run adaptation on ('cpu' or 'cuda')")
-    parser.add_argument("--generator", type=str, default="hypernetwork", choices=["hypernetwork", "diffusion"],
-                        help="Generator architecture: 'hypernetwork' (direct MLP) or 'diffusion' (conditional DDPM/DDIM)")
-    parser.add_argument("--diffusion-steps", type=int, default=100,
+    parser.add_argument("--diffusion-steps", type=int, default=50,
                         help="Number of diffusion timesteps T (diffusion generator only)")
-    parser.add_argument("--sampling-steps", type=int, default=20,
+    parser.add_argument("--sampling-steps", type=int, default=10,
                         help="Number of DDIM sampling steps during inference (diffusion generator only)")
-    parser.add_argument("--oracle-steps", type=int, default=50,
+    parser.add_argument("--oracle-steps", type=int, default=30,
                         help="Steps to fit teacher oracle deltas (diffusion generator only)")
     return parser.parse_args()
 
@@ -152,30 +155,43 @@ def main():
     print("\n[3/5] Instantiating GNN Models ...")
     grouped_models = load_partitioned_models(bank, partition, build_model, device=args.device)
 
-    # Inspect head parameters on sample model to configure generator
+    # Inspect target parameters on sample model to configure generator
     sample_model = next(iter(grouped_models["meta_train"].values()))
-    head_flat, schema = extract_head_parameters(sample_model)
-    head_dim = len(head_flat)
+    target_flat, schema = extract_target_parameters(sample_model, scope=args.scope)
+    target_dim = len(target_flat)
     hidden_dim = sample_model.config.hidden_channels
 
-    descriptor = GraphShiftDescriptor(hidden_channels=hidden_dim, include_degree=True)
+    in_channels = sample_model.config.in_channels
+    out_channels = sample_model.config.out_channels
+    descriptor = GraphShiftDescriptor(
+        in_channels=in_channels,
+        hidden_channels=hidden_dim,
+        out_channels=out_channels,
+        conditioning=args.conditioning,
+        target_scope=args.scope,
+    )
+    include_head_weights = (args.conditioning is None)
     if args.generator == "diffusion":
         generator = DiffusionHeadGenerator(
             descriptor_dim=descriptor.output_dim,
-            head_dim=head_dim,
+            head_dim=target_dim,
             hidden_dim=128,
             diffusion_steps=args.diffusion_steps,
             sampling_steps=args.sampling_steps,
+            include_head_weights=include_head_weights,
         )
     else:
         generator = HeadAdapterGenerator(
             descriptor_dim=descriptor.output_dim,
-            head_dim=head_dim,
+            head_dim=target_dim,
             hidden_dim=128,
+            include_head_weights=include_head_weights,
         )
     print(f"      Generator Architecture: {args.generator.upper()}")
+    print(f"      Adaptation Scope: {args.scope.upper()}")
+    print(f"      Conditioning Version: {args.conditioning.upper()}")
     print(f"      Descriptor Vector Size: {descriptor.output_dim}")
-    print(f"      Classification Head Parameter Size: {head_dim} ({[s[0] for s in schema]})")
+    print(f"      Target Parameter Count: {target_dim} ({len(schema)} tensors: {[s[0] for s in schema]})")
     print(f"      Generator Total Trainable Weights: {sum(p.numel() for p in generator.parameters())}")
 
     # 4. Meta-Training
@@ -196,6 +212,7 @@ def main():
             val_models=grouped_models["validation"],
             device=args.device,
             verbose=True,
+            target_scope=args.scope,
         )
     else:
         train_res = train_adaptation_generator(
@@ -212,6 +229,7 @@ def main():
             val_models=grouped_models["validation"],
             device=args.device,
             verbose=True,
+            target_scope=args.scope,
         )
 
     # Load best validation weights into generator
@@ -232,6 +250,7 @@ def main():
         role="target_test",
         max_environments=args.max_environments,
         device=args.device,
+        target_scope=args.scope,
     )
 
     # Print the user-readable report
@@ -248,9 +267,11 @@ def main():
         generator_ckpt = args.output_dir / "generator_best.pt"
         torch.save({
             "generator_type": args.generator,
+            "scope": args.scope,
+            "descriptor_type": args.descriptor,
             "generator_state_dict": train_res.best_state_dict,
             "descriptor_dim": descriptor.output_dim,
-            "head_dim": head_dim,
+            "head_dim": target_dim,
             "schema": schema,
             "history": train_res.history,
         }, generator_ckpt)

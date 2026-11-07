@@ -327,3 +327,73 @@ def test_diffusion_do_no_harm_fallback(tiny_bundle):
     if res.history[0]["val_gain"] is not None and res.history[0]["val_gain"] <= 0.0:
         assert torch.equal(res.best_state_dict["net.2.weight"], torch.zeros_like(res.best_state_dict["net.2.weight"]))
 
+
+def test_diffusion_backbone_adaptation_training(tiny_bundle):
+    """Diffusion generator must correctly train and sample updates for backbone parameters."""
+    from amortized_gnn_tta.adaptation import extract_target_parameters, evaluate_adaptation_pair
+
+    spec = make_model_spec("gcn", in_channels=16, out_channels=2, hidden_channels=8)
+    model = build_model(spec)
+    descriptor = GraphShiftDescriptor(hidden_channels=8, include_degree=True)
+    flat_bb, schema_bb = extract_target_parameters(model, scope="backbone")
+    assert len(flat_bb) == 136
+
+    gen = DiffusionHeadGenerator(
+        descriptor_dim=descriptor.output_dim,
+        head_dim=len(flat_bb),
+        hidden_dim=32,
+        diffusion_steps=10,
+        sampling_steps=3,
+    )
+
+    fake_manifest = {
+        "environments": [
+            {"id": "meta_train_env", "role": "meta_train", "family": "control"},
+            {"id": "val_env", "role": "validation", "family": "control"},
+        ]
+    }
+
+    # 1. Oracle fitting on backbone
+    records = fit_oracle_deltas(
+        models={"m1": model},
+        manifest=fake_manifest,
+        load_env_fn=lambda m, eid: tiny_bundle,
+        descriptor=descriptor,
+        steps=5,
+        target_scope="backbone",
+        verbose=False,
+    )
+    assert len(records) == 1
+    assert records[0].target_delta.shape == (136,)
+
+    # 2. Diffusion denoiser training with backbone scope
+    res = train_diffusion_generator(
+        models={"m1": model},
+        manifest=fake_manifest,
+        load_env_fn=lambda m, eid: tiny_bundle,
+        descriptor=descriptor,
+        generator=gen,
+        epochs=2,
+        lr=1e-3,
+        oracle_steps=5,
+        val_models={"v1": model},
+        verbose=False,
+        target_scope="backbone",
+    )
+    assert len(res.history) == 2
+    assert "train_loss" in res.history[0]
+
+    # 3. Evaluation on pair with backbone scope
+    rec = evaluate_adaptation_pair(
+        model=model,
+        model_id="m1",
+        bundle=tiny_bundle,
+        env_id="val_env",
+        env_metadata=fake_manifest["environments"][1],
+        descriptor=descriptor,
+        generator=gen,
+        target_scope="backbone",
+    )
+    assert rec.weight_delta_norm >= 0.0
+    assert torch.isfinite(torch.tensor(rec.adapted_accuracy))
+

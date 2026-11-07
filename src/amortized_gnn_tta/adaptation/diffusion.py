@@ -25,6 +25,7 @@ from .generator import (
     GraphShiftDescriptor,
     adapted_forward,
     extract_head_parameters,
+    extract_target_parameters,
 )
 from .meta_trainer import MetaTrainResult
 
@@ -147,6 +148,7 @@ class DiffusionHeadGenerator(nn.Module):
         time_dim: int = 32,
         schedule: str = "cosine",
         default_seed: int = 42,
+        include_head_weights: bool = True,
     ):
         super().__init__()
         self.descriptor_dim = descriptor_dim
@@ -154,12 +156,13 @@ class DiffusionHeadGenerator(nn.Module):
         self.hidden_dim = hidden_dim
         self.sampling_steps = sampling_steps
         self.default_seed = default_seed
+        self.include_head_weights = include_head_weights
 
         self.schedule = NoiseSchedule(timesteps=diffusion_steps, schedule=schedule)
         self.time_embed = SinusoidalPositionalEmbedding(time_dim)
 
-        # Input: [x_t (head_dim) || desc (desc_dim) || head_w (head_dim) || t_emb (time_dim)]
-        in_dim = head_dim * 2 + descriptor_dim + time_dim
+        # Input: [x_t (head_dim) || desc (desc_dim) || (optional head_w) || t_emb (time_dim)]
+        in_dim = head_dim + descriptor_dim + time_dim + (head_dim if include_head_weights else 0)
 
         layers: list[nn.Module] = []
         current_dim = in_dim
@@ -202,14 +205,15 @@ class DiffusionHeadGenerator(nn.Module):
             return delta_normed * self.target_std + self.target_mean
         return delta_normed
 
-    def forward_denoiser(self, x_t: Tensor, t: Tensor, desc: Tensor, head_weights: Tensor) -> Tensor:
+    def forward_denoiser(self, x_t: Tensor, t: Tensor, desc: Tensor, head_weights: Tensor | None = None) -> Tensor:
         """Denoiser forward pass predicting clean x0."""
         # Ensure 2D batch shape
         is_single = x_t.ndim == 1
         if is_single:
             x_t = x_t.unsqueeze(0)
             desc = desc.unsqueeze(0)
-            head_weights = head_weights.unsqueeze(0)
+            if head_weights is not None:
+                head_weights = head_weights.unsqueeze(0)
             if t.ndim == 0:
                 t = t.unsqueeze(0)
 
@@ -217,12 +221,16 @@ class DiffusionHeadGenerator(nn.Module):
         if t_emb.ndim == 1:
             t_emb = t_emb.unsqueeze(0)
 
-        combined = torch.cat([x_t, desc, head_weights, t_emb], dim=-1)
+        components = [x_t, desc]
+        if self.include_head_weights and head_weights is not None:
+            components.append(head_weights)
+        components.append(t_emb)
+        combined = torch.cat(components, dim=-1)
         x0_pred = self.net(combined)
 
         return x0_pred.squeeze(0) if is_single else x0_pred
 
-    def diffusion_loss(self, desc: Tensor, head_weights: Tensor, target_delta: Tensor) -> Tensor:
+    def diffusion_loss(self, desc: Tensor, head_weights: Tensor | None, target_delta: Tensor) -> Tensor:
         """Compute training MSE loss: ||x0 - x0_hat||^2 on random timestep t."""
         # Normalize target into unit-variance space
         x_0 = self.normalize(target_delta)
@@ -242,7 +250,7 @@ class DiffusionHeadGenerator(nn.Module):
     def sample(
         self,
         desc: Tensor,
-        head_weights: Tensor,
+        head_weights: Tensor | None = None,
         steps: int | None = None,
         seed: int | None = None,
     ) -> Tensor:
@@ -250,7 +258,7 @@ class DiffusionHeadGenerator(nn.Module):
 
         Args:
             desc: Graph shift descriptor vector.
-            head_weights: Model head parameter vector.
+            head_weights: Model head parameter vector (optional if include_head_weights=False).
             steps: Number of DDIM steps (default: self.sampling_steps).
             seed: Optional RNG seed for deterministic noise initialization (defaults to self.default_seed).
 
@@ -262,7 +270,7 @@ class DiffusionHeadGenerator(nn.Module):
         if seed is None:
             seed = self.default_seed
 
-        device = head_weights.device
+        device = head_weights.device if head_weights is not None else desc.device
         steps = max(1, min(steps, self.schedule.timesteps))
 
         # Sample initial pure Gaussian noise
@@ -300,7 +308,7 @@ class DiffusionHeadGenerator(nn.Module):
         clean_delta = self.unnormalize(x_t)
         return clean_delta
 
-    def forward(self, desc: Tensor, head_weights: Tensor) -> Tensor:
+    def forward(self, desc: Tensor, head_weights: Tensor | None = None) -> Tensor:
         """Evaluate adaptation delta, matching HeadAdapterGenerator callable interface."""
         return self.sample(desc, head_weights, steps=self.sampling_steps, seed=self.default_seed)
 
@@ -332,6 +340,7 @@ def fit_oracle_deltas(
     max_environments: int | None = None,
     device: str = "cpu",
     verbose: bool = True,
+    target_scope: str = "head",
 ) -> list[OracleTargetRecord]:
     """Precompute supervised teacher updates (Delta*) for all meta-training pairs.
 
@@ -361,7 +370,7 @@ def fit_oracle_deltas(
             model.eval()
             for p in model.parameters():
                 p.requires_grad = False
-            flat_w, schema = extract_head_parameters(model)
+            flat_w, schema = extract_target_parameters(model, scope=target_scope)
             flat_w = flat_w.to(device)
             desc = descriptor(model, unlabeled).to(device)
 
@@ -424,6 +433,7 @@ def train_diffusion_generator(
     val_models: dict[str, nn.Module] | None = None,
     device: str = "cpu",
     verbose: bool = True,
+    target_scope: str = "head",
 ) -> MetaTrainResult:
     """Train the conditional diffusion head generator using oracle distillation."""
     total_start_time = time.time()
@@ -445,6 +455,7 @@ def train_diffusion_generator(
         max_environments=max_environments,
         device=device,
         verbose=verbose,
+        target_scope=target_scope,
     )
 
     if not targets:
@@ -475,7 +486,7 @@ def train_diffusion_generator(
             v_bundle = load_env_fn(manifest, v_env["id"])
             for v_mid, v_m in val_models.items():
                 r = evaluate_adaptation_pair(
-                    v_m, v_mid, v_bundle, v_env["id"], v_env, descriptor, generator, device=device
+                    v_m, v_mid, v_bundle, v_env["id"], v_env, descriptor, generator, device=device, target_scope=target_scope
                 )
                 baseline_records.append(r)
         baseline_summary = summarize_records(baseline_records)
@@ -524,7 +535,7 @@ def train_diffusion_generator(
                 v_bundle = load_env_fn(manifest, v_env["id"])
                 for v_mid, v_m in val_models.items():
                     r = evaluate_adaptation_pair(
-                        v_m, v_mid, v_bundle, v_env["id"], v_env, descriptor, generator, device=device
+                        v_m, v_mid, v_bundle, v_env["id"], v_env, descriptor, generator, device=device, target_scope=target_scope
                     )
                     val_records.append(r)
 

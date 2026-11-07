@@ -64,6 +64,63 @@ def test_graph_shift_descriptor_shapes(tiny_bundle):
     assert torch.isfinite(desc).all()
 
 
+def test_structural_descriptor_shapes_and_sensitivity(tiny_bundle):
+    """Structural descriptor should have shape 3*H + 9 and distinguish homophily shifts."""
+    spec = make_model_spec("gcn", in_channels=16, out_channels=2, hidden_channels=8)
+    model = build_model(spec)
+    desc_module = GraphShiftDescriptor(hidden_channels=8, descriptor_type="structural")
+
+    assert desc_module.output_dim == 8 * 3 + 9  # 33
+
+    # Homophilic graph (h=0.8) vs Heterophilic graph (h=0.2)
+    homo_graph = tiny_bundle.unlabeled_input("source")
+    hetero_graph = tiny_bundle.unlabeled_input("target")
+
+    desc_homo = desc_module(model, homo_graph)
+    desc_hetero = desc_module(model, hetero_graph)
+
+    assert desc_homo.shape == (33,)
+    assert desc_hetero.shape == (33,)
+    assert torch.isfinite(desc_homo).all()
+    assert torch.isfinite(desc_hetero).all()
+
+    # Dirichlet energy (indices 16:24 are per-channel, 24 is dirichlet_total)
+    dirichlet_homo = desc_homo[24].item()
+    dirichlet_hetero = desc_hetero[24].item()
+
+    # Heterophilic graphs must have significantly higher Dirichlet energy than homophilic graphs
+    assert dirichlet_hetero > dirichlet_homo, (
+        f"Expected heterophilic Dirichlet energy ({dirichlet_hetero:.4f}) > "
+        f"homophilic Dirichlet energy ({dirichlet_homo:.4f})"
+    )
+
+
+def test_structural_descriptor_zero_edges(tiny_bundle):
+    """Structural descriptor should gracefully handle graphs with zero edges."""
+    from torch_geometric.data import Data
+
+    spec = make_model_spec("gcn", in_channels=16, out_channels=2, hidden_channels=8)
+    model = build_model(spec)
+    desc_module = GraphShiftDescriptor(hidden_channels=8, descriptor_type="structural")
+
+    empty_edge_graph = Data(
+        x=torch.randn(20, 16),
+        edge_index=torch.empty((2, 0), dtype=torch.long),
+        num_nodes=20,
+    )
+    desc = desc_module(model, empty_edge_graph)
+    assert desc.shape == (33,)
+    assert torch.isfinite(desc).all()
+    # When zero edges, isolated_ratio (last element) must be 1.0
+    assert torch.isclose(desc[-1], torch.tensor(1.0))
+
+
+def test_graph_shift_descriptor_invalid_type():
+    """Invalid descriptor_type should raise ValueError."""
+    with pytest.raises(ValueError, match="Unknown descriptor_type"):
+        GraphShiftDescriptor(descriptor_type="invalid_type")
+
+
 def test_head_parameters_extraction_and_unflattening(tiny_bundle):
     """Head parameter extraction and unflattening should match parameter schemas."""
     spec = make_model_spec("gcn", in_channels=16, out_channels=2, hidden_channels=8)
@@ -307,4 +364,176 @@ def test_do_no_harm_fallback_when_validation_degrades(tiny_bundle):
     if res.history[0]["val_loss"] > (1.0 - res.history[0].get("val_gain", 0.0)):
         final_w = res.best_state_dict["net.2.weight"]
         assert torch.equal(final_w, torch.zeros_like(final_w))
+
+
+def test_extract_target_parameters_scopes():
+    """extract_target_parameters must correctly filter by scope."""
+    from amortized_gnn_tta.adaptation import extract_target_parameters
+
+    spec = make_model_spec("gcn", in_channels=16, out_channels=2, hidden_channels=8)
+    model = build_model(spec)
+
+    # 1. Head scope: conv2 only (lin.weight: 16, bias: 2 -> 18)
+    flat_head, schema_head = extract_target_parameters(model, scope="head")
+    assert len(flat_head) == 18
+    assert len(schema_head) == 2
+
+    # 2. Backbone scope: conv1 only (lin.weight: 8x16=128, bias: 8 -> 136)
+    flat_backbone, schema_backbone = extract_target_parameters(model, scope="backbone")
+    assert len(flat_backbone) == 136
+    assert len(schema_backbone) == 2
+    assert all("conv1." in s[0] for s in schema_backbone)
+
+    # 3. All scope: conv1 + conv2 (136 + 18 = 154)
+    flat_all, schema_all = extract_target_parameters(model, scope="all")
+    assert len(flat_all) == 154
+    assert len(schema_all) == 4
+
+    # 4. Invalid scope raises ValueError
+    with pytest.raises(ValueError, match="Unknown scope"):
+        extract_target_parameters(model, scope="invalid")
+
+
+def test_adapted_forward_and_apply_delta_backbone(tiny_bundle):
+    """adapted_forward and apply_target_delta must work with backbone scope."""
+    from amortized_gnn_tta.adaptation import apply_target_delta, extract_target_parameters
+
+    spec = make_model_spec("gcn", in_channels=16, out_channels=2, hidden_channels=8)
+    model = build_model(spec).eval()
+    graph = tiny_bundle.unlabeled_input("target")
+
+    flat_bb, schema_bb = extract_target_parameters(model, scope="backbone")
+    zero_delta = torch.zeros_like(flat_bb)
+
+    # Baseline vs adapted with zero delta
+    base_logits = model(graph.x, graph.edge_index)
+    adapted_logits = adapted_forward(model, graph, zero_delta, schema_bb)
+    torch.testing.assert_close(base_logits, adapted_logits)
+
+    # Non-zero delta must produce different outputs
+    nonzero_delta = torch.randn_like(flat_bb) * 0.1
+    shifted_logits = adapted_forward(model, graph, nonzero_delta, schema_bb)
+    assert not torch.allclose(base_logits, shifted_logits)
+
+    # apply_target_delta must produce matching forward pass and not mutate base
+    adapted_model = apply_target_delta(model, nonzero_delta, schema_bb)
+    perm_logits = adapted_model(graph.x, graph.edge_index)
+    torch.testing.assert_close(shifted_logits, perm_logits)
+
+    # Original model must be unchanged
+    flat_orig, _ = extract_target_parameters(model, scope="backbone")
+    assert torch.equal(flat_bb, flat_orig)
+
+
+def test_conditioning_hierarchy_shapes(tiny_bundle):
+    """Verify output dimensions for conditioning versions A, B, C, and D."""
+    spec = make_model_spec("gcn", in_channels=16, out_channels=2, hidden_channels=8)
+    model = build_model(spec).eval()
+    graph = tiny_bundle.unlabeled_input("target")
+
+    # in_channels=16, hidden_channels=8, out_channels=2
+    # Dim A: 16*2 + 17 = 49
+    # Dim B: 49 + (8*3 + 5) = 49 + 29 = 78
+    # Dim C: 78 + (7 + 2) = 87
+    # Dim D: 87 + 12 = 99
+
+    desc_a = GraphShiftDescriptor(in_channels=16, hidden_channels=8, out_channels=2, conditioning="A")
+    desc_b = GraphShiftDescriptor(in_channels=16, hidden_channels=8, out_channels=2, conditioning="B")
+    desc_c = GraphShiftDescriptor(in_channels=16, hidden_channels=8, out_channels=2, conditioning="C")
+    desc_d = GraphShiftDescriptor(in_channels=16, hidden_channels=8, out_channels=2, conditioning="D")
+
+    assert desc_a.output_dim == 49
+    assert desc_b.output_dim == 78
+    assert desc_c.output_dim == 87
+    assert desc_d.output_dim == 99
+
+    vec_a = desc_a(model, graph)
+    vec_b = desc_b(model, graph)
+    vec_c = desc_c(model, graph)
+    vec_d = desc_d(model, graph)
+
+    assert vec_a.shape == (49,)
+    assert vec_b.shape == (78,)
+    assert vec_c.shape == (87,)
+    assert vec_d.shape == (99,)
+
+    assert torch.isfinite(vec_a).all()
+    assert torch.isfinite(vec_b).all()
+    assert torch.isfinite(vec_c).all()
+    assert torch.isfinite(vec_d).all()
+
+    # B must strictly contain A as its prefix
+    torch.testing.assert_close(vec_b[:49], vec_a)
+    # C must strictly contain B as its prefix
+    torch.testing.assert_close(vec_c[:78], vec_b)
+    # D must strictly contain C as its prefix
+    torch.testing.assert_close(vec_d[:87], vec_c)
+
+
+def test_conditioning_version_a_model_independence(tiny_bundle):
+    """Version A must produce identical results with model=None or any model."""
+    spec = make_model_spec("gcn", in_channels=16, out_channels=2, hidden_channels=8)
+    model = build_model(spec).eval()
+    graph = tiny_bundle.unlabeled_input("target")
+
+    desc_a = GraphShiftDescriptor(in_channels=16, hidden_channels=8, out_channels=2, conditioning="A")
+    res_none = desc_a(None, graph)
+    res_model = desc_a(model, graph)
+
+    assert torch.equal(res_none, res_model)
+
+
+def test_conditioning_version_c_uncertainty_sensitivity(tiny_bundle):
+    """Version C uncertainty descriptor must change when model logits change."""
+    spec = make_model_spec("gcn", in_channels=16, out_channels=2, hidden_channels=8)
+    model1 = build_model(spec).eval()
+    model2 = build_model(spec).eval()
+    with torch.no_grad():
+        model2.conv2.lin.weight.mul_(5.0)
+
+    graph = tiny_bundle.unlabeled_input("target")
+    desc_c = GraphShiftDescriptor(in_channels=16, hidden_channels=8, out_channels=2, conditioning="C")
+
+    vec1 = desc_c(model1, graph)
+    vec2 = desc_c(model2, graph)
+
+    # Uncertainty slice (78:87) must differ
+    assert not torch.allclose(vec1[78:87], vec2[78:87])
+
+
+def test_conditioning_version_d_weight_sensitivity(tiny_bundle):
+    """Version D compact weight descriptor must change when weights change."""
+    spec = make_model_spec("gcn", in_channels=16, out_channels=2, hidden_channels=8)
+    model1 = build_model(spec).eval()
+    model2 = build_model(spec).eval()
+    with torch.no_grad():
+        model2.conv2.lin.weight.add_(1.5)
+
+    graph = tiny_bundle.unlabeled_input("target")
+    desc_d = GraphShiftDescriptor(in_channels=16, hidden_channels=8, out_channels=2, conditioning="D")
+
+    vec1 = desc_d(model1, graph)
+    vec2 = desc_d(model2, graph)
+
+    # Compact weight slice (87:100) must differ
+    assert not torch.allclose(vec1[87:], vec2[87:])
+
+
+def test_generator_with_version_conditioning(tiny_bundle):
+    """Generators must work with include_head_weights=False on version descriptors."""
+    spec = make_model_spec("gcn", in_channels=16, out_channels=2, hidden_channels=8)
+    model = build_model(spec).eval()
+    graph = tiny_bundle.unlabeled_input("target")
+
+    flat_head, schema = extract_head_parameters(model)
+    head_dim = len(flat_head)
+
+    desc_module = GraphShiftDescriptor(in_channels=16, hidden_channels=8, out_channels=2, conditioning="A")
+    desc = desc_module(model, graph)
+
+    # Hypernetwork without extra head weights (conditioning vector is the sole input)
+    gen = HeadAdapterGenerator(descriptor_dim=desc_module.output_dim, head_dim=head_dim, include_head_weights=False)
+    delta = gen(desc)
+    assert delta.shape == (head_dim,)
+    assert torch.allclose(delta, torch.zeros_like(delta))  # Zero-init verification
 
