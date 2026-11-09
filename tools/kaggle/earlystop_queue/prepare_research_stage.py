@@ -13,7 +13,7 @@ p.add_argument('--slug',required=True);p.add_argument('--output-dir',type=Path,r
 p.add_argument('--phase-gate',type=Path)
 p.add_argument('--runtime-seconds',type=int,help='Explicit remote job limit; saved in the manifest and passed to the worker')
 a=p.parse_args()
-runtime=a.runtime_seconds or (43200 if a.mode in {'extend','natural'} else 14400 if a.mode=='final' and a.dataset=='ogbn-arxiv' else 7200 if a.mode=='final' else 3600)
+runtime=a.runtime_seconds or (43200 if a.mode in {'extend','natural'} else 14400 if a.mode=='final' and a.dataset=='ogbn-arxiv' else 7200 if a.mode in {'final','diagnostic'} else 3600)
 if not 2400<=runtime<=43200:raise ValueError('Runtime must leave room for evidence packaging within the documented session limit')
 bank=json.loads(a.bank_proof.read_text());study=json.loads(a.study_proof.read_text())
 if bank.get('status')!='complete' or len(bank.get('source_fits',[]))!=90:raise ValueError('Complete independently verified bank required')

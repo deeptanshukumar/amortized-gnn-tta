@@ -68,7 +68,7 @@ def stage(mode,dataset,prior_slug,prior_download,*,architecture=None,gate=None):
     if not folder.exists():
         quota=json.loads(run([*CLI,'quota','--format','json'],read=True))
         remaining=float(next(r for r in quota if r['resource']=='GPU')['remaining'].removesuffix('h'))
-        required=12 if mode in {'extend','natural'} else 4 if mode=='final' and dataset=='ogbn-arxiv' else 2 if mode=='final' else 1
+        required=12 if mode in {'extend','natural'} else 4 if mode=='final' and dataset=='ogbn-arxiv' else 2 if mode in {'final','diagnostic'} else 1
         if remaining<required:raise RuntimeError(f'Only {remaining} GPU hours remain; bounded {mode} job requests {required}. Queue stopped before allocation.')
         args=[PYTHON,ROOT/'prepare_research_stage.py','--mode',mode,'--dataset',dataset,'--bank-input',OWNER+'/'+bank_slug+'/1','--study-input',OWNER+'/'+prior_slug+'/1','--bank-proof',ROOT/bank_folder/'download-version-1/LOCAL_REPLAY_VERIFICATION.json','--study-proof',prior_download/'LOCAL_STUDY_VERIFICATION.json','--slug',slug,'--output-dir',folder]
         if architecture:args+=['--architecture',architecture]

@@ -25,3 +25,5 @@ Git includes code, configs, helper source, tests, small source audits and earlie
 ## Latest stopping-policy correction
 
 The owner explicitly selected patience10 against the best trained epoch only. Epoch zero remains eligible for checkpoint selection but never sets or resets the patience reference. Thus a trained epoch may improve on its predecessor and continue even while below frozen accuracy. A regression check demonstrates recovery below frozen followed by a plateau, stopping only after the trained-epoch patience is exhausted. The38 focused tests passed. The former baseline-referenced100-epoch job was cancelled by the owner before this corrected replacement was submitted. The exact new source audit is in reports/earlystop-100-2026-11-09/trained-patience/. This section supersedes earlier wording about epoch zero participating in stopping.
+
+See [selective budget audit](BUDGET_AUDIT.md) for the later E6 diagnostic budget change; the running fitting snapshot is unchanged.

@@ -57,7 +57,7 @@ def run(args):
     frozen = json.loads((args.output_dir / "FROZEN_DESIGN.json").read_text())
     destination = args.output_dir / "DIAGNOSTIC"
     destination.mkdir(exist_ok=False)
-    atomic_json(destination / "PLAN.json", dict(audit_runner_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(), design_sha256=hashlib.sha256((args.output_dir / "FROZEN_DESIGN.json").read_bytes()).hexdigest(), final_test_scored=False, replay_tolerances=dict(rtol=1e-4, atol=1e-5), label_access="Practice fitting/inner stopping; disjoint diagnostic labels score only"))
+    atomic_json(destination / "PLAN.json", dict(audit_runner_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(), design_sha256=hashlib.sha256((args.output_dir / "FROZEN_DESIGN.json").read_bytes()).hexdigest(), final_test_scored=False, supervised_max_steps=200, supervised_patience=30, replay_tolerances=dict(rtol=1e-4, atol=1e-5), label_access="Practice fitting/inner stopping; disjoint diagnostic labels score only"))
     rows = []
     replay_audit = []
     for arch in study.plan["architectures"]:
@@ -100,8 +100,8 @@ def run(args):
                     supervision,
                     peft,
                     AdaptationConfig(
-                        steps=study.plan["teacher_steps"],
-                        patience=study.plan["teacher_steps"],
+                        steps=200,
+                        patience=30,
                         learning_rate=study.plan["teacher_lr"],
                     ),
                     device=study.device,
