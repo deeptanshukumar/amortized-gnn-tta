@@ -5,11 +5,13 @@ conditional diffusion model. Factor MSE is a training loss, not weight-space or
 prediction equivalence: LoRA factors have non-unique coordinates.
 """
 
+import math
 import time
 import torch
 from ._validation import (
     checked_backward,
     conditioning_contract,
+    positive_int,
     training_options,
     frozen_sources,
 )
@@ -31,8 +33,18 @@ def train_teacher_hypernetwork(
     lr=0.001,
     target_scope="head",
     device="cpu",
+    early_stopping_patience=None,
+    early_stopping_min_delta=0.0,
 ):
     training_options(epochs, lr, 0.0)
+    if early_stopping_patience is not None:
+        positive_int(early_stopping_patience, "early_stopping_patience")
+    if (
+        isinstance(early_stopping_min_delta, bool)
+        or not math.isfinite(early_stopping_min_delta)
+        or early_stopping_min_delta < 0
+    ):
+        raise ValueError("early_stopping_min_delta must be finite and nonnegative")
     conditioning_contract(descriptor, generator)
     expected = {
         (mid, e["id"])
@@ -86,6 +98,10 @@ def train_teacher_hypernetwork(
     best = {k: v.detach().cpu().clone() for k, v in generator.state_dict().items()}
     history = []
     selected_epoch = 0
+    stopped_epoch = 0
+    early_stopped = False
+    stale_epochs = 0
+    best_trained_error = float("inf")
     steps = 0
     for epoch in range(1, epochs + 1):
         generator.train()
@@ -107,12 +123,17 @@ def train_teacher_hypernetwork(
             losses.append(float(loss.detach()))
             steps += 1
         error = validation_error()
-        if error < best_error:
+        if error < best_error - early_stopping_min_delta:
             best_error = error
             selected_epoch = epoch
             best = {
                 k: v.detach().cpu().clone() for k, v in generator.state_dict().items()
             }
+        if error < best_trained_error - early_stopping_min_delta:
+            best_trained_error = error
+            stale_epochs = 0
+        else:
+            stale_epochs += 1
         history.append(
             dict(
                 epoch=epoch,
@@ -120,6 +141,13 @@ def train_teacher_hypernetwork(
                 validation_accuracy_error=error,
             )
         )
+        if (
+            early_stopping_patience is not None
+            and stale_epochs >= early_stopping_patience
+        ):
+            stopped_epoch = epoch
+            early_stopped = True
+            break
     return MetaTrainResult(
         generator,
         best,
@@ -129,4 +157,6 @@ def train_teacher_hypernetwork(
         0.0,
         steps,
         selected_epoch,
+        stopped_epoch,
+        early_stopped,
     )

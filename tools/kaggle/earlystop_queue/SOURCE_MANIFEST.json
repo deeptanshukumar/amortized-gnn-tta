@@ -1,0 +1,17 @@
+{
+  "protocol": "100-epoch-operational-source-v1",
+  "files_sha256": {
+    "continue_research.py": "076f92f3f71cd2f8cab6f534e37faafd6cb9d02544545a6dd649a24c5c230631",
+    "prepare_research_stage.py": "b65f8724d5b6ad513d8c49e1a7eacb9f9ff4570bc1caf681b0f74f7eb3c27104",
+    "research_stage_driver.py": "ad6fdefdd998866b327a2d735eaec042bb6aa3658d9d20ea46640cad8aeda301",
+    "verify_study_outputs.py": "d547760c1696f3e40eee9cdafd2d73539b73eae648a77da75b51c5a386e51265",
+    "merge_final_shards.py": "314ca1ce10348fd53d77f4af65351ed7755ac5a70a46446687060f2671203653",
+    "summarize_verified_design.py": "12f0972166da0c72edd0ea553fbec18204c634b9119860edd62d9e3afc219661",
+    "gcn_study_driver.py": "d9c3a1fc72b6d08167e04b2585396d135608afe577da7366e7ffa2863cbc651a",
+    "replay_real_study.py": "0a0146432a1bd25faed04b6a21f7d1da16e84086b930cb880c0c5d7a8598d312",
+    "diagnose_real_audit.py": "99168109e93f79113287776434754622e254dc6e31921ec21d37edc729f6b75b",
+    "evaluate_final_shard.py": "edf31b28b698e204063002a99e74a824154b979867ef03548be64304e722ed18",
+    "test_continuation_queue.py": "f9bd821adc06847fa5e8c844b00d2970d7ea33da4e9fafe99e2fc257caa7bcd0"
+  },
+  "source_archive_sha256": "5fa2a6b8dbfcc869eb50eddbb95db43a44d6550148676545dcd0c326a738a96a"
+}

@@ -185,7 +185,9 @@ def run(args):
                         seed_model(run_context["training_seed"])
                         common = dict(models=models, manifest=manifest, load_env_fn=loader, descriptor=descriptor,
                             generator=generator, epochs=plan["epochs"], lr=plan["learning_rate"], delta_l2_reg=plan["delta_l2"],
-                            val_models=validation_models, verbose=False, checkpoint_callback=checkpoint, target_scope=scope)
+                            val_models=validation_models, verbose=False, checkpoint_callback=checkpoint, target_scope=scope,
+                            early_stopping_patience=plan.get("generator_patience"),
+                            early_stopping_min_delta=plan.get("generator_min_delta", 0.0))
                         old_directory = reuse_root / name if reuse_root is not None else None
                         reuse = old_directory is not None and (old_directory / "summary.json").is_file()
                         if reuse:

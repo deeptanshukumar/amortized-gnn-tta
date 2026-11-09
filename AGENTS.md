@@ -1,5 +1,10 @@
 # Project instructions
 
+## Latest campaign authorization
+
+The owner authorized the100-epoch early-stopping implementation, new Kaggle design run and E3–E6 replacement queue, and explicitly requested pushing these current changes to main. See docs/CURRENT_CAMPAIGN.md before relying on older five-epoch/no-change instructions. Do not edit the submitted archive or start a duplicate queue. This delivery changes no running source bytes.
+
+
 ## Current Git delivery authorization — 2026-11-09 IST
 
 The owner explicitly requested pushing all current project implementation, documentation and concise verified evidence to main. This authorizes the present commit/main integration/push, superseding earlier no-push statements for this delivery only. Preserve the other main checkout's unrelated handbook formatting edit and all external runtime artifacts. Do not commit credentials, datasets, weight/prediction tensors or large bundles. Scientific settings and the running Kaggle queue remain unchanged; the frozen fitting ZIP and its original provenance must not be rewritten by the Git delivery. Later numerical findings do not carry standing permission for future pushes.

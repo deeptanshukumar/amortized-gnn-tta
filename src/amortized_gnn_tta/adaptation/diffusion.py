@@ -499,11 +499,21 @@ def train_diffusion_generator(
     checkpoint_callback: Callable | None = None,
     candidate_seeds=None,
     teacher_targets=None,
+    early_stopping_patience: int | None = None,
+    early_stopping_min_delta: float = 0.0,
 ) -> MetaTrainResult:
     """Train the conditional diffusion head generator using oracle distillation."""
     conditioning_contract(descriptor, generator)
     training_options(epochs, lr, delta_l2_reg, max_models, max_environments)
     training_options(oracle_steps, oracle_lr, delta_l2_reg)
+    if early_stopping_patience is not None:
+        positive_int(early_stopping_patience, "early_stopping_patience")
+    if (
+        isinstance(early_stopping_min_delta, bool)
+        or not math.isfinite(early_stopping_min_delta)
+        or early_stopping_min_delta < 0
+    ):
+        raise ValueError("early_stopping_min_delta must be finite and nonnegative")
     if val_models is not None:
         val_models = dict(list(val_models.items())[:max_models])
     total_start_time = time.time()
@@ -563,6 +573,11 @@ def train_diffusion_generator(
     best_val_loss = float("inf")
     best_train_loss = float("inf")
     selected_epoch = 0
+    stopped_epoch = 0
+    early_stopped = False
+    stale_epochs = 0
+    best_trained_loss = float("inf")
+    epochs_run = 0
 
     if val_models:
         generator.eval()
@@ -636,15 +651,23 @@ def train_diffusion_generator(
             val_loss = 1.0 - val_summary.get("mean_adapted_acc", 0.0)
 
             # Do-no-harm update rule: strictly require beating the unadapted baseline
-            if val_loss < best_val_loss:
+            if val_loss < best_val_loss - early_stopping_min_delta:
                 best_val_loss = val_loss
                 selected_epoch = epoch
                 best_state_dict = {k: v.cpu().clone() for k, v in generator.state_dict().items()}
         else:
-            if mean_loss < best_train_loss:
+            if mean_loss < best_train_loss - early_stopping_min_delta:
                 best_train_loss = mean_loss
                 selected_epoch = epoch
                 best_state_dict = {k: v.cpu().clone() for k, v in generator.state_dict().items()}
+
+        # Patience follows trained epochs only; checkpoint selection above may retain epoch zero.
+        monitored = val_loss if val_models else mean_loss
+        if monitored < best_trained_loss - early_stopping_min_delta:
+            best_trained_loss = monitored
+            stale_epochs = 0
+        else:
+            stale_epochs += 1
 
         epoch_time = time.time() - epoch_start
         epoch_record = {
@@ -659,9 +682,22 @@ def train_diffusion_generator(
         if checkpoint_callback:
             checkpoint_callback(best_state_dict, history)
 
+        epochs_run = epoch
         if verbose:
             val_str = f"Val Acc Gain: {val_gain*100:+.2f} pp" if val_gain is not None else "No Val"
             print(f"Epoch {epoch:02d}/{epochs:02d} | Diff MSE: {mean_loss:.5f} | {val_str} | Time: {epoch_time:.2f}s")
+        if (
+            early_stopping_patience is not None
+            and stale_epochs >= early_stopping_patience
+        ):
+            stopped_epoch = epoch
+            early_stopped = True
+            if verbose:
+                print(
+                    f"Early stopping at epoch {epoch} after {stale_epochs} "
+                    "epochs without improvement."
+                )
+            break
 
     total_time = time.time() - total_start_time
 
@@ -672,6 +708,8 @@ def train_diffusion_generator(
         total_time_seconds=total_time,
         pairs_trained=len(targets),
         teacher_time_seconds=teacher_seconds,
-        optimizer_steps=epochs * math.ceil(len(targets) / batch_size),
+        optimizer_steps=epochs_run * math.ceil(len(targets) / batch_size),
         selected_epoch=selected_epoch,
+        stopped_epoch=stopped_epoch,
+        early_stopped=early_stopped,
     )

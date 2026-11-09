@@ -112,6 +112,8 @@ def run(args):
                 epochs=study.plan["generator_epochs"],
                 lr=study.plan["generator_lr"],
                 device=study.device,
+                early_stopping_patience=study.plan.get("generator_patience"),
+                early_stopping_min_delta=study.plan.get("generator_min_delta", 0.0),
             )
             torch.save(
                 dict(

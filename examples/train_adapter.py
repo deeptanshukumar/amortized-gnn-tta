@@ -47,6 +47,10 @@ def parse_args():
                         help="Parameter adaptation scope: 'head' (conv2 only, default), 'backbone' (conv1 only), or 'all' (conv1 + conv2)")
     parser.add_argument("--epochs", type=int, default=5,
                         help="Number of meta-training sweeps over (model, graph) pairs")
+    parser.add_argument("--early-stopping-patience", type=int, default=None,
+                        help="Stop after this many epochs without improvement; disabled by default")
+    parser.add_argument("--early-stopping-min-delta", type=float, default=0.0,
+                        help="Minimum loss decrease required to count as an improvement")
     parser.add_argument("--lr", type=float, default=1e-3,
                         help="Adam learning rate for the generator")
     parser.add_argument("--delta-l2", type=float, default=1e-3,
@@ -177,7 +181,9 @@ def run(args):
     common = dict(models=grouped["meta_train"], manifest=manifest, load_env_fn=load_shift_environment,
         descriptor=descriptor, generator=generator, epochs=args.epochs, lr=args.lr,
         delta_l2_reg=args.delta_l2, max_environments=args.max_environments, max_models=args.max_models,
-        val_models=grouped["validation"], device=device, target_scope=args.scope, checkpoint_callback=checkpoint)
+        val_models=grouped["validation"], device=device, target_scope=args.scope, checkpoint_callback=checkpoint,
+        early_stopping_patience=args.early_stopping_patience,
+        early_stopping_min_delta=args.early_stopping_min_delta)
     result = (train_diffusion_generator(**common, oracle_steps=args.oracle_steps)
               if args.generator == "diffusion" else train_adaptation_generator(**common))
     generator.load_state_dict(result.best_state_dict)

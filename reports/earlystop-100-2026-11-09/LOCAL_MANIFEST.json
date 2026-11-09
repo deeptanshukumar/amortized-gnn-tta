@@ -1,0 +1,10 @@
+{
+  "study_source_sha256": "d014f09b4d384903c7840baa5de19895fea1b4880750a2fb6cda00386ab1e99b",
+  "script_sha256": "c7444dc8e8ada5c9c53c76ea642bb33be86e6a0c5255314a68deefa9ad4d5960",
+  "is_private": true,
+  "source_models": 30,
+  "epochs": 100,
+  "patience": 10,
+  "min_delta": 0.0001,
+  "timeout_seconds": 43200
+}

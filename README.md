@@ -6,6 +6,10 @@ We investigate whether an offline-trained generator can predict small parameter 
 
 Deeptanshu owns GCN experiments; teammates handle GAT and GraphSAGE. At the owner's request, the shared codebase now implements all three architectures with the same data/training/bank interfaces.
 
+## Current campaign
+
+See the [100-epoch campaign and teammate handoff](docs/CURRENT_CAMPAIGN.md) for the exact live job, source audit, early-stopping rule and replacement queue. The earlier five-epoch evidence remains separately labeled below.
+
 ## Verified evidence and operational source
 
 The owner-authorized main checkpoint includes [formal source-bank and GCN design evidence](reports/real-data-2026-11-08/README.md), including CSVs/plots, and [Kaggle operational helper source/restoration notes](tools/kaggle/README.md). All 270 source checkpoints are verified; Experiments 1–2 completed with no generator gain and the broader comparison is in progress. The five-epoch design budget completed normally; A/head is a tie fallback, not an established optimal recipe. This commit does not replace the immutable source ZIP used by running Kaggle jobs. Large datasets, weights, raw predictions and bundles remain outside Git.

@@ -9,6 +9,7 @@ import argparse
 from dataclasses import asdict
 import json
 import hashlib
+import os
 import zipfile
 from pathlib import Path
 import time
@@ -107,6 +108,16 @@ class Study:
                 "A partial bank is allowed only for the GCN input/update design stage"
             )
         self.plan = bank["plan"]
+        for key, (env_name, cast) in {
+            "generator_epochs": ("AFML_GENERATOR_EPOCHS", int),
+            "generator_patience": ("AFML_GENERATOR_PATIENCE", int),
+            "generator_min_delta": ("AFML_GENERATOR_MIN_DELTA", float),
+        }.items():
+            value = getattr(args, key, None)
+            if value is None and env_name in os.environ:
+                value = cast(os.environ[env_name])
+            if value is not None:
+                self.plan[key] = value
         self.formal_audit = None
         if self.plan.get("bank_kind") == "formal-real-v1":
             audit_path = args.bank / "DIVERSITY.json"
@@ -274,6 +285,8 @@ class Study:
             lr=self.plan["generator_lr"],
             target_scope=scope,
             device=self.device,
+            early_stopping_patience=self.plan.get("generator_patience"),
+            early_stopping_min_delta=self.plan.get("generator_min_delta", 0.0),
         )
         teacher_seconds = 0.0
         if method in {"diffusion", "teacher_hypernetwork"}:
@@ -332,6 +345,8 @@ class Study:
             / len(records),
             records=records,
             selected_epoch=result.selected_epoch,
+            stopped_epoch=result.stopped_epoch,
+            early_stopped=result.early_stopped,
             optimizer_steps=result.optimizer_steps,
             adaptation_parameter_count=getattr(generator, "latent_dim", generator.head_dim),
             dense_delta_schema_entries=generator.head_dim,
@@ -478,6 +493,8 @@ class Study:
                 epochs=self.plan["generator_epochs"],
                 lr=self.plan["generator_lr"],
                 device=self.device,
+                early_stopping_patience=self.plan.get("generator_patience"),
+                early_stopping_min_delta=self.plan.get("generator_min_delta", 0.0),
             )
             practice_cost[mid] = fit
             torch.save(
@@ -695,6 +712,9 @@ if __name__ == "__main__":
         choices=[2],
         help="Finish GCN design while independent source-bank preparation continues",
     )
+    p.add_argument("--generator-epochs", type=int)
+    p.add_argument("--generator-patience", type=int)
+    p.add_argument("--generator-min-delta", type=float)
     args = p.parse_args()
     study = Study(args)
     if args.natural_design:

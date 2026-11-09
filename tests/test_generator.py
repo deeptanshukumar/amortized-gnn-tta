@@ -331,6 +331,42 @@ def test_meta_training_without_val_models_does_not_discard_weights(tiny_bundle):
     assert not torch.equal(final_w, torch.zeros_like(final_w))
 
 
+def test_meta_training_early_stopping(tiny_bundle):
+    """Early stopping must end the loop after the configured stale-epoch budget."""
+    from amortized_gnn_tta.adaptation import train_adaptation_generator
+
+    spec = make_model_spec("gcn", in_channels=16, out_channels=2, hidden_channels=8)
+    model = build_model(spec)
+    descriptor = GraphShiftDescriptor(hidden_channels=8, include_degree=True)
+    flat, _ = extract_head_parameters(model)
+    gen = HeadAdapterGenerator(
+        descriptor_dim=descriptor.output_dim, head_dim=len(flat), hidden_dim=32
+    )
+
+    fake_manifest = {
+        "environments": [{"id": "source", "role": "meta_train", "family": "control"}]
+    }
+
+    res = train_adaptation_generator(
+        models={"m1": model},
+        manifest=fake_manifest,
+        load_env_fn=lambda m, eid: tiny_bundle,
+        descriptor=descriptor,
+        generator=gen,
+        epochs=5,
+        val_models=None,
+        verbose=False,
+        early_stopping_patience=1,
+        early_stopping_min_delta=1e9,
+    )
+
+    assert res.early_stopped
+    assert res.stopped_epoch == 2
+    assert len(res.history) == 2
+    assert res.selected_epoch == 1
+    assert res.optimizer_steps == 2
+
+
 
 
 def test_extract_target_parameters_scopes():
@@ -504,3 +540,28 @@ def test_generator_with_version_conditioning(tiny_bundle):
     assert delta.shape == (head_dim,)
     assert torch.allclose(delta, torch.zeros_like(delta))  # Zero-init verification
 
+
+
+def test_trained_epoch_patience_allows_recovery_below_frozen(tiny_bundle, monkeypatch):
+    import amortized_gnn_tta.adaptation.meta_trainer as trainer
+    spec = make_model_spec('gcn', in_channels=16, out_channels=2, hidden_channels=8)
+    model = build_model(spec)
+    descriptor = GraphShiftDescriptor(hidden_channels=8, include_degree=True)
+    flat, _ = extract_head_parameters(model)
+    gen = HeadAdapterGenerator(descriptor.output_dim, len(flat), hidden_dim=32)
+    # Frozen accuracy .9; trained epochs recover .1 -> .2 -> .3, then plateau.
+    values = iter([.9, .1, .2, .3, .3, .3])
+    def summary(records):
+        accuracy = next(values)
+        return {'mean_adapted_acc': accuracy, 'mean_gain': accuracy-.9}
+    monkeypatch.setattr(trainer, 'summarize_records', summary)
+    result = trainer.train_adaptation_generator(
+        {'m': model}, {'environments': [
+            {'id': 'source', 'role': 'meta_train', 'family': 'control'},
+            {'id': 'source', 'role': 'validation', 'family': 'control'}]},
+        lambda m, eid: tiny_bundle, descriptor, gen,
+        epochs=100, val_models={'v': model}, verbose=False,
+        early_stopping_patience=2, early_stopping_min_delta=0)
+    assert result.stopped_epoch == 5
+    assert result.selected_epoch == 0
+    assert len(result.history) == 5

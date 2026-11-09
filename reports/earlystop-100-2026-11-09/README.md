@@ -1,0 +1,7 @@
+**Superseded launch:** the initial100-epoch job below was cancelled by the owner. The active replacement uses trained-epoch-only patience; see [new source audit](trained-patience/PUSH_SOURCE_AUDIT.json) and [current handoff](../../docs/CURRENT_CAMPAIGN.md).
+
+# 100-epoch launch/source audit
+
+This directory records verification of the source submitted to the private GCN design job, not completed numerical results. `PUSH_SOURCE_AUDIT.json` verifies the freshly pulled server script, its embedded archive, every internal archive checksum and all85 scientific source/example/config files against the local implementation. The job is `deeptanshukumar/afml-gcn-early-stopping-100-20261109/1`; its archive SHA-256 is d014f09b4d384903c7840baa5de19895fea1b4880750a2fb6cda00386ab1e99b. The37 focused local tests passed; the job also passed9 real GPU component checks before training. Full-study numerical outcomes remain pending.
+
+Maximum100 generator epochs, patience10 and minimum validation accuracy improvement0.0001. Epoch zero participates in stopping/checkpoint selection. Training may therefore stop after10 epochs without surpassing the initial checkpoint. The direct hypernetwork loss remains CE plus0.001 times the sum of squared generated dense updates; diffusion retains its separate teacher/denoising objective. No normalization/alignment fix is part of this campaign change. The old five-epoch results remain in the preceding report directory.

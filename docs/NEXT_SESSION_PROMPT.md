@@ -1,6 +1,14 @@
+## Current100-epoch trained-patience replacement
+
+The owner chose patience10 based only on best trained validation accuracy, while epoch zero remains eligible for best-checkpoint selection. The baseline-referenced100-epoch job was cancelled. Current job: deeptanshukumar/afml-gcn-trained-patience-100-20261109/1, source archive SHA256 5fa2a6b8dbfcc869eb50eddbb95db43a44d6550148676545dcd0c326a738a96a at runs/earlystop-100-20261109/source-trained-patience.zip. Fresh remote pull matched85 scientific files;38 focused tests passed. Replacement queue: compute-tools/earlystop_queue. Read active checkout docs/CURRENT_CAMPAIGN.md. Do not launch duplicates or use superseded job/archive identifiers below.
+
 # AFML continuation — formal real-data banks, Kaggle and sequential research experiments
 
 Continue the already authorized implementation. Read this handoff, inspect live state, then work in verified milestones. Do not treat historical completion claims as current evidence. Keep me informed in simple English. I want the project finished correctly, not just more runners or another pilot described as a final result.
+
+## Latest owner instruction and active queue — 100 epochs
+
+The owner authorized up to100 generator epochs with early stopping, requested a new Kaggle run and explicitly asked to queue Experiments3–6. The private job `deeptanshukumar/afml-gcn-early-stopping-100-20261109/1` is running with patience10 and minimum accuracy improvement0.0001, using immutable source ZIP `amortized-gnn-tta-generator-integration/runs/earlystop-100-20261109/source-v2.zip` SHA-256 `d014f09b4d384903c7840baa5de19895fea1b4880750a2fb6cda00386ab1e99b`. The earlier five-epoch E3 job was intentionally cancelled and remains preserved. The new separate queue is running at `compute-tools/earlystop_queue/continue_research.py`; check its `RESEARCH_QUEUE.json` and `queue.log` before any submission. A process-scoped sleep inhibitor is active. It is configured to verify the new design and advance sequentially, stopping on any failed check/service/quota gate. Do not start a duplicate queue. Queue safety fixtures passed5 tests; end-to-end continuation with this new archive cannot be verified until the current job completes. The old queue/source pins below are historical. The earlier completed five-epoch design remains a distinct verified result.
 
 ## Current main delivery authorization — 2026-11-09 IST
 

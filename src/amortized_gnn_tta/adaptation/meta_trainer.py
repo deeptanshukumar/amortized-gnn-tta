@@ -17,7 +17,7 @@ from torch.nn import functional as F
 
 from ..data.api import DatasetBundle
 from .evaluator import evaluate_adaptation_pair, subsample_environments, summarize_records
-from ._validation import conditioning_contract, checked_backward, frozen_sources, training_options
+from ._validation import conditioning_contract, checked_backward, frozen_sources, training_options, positive_int
 from .generator import (
     GraphShiftDescriptor,
     HeadAdapterGenerator,
@@ -38,6 +38,8 @@ class MetaTrainResult:
     teacher_time_seconds: float = 0.0
     optimizer_steps: int = 0
     selected_epoch: int = 0
+    stopped_epoch: int = 0
+    early_stopped: bool = False
 
 
 @frozen_sources
@@ -59,6 +61,8 @@ def train_adaptation_generator(
     verbose: bool = True,
     target_scope: str = "head",
     checkpoint_callback: Callable | None = None,
+    early_stopping_patience: int | None = None,
+    early_stopping_min_delta: float = 0.0,
 ) -> MetaTrainResult:
     """Train the HeadAdapterGenerator across (pretrained_model, shifted_graph) pairs.
 
@@ -77,12 +81,24 @@ def train_adaptation_generator(
         val_models: Optional mapping of validation models for validation monitoring.
         device: 'cpu' or 'cuda'.
         verbose: Whether to print progress to stdout.
+        early_stopping_patience: Stop after this many epochs without strict
+            improvement in the monitored metric. ``None`` disables early stopping.
+        early_stopping_min_delta: Minimum decrease in the monitored loss required
+            to count as an improvement.
 
     Returns:
         MetaTrainResult containing the trained generator, best weights, and metrics history.
     """
     conditioning_contract(descriptor, generator)
     training_options(epochs, lr, delta_l2_reg, max_models, max_environments)
+    if early_stopping_patience is not None:
+        positive_int(early_stopping_patience, "early_stopping_patience")
+    if (
+        isinstance(early_stopping_min_delta, bool)
+        or not math.isfinite(early_stopping_min_delta)
+        or early_stopping_min_delta < 0
+    ):
+        raise ValueError("early_stopping_min_delta must be finite and nonnegative")
     if weight_decay < 0 or not math.isfinite(weight_decay):
         raise ValueError("weight_decay must be finite and nonnegative")
     if val_models is not None:
@@ -116,6 +132,11 @@ def train_adaptation_generator(
     best_val_loss = float("inf")
     best_train_loss = float("inf")
     selected_epoch = 0
+    stopped_epoch = 0
+    early_stopped = False
+    stale_epochs = 0
+    best_trained_loss = float("inf")
+    epochs_run = 0
 
     # Evaluate Epoch 0 unadapted baseline if val_models provided (do-no-harm baseline check)
     if val_models:
@@ -211,16 +232,24 @@ def train_adaptation_generator(
             val_loss = 1.0 - val_summary.get("mean_adapted_acc", 0.0)
 
             # Strictly require outperforming the unadapted baseline (do-no-harm)
-            if val_loss < best_val_loss:
+            if val_loss < best_val_loss - early_stopping_min_delta:
                 best_val_loss = val_loss
                 selected_epoch = epoch
                 best_state_dict = {k: v.cpu().clone() for k, v in generator.state_dict().items()}
         else:
             # When no validation models are supplied, select by training loss so work is not discarded
-            if mean_train_loss < best_train_loss:
+            if mean_train_loss < best_train_loss - early_stopping_min_delta:
                 best_train_loss = mean_train_loss
                 selected_epoch = epoch
                 best_state_dict = {k: v.cpu().clone() for k, v in generator.state_dict().items()}
+
+        # Patience follows trained epochs only; checkpoint selection above may retain epoch zero.
+        monitored = val_loss if val_models else mean_train_loss
+        if monitored < best_trained_loss - early_stopping_min_delta:
+            best_trained_loss = monitored
+            stale_epochs = 0
+        else:
+            stale_epochs += 1
 
         epoch_time = time.time() - epoch_start
         epoch_record = {
@@ -237,16 +266,29 @@ def train_adaptation_generator(
         if checkpoint_callback:
             checkpoint_callback(best_state_dict, history)
 
+        epochs_run = epoch
         if verbose:
             val_msg = f" | Val Acc Gain: {val_gain * 100:+.2f} pp" if val_gain is not None else ""
             print(
                 f"Epoch {epoch:02d}/{epochs:02d} | Train Loss: {mean_train_loss:.4f} "
                 f"(CE: {mean_ce_loss:.4f}) | ΔNorm: {mean_norm:.4f}{val_msg} | Time: {epoch_time:.2f}s"
             )
+        if (
+            early_stopping_patience is not None
+            and stale_epochs >= early_stopping_patience
+        ):
+            stopped_epoch = epoch
+            early_stopped = True
+            if verbose:
+                print(
+                    f"Early stopping at epoch {epoch} after {stale_epochs} "
+                    "epochs without improvement."
+                )
+            break
 
     total_time = time.perf_counter() - start_time
     if verbose:
-        print(f"\nMeta-training finished in {total_time:.2f}s across {total_pairs * epochs} step evaluations.")
+        print(f"\nMeta-training finished in {total_time:.2f}s across {total_pairs * epochs_run} step evaluations.")
 
     return MetaTrainResult(
         generator=generator,
@@ -254,6 +296,8 @@ def train_adaptation_generator(
         history=history,
         total_time_seconds=total_time,
         pairs_trained=total_pairs,
-        optimizer_steps=total_pairs * epochs,
+        optimizer_steps=total_pairs * epochs_run,
         selected_epoch=selected_epoch,
+        stopped_epoch=stopped_epoch,
+        early_stopped=early_stopped,
     )

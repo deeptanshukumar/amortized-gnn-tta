@@ -285,6 +285,47 @@ def test_train_diffusion_generator_end_to_end(tiny_bundle):
     assert "net.0.weight" in res.best_state_dict
 
 
+def test_train_diffusion_generator_early_stopping(tiny_bundle):
+    """Diffusion early stopping must end the loop after the stale-epoch budget."""
+    spec = make_model_spec("gcn", in_channels=16, out_channels=2, hidden_channels=8)
+    model = build_model(spec)
+    descriptor = GraphShiftDescriptor(hidden_channels=8, include_degree=True)
+    flat, _ = extract_head_parameters(model)
+    gen = DiffusionHeadGenerator(
+        descriptor_dim=descriptor.output_dim,
+        head_dim=len(flat),
+        hidden_dim=32,
+        diffusion_steps=10,
+        sampling_steps=3,
+    )
+    fake_manifest = {
+        "environments": [
+            {"id": "meta_train_env", "role": "meta_train", "family": "control"},
+            {"id": "val_env", "role": "validation", "family": "control"},
+        ]
+    }
+
+    res = train_diffusion_generator(
+        models={"m1": model},
+        manifest=fake_manifest,
+        load_env_fn=lambda m, eid: tiny_bundle,
+        descriptor=descriptor,
+        generator=gen,
+        epochs=5,
+        lr=1e-3,
+        oracle_steps=5,
+        val_models={"v1": model},
+        verbose=False,
+        early_stopping_patience=1,
+        early_stopping_min_delta=1e9,
+    )
+
+    assert res.early_stopped
+    assert res.stopped_epoch == 2
+    assert len(res.history) == 2
+    assert res.selected_epoch == 0
+
+
 
 
 def test_diffusion_backbone_adaptation_training(tiny_bundle):

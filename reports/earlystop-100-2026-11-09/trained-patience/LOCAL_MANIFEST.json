@@ -1,0 +1,12 @@
+{
+  "study_source_sha256": "5fa2a6b8dbfcc869eb50eddbb95db43a44d6550148676545dcd0c326a738a96a",
+  "script_sha256": "d62da5b2cd9e39d9ab09022dd07c889bd55362708f20e4e9be09442bfbfd28ae",
+  "is_private": true,
+  "source_models": 30,
+  "epochs": 100,
+  "patience": 10,
+  "min_delta": 0.0001,
+  "patience_monitor": "best trained epoch only",
+  "checkpoint_selection": "epoch zero eligible",
+  "timeout_seconds": 43200
+}

@@ -26,7 +26,9 @@
     202802,
     202803
   ],
-  "generator_epochs": 5,
+  "generator_epochs": 100,
+  "generator_patience": 10,
+  "generator_min_delta": 0.0001,
   "generator_lr": 0.001,
   "teacher_steps": 30,
   "teacher_lr": 0.01,
