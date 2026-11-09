@@ -1,0 +1,914 @@
+{
+  "gcn-group0-31": {
+    "id": "gcn-group0-31",
+    "architecture": "gcn",
+    "role": "meta_train",
+    "group": 0,
+    "seed": 31,
+    "job": {
+      "id": "gcn-group0-31",
+      "architecture": "gcn",
+      "role": "meta_train",
+      "group": 0,
+      "seed": 31,
+      "model_spec": {
+        "architecture": "two_layer_gcn",
+        "config": {
+          "in_channels": 128,
+          "out_channels": 40,
+          "hidden_channels": 32,
+          "dropout": 0.5
+        }
+      },
+      "training_config": {
+        "max_epochs": 200,
+        "patience": 30,
+        "learning_rate": 0.01,
+        "weight_decay": 0.0005,
+        "model_seed": 31
+      }
+    },
+    "path": "models/gcn-group0-31/checkpoint.pt",
+    "identity_sha256": "9381f92d84edd5f5f5b11f813a92380dfd86b51381e6b71d73ec44c369f01834",
+    "checkpoint_sha256": "3560b39bd0efe96ff8346ccd96f21f8628f7ea7d3b41fc453a5005b414be934e",
+    "state_sha256": "1111235f834dc28d270b4eb26b48fc7caa4ae19c1b9b74ea91a63344e3318269",
+    "selected_epoch": 200,
+    "fit_seconds": 19.070851962999996,
+    "cuda_peak_allocated_bytes": 1196469248,
+    "cuda_peak_reserved_bytes": 2103443456
+  },
+  "gcn-group0-32": {
+    "id": "gcn-group0-32",
+    "architecture": "gcn",
+    "role": "meta_train",
+    "group": 0,
+    "seed": 32,
+    "job": {
+      "id": "gcn-group0-32",
+      "architecture": "gcn",
+      "role": "meta_train",
+      "group": 0,
+      "seed": 32,
+      "model_spec": {
+        "architecture": "two_layer_gcn",
+        "config": {
+          "in_channels": 128,
+          "out_channels": 40,
+          "hidden_channels": 32,
+          "dropout": 0.5
+        }
+      },
+      "training_config": {
+        "max_epochs": 200,
+        "patience": 30,
+        "learning_rate": 0.01,
+        "weight_decay": 0.0005,
+        "model_seed": 32
+      }
+    },
+    "path": "models/gcn-group0-32/checkpoint.pt",
+    "identity_sha256": "9381f92d84edd5f5f5b11f813a92380dfd86b51381e6b71d73ec44c369f01834",
+    "checkpoint_sha256": "08bfc583e43240ce17f5a66b6a022e0426f99859b5db586f0ec91f87da5de10a",
+    "state_sha256": "256325b3a2c2491d7381cf5dc931dad939eb7bf7eab2422b105c3508aaf1a7bd",
+    "selected_epoch": 198,
+    "fit_seconds": 19.91262292800002,
+    "cuda_peak_allocated_bytes": 1196469248,
+    "cuda_peak_reserved_bytes": 2103443456
+  },
+  "gcn-group0-33": {
+    "id": "gcn-group0-33",
+    "architecture": "gcn",
+    "role": "meta_train",
+    "group": 0,
+    "seed": 33,
+    "job": {
+      "id": "gcn-group0-33",
+      "architecture": "gcn",
+      "role": "meta_train",
+      "group": 0,
+      "seed": 33,
+      "model_spec": {
+        "architecture": "two_layer_gcn",
+        "config": {
+          "in_channels": 128,
+          "out_channels": 40,
+          "hidden_channels": 32,
+          "dropout": 0.5
+        }
+      },
+      "training_config": {
+        "max_epochs": 200,
+        "patience": 30,
+        "learning_rate": 0.01,
+        "weight_decay": 0.0005,
+        "model_seed": 33
+      }
+    },
+    "path": "models/gcn-group0-33/checkpoint.pt",
+    "identity_sha256": "9381f92d84edd5f5f5b11f813a92380dfd86b51381e6b71d73ec44c369f01834",
+    "checkpoint_sha256": "e52bfe897572285cdc665039b70f5a7bf50bf4e9a1f8d59e222aac5c8c7f0363",
+    "state_sha256": "b87dc3246a765d9ec64197064efd91c1a69b2c9bcec3c9347e3f0e89957d79bf",
+    "selected_epoch": 200,
+    "fit_seconds": 19.80155669200002,
+    "cuda_peak_allocated_bytes": 1196469248,
+    "cuda_peak_reserved_bytes": 2103443456
+  },
+  "gcn-group0-34": {
+    "id": "gcn-group0-34",
+    "architecture": "gcn",
+    "role": "meta_train",
+    "group": 0,
+    "seed": 34,
+    "job": {
+      "id": "gcn-group0-34",
+      "architecture": "gcn",
+      "role": "meta_train",
+      "group": 0,
+      "seed": 34,
+      "model_spec": {
+        "architecture": "two_layer_gcn",
+        "config": {
+          "in_channels": 128,
+          "out_channels": 40,
+          "hidden_channels": 32,
+          "dropout": 0.5
+        }
+      },
+      "training_config": {
+        "max_epochs": 200,
+        "patience": 30,
+        "learning_rate": 0.01,
+        "weight_decay": 0.0005,
+        "model_seed": 34
+      }
+    },
+    "path": "models/gcn-group0-34/checkpoint.pt",
+    "identity_sha256": "9381f92d84edd5f5f5b11f813a92380dfd86b51381e6b71d73ec44c369f01834",
+    "checkpoint_sha256": "3807806d92e67626d512ff360ef1a7a141ed0cdc188adc6db5e036d8c47b8854",
+    "state_sha256": "3ef8052552742d9d5b5f84ee87a70adbaeb83b0fb369a865e08e06102095f2a0",
+    "selected_epoch": 200,
+    "fit_seconds": 18.60996682299998,
+    "cuda_peak_allocated_bytes": 1196469248,
+    "cuda_peak_reserved_bytes": 2103443456
+  },
+  "gcn-group0-35": {
+    "id": "gcn-group0-35",
+    "architecture": "gcn",
+    "role": "meta_train",
+    "group": 0,
+    "seed": 35,
+    "job": {
+      "id": "gcn-group0-35",
+      "architecture": "gcn",
+      "role": "meta_train",
+      "group": 0,
+      "seed": 35,
+      "model_spec": {
+        "architecture": "two_layer_gcn",
+        "config": {
+          "in_channels": 128,
+          "out_channels": 40,
+          "hidden_channels": 32,
+          "dropout": 0.5
+        }
+      },
+      "training_config": {
+        "max_epochs": 200,
+        "patience": 30,
+        "learning_rate": 0.01,
+        "weight_decay": 0.0005,
+        "model_seed": 35
+      }
+    },
+    "path": "models/gcn-group0-35/checkpoint.pt",
+    "identity_sha256": "9381f92d84edd5f5f5b11f813a92380dfd86b51381e6b71d73ec44c369f01834",
+    "checkpoint_sha256": "08f84efb6934f0057d864764f392fa922d50a842b499a1fb0e708864815ec149",
+    "state_sha256": "88d0fd62217549899af63f239b2b751b065f414e8213b24a227e4a48cc80afa1",
+    "selected_epoch": 200,
+    "fit_seconds": 18.742524679999974,
+    "cuda_peak_allocated_bytes": 1196469248,
+    "cuda_peak_reserved_bytes": 2103443456
+  },
+  "gcn-group0-36": {
+    "id": "gcn-group0-36",
+    "architecture": "gcn",
+    "role": "meta_train",
+    "group": 0,
+    "seed": 36,
+    "job": {
+      "id": "gcn-group0-36",
+      "architecture": "gcn",
+      "role": "meta_train",
+      "group": 0,
+      "seed": 36,
+      "model_spec": {
+        "architecture": "two_layer_gcn",
+        "config": {
+          "in_channels": 128,
+          "out_channels": 40,
+          "hidden_channels": 32,
+          "dropout": 0.5
+        }
+      },
+      "training_config": {
+        "max_epochs": 200,
+        "patience": 30,
+        "learning_rate": 0.01,
+        "weight_decay": 0.0005,
+        "model_seed": 36
+      }
+    },
+    "path": "models/gcn-group0-36/checkpoint.pt",
+    "identity_sha256": "9381f92d84edd5f5f5b11f813a92380dfd86b51381e6b71d73ec44c369f01834",
+    "checkpoint_sha256": "3254fe08357b8e7e0bf937065d5cba3b8ca3b2880b8812f915d49cdda4bd35ae",
+    "state_sha256": "fbf14c8addc5eebd4e8e0739d753b6514614674f01514779f9981649c140ba35",
+    "selected_epoch": 199,
+    "fit_seconds": 18.88624890599999,
+    "cuda_peak_allocated_bytes": 1196469248,
+    "cuda_peak_reserved_bytes": 2103443456
+  },
+  "gcn-group1-37": {
+    "id": "gcn-group1-37",
+    "architecture": "gcn",
+    "role": "meta_train",
+    "group": 1,
+    "seed": 37,
+    "job": {
+      "id": "gcn-group1-37",
+      "architecture": "gcn",
+      "role": "meta_train",
+      "group": 1,
+      "seed": 37,
+      "model_spec": {
+        "architecture": "two_layer_gcn",
+        "config": {
+          "in_channels": 128,
+          "out_channels": 40,
+          "hidden_channels": 32,
+          "dropout": 0.5
+        }
+      },
+      "training_config": {
+        "max_epochs": 200,
+        "patience": 30,
+        "learning_rate": 0.01,
+        "weight_decay": 0.0005,
+        "model_seed": 37
+      }
+    },
+    "path": "models/gcn-group1-37/checkpoint.pt",
+    "identity_sha256": "9381f92d84edd5f5f5b11f813a92380dfd86b51381e6b71d73ec44c369f01834",
+    "checkpoint_sha256": "4044e1af16102078f065624999c911f684ba78594bb1d05dc49209118a884bc8",
+    "state_sha256": "bb0354e3db1c596bf1e1696d566dd34811e7d4cde84a44b74edb5491b9e50c97",
+    "selected_epoch": 200,
+    "fit_seconds": 19.022932620999995,
+    "cuda_peak_allocated_bytes": 1196469248,
+    "cuda_peak_reserved_bytes": 2103443456
+  },
+  "gcn-group1-38": {
+    "id": "gcn-group1-38",
+    "architecture": "gcn",
+    "role": "meta_train",
+    "group": 1,
+    "seed": 38,
+    "job": {
+      "id": "gcn-group1-38",
+      "architecture": "gcn",
+      "role": "meta_train",
+      "group": 1,
+      "seed": 38,
+      "model_spec": {
+        "architecture": "two_layer_gcn",
+        "config": {
+          "in_channels": 128,
+          "out_channels": 40,
+          "hidden_channels": 32,
+          "dropout": 0.5
+        }
+      },
+      "training_config": {
+        "max_epochs": 200,
+        "patience": 30,
+        "learning_rate": 0.01,
+        "weight_decay": 0.0005,
+        "model_seed": 38
+      }
+    },
+    "path": "models/gcn-group1-38/checkpoint.pt",
+    "identity_sha256": "9381f92d84edd5f5f5b11f813a92380dfd86b51381e6b71d73ec44c369f01834",
+    "checkpoint_sha256": "f2beebca2cff456c0042a7e36079fa52b092b8157c9d3b058ca0282e8e7061a2",
+    "state_sha256": "19bc85331c990d5b1234769bf654af7ce186e20459bae625398269a2ef202deb",
+    "selected_epoch": 198,
+    "fit_seconds": 19.016939477999983,
+    "cuda_peak_allocated_bytes": 1196469248,
+    "cuda_peak_reserved_bytes": 2103443456
+  },
+  "gcn-group1-39": {
+    "id": "gcn-group1-39",
+    "architecture": "gcn",
+    "role": "meta_train",
+    "group": 1,
+    "seed": 39,
+    "job": {
+      "id": "gcn-group1-39",
+      "architecture": "gcn",
+      "role": "meta_train",
+      "group": 1,
+      "seed": 39,
+      "model_spec": {
+        "architecture": "two_layer_gcn",
+        "config": {
+          "in_channels": 128,
+          "out_channels": 40,
+          "hidden_channels": 32,
+          "dropout": 0.5
+        }
+      },
+      "training_config": {
+        "max_epochs": 200,
+        "patience": 30,
+        "learning_rate": 0.01,
+        "weight_decay": 0.0005,
+        "model_seed": 39
+      }
+    },
+    "path": "models/gcn-group1-39/checkpoint.pt",
+    "identity_sha256": "9381f92d84edd5f5f5b11f813a92380dfd86b51381e6b71d73ec44c369f01834",
+    "checkpoint_sha256": "c09f6f0dac2efa31e7ac321e9563900f6ff53be4adcee7046447328469dc5f01",
+    "state_sha256": "9957c7712414f287fffc78493fff1e5ed1b2ecbd3033197f0013d497476c727b",
+    "selected_epoch": 200,
+    "fit_seconds": 18.90609158000001,
+    "cuda_peak_allocated_bytes": 1196469248,
+    "cuda_peak_reserved_bytes": 2103443456
+  },
+  "gcn-group1-40": {
+    "id": "gcn-group1-40",
+    "architecture": "gcn",
+    "role": "meta_train",
+    "group": 1,
+    "seed": 40,
+    "job": {
+      "id": "gcn-group1-40",
+      "architecture": "gcn",
+      "role": "meta_train",
+      "group": 1,
+      "seed": 40,
+      "model_spec": {
+        "architecture": "two_layer_gcn",
+        "config": {
+          "in_channels": 128,
+          "out_channels": 40,
+          "hidden_channels": 32,
+          "dropout": 0.5
+        }
+      },
+      "training_config": {
+        "max_epochs": 200,
+        "patience": 30,
+        "learning_rate": 0.01,
+        "weight_decay": 0.0005,
+        "model_seed": 40
+      }
+    },
+    "path": "models/gcn-group1-40/checkpoint.pt",
+    "identity_sha256": "9381f92d84edd5f5f5b11f813a92380dfd86b51381e6b71d73ec44c369f01834",
+    "checkpoint_sha256": "810eb4d4d69861e7f62f781d63e7416f3127fc6b71deda784a019b15fd5f696f",
+    "state_sha256": "213865ff26803d0d6f83005976024160cc7004ff7809d1034acf89dc3e6cc209",
+    "selected_epoch": 200,
+    "fit_seconds": 18.86934095700002,
+    "cuda_peak_allocated_bytes": 1196469248,
+    "cuda_peak_reserved_bytes": 2103443456
+  },
+  "gcn-group1-41": {
+    "id": "gcn-group1-41",
+    "architecture": "gcn",
+    "role": "meta_train",
+    "group": 1,
+    "seed": 41,
+    "job": {
+      "id": "gcn-group1-41",
+      "architecture": "gcn",
+      "role": "meta_train",
+      "group": 1,
+      "seed": 41,
+      "model_spec": {
+        "architecture": "two_layer_gcn",
+        "config": {
+          "in_channels": 128,
+          "out_channels": 40,
+          "hidden_channels": 32,
+          "dropout": 0.5
+        }
+      },
+      "training_config": {
+        "max_epochs": 200,
+        "patience": 30,
+        "learning_rate": 0.01,
+        "weight_decay": 0.0005,
+        "model_seed": 41
+      }
+    },
+    "path": "models/gcn-group1-41/checkpoint.pt",
+    "identity_sha256": "9381f92d84edd5f5f5b11f813a92380dfd86b51381e6b71d73ec44c369f01834",
+    "checkpoint_sha256": "413c29366422fd524610d7ab4a4f2e402b5deadb6f41f7b510c0a202419cea8a",
+    "state_sha256": "271dcc7e985cf64cb456e357ae9506cc7542d2242e601481d8870f08f88f1882",
+    "selected_epoch": 199,
+    "fit_seconds": 18.942108150000024,
+    "cuda_peak_allocated_bytes": 1196469248,
+    "cuda_peak_reserved_bytes": 2103443456
+  },
+  "gcn-group1-42": {
+    "id": "gcn-group1-42",
+    "architecture": "gcn",
+    "role": "meta_train",
+    "group": 1,
+    "seed": 42,
+    "job": {
+      "id": "gcn-group1-42",
+      "architecture": "gcn",
+      "role": "meta_train",
+      "group": 1,
+      "seed": 42,
+      "model_spec": {
+        "architecture": "two_layer_gcn",
+        "config": {
+          "in_channels": 128,
+          "out_channels": 40,
+          "hidden_channels": 32,
+          "dropout": 0.5
+        }
+      },
+      "training_config": {
+        "max_epochs": 200,
+        "patience": 30,
+        "learning_rate": 0.01,
+        "weight_decay": 0.0005,
+        "model_seed": 42
+      }
+    },
+    "path": "models/gcn-group1-42/checkpoint.pt",
+    "identity_sha256": "9381f92d84edd5f5f5b11f813a92380dfd86b51381e6b71d73ec44c369f01834",
+    "checkpoint_sha256": "96e253027b9f9de93e9f2439323ce2ac969ffa6b9a3d18b026fbf1da36eb229f",
+    "state_sha256": "2e3f764306a6e1ba7d27e42184f72253f07cf1babaad87f029f3818aa42077be",
+    "selected_epoch": 200,
+    "fit_seconds": 18.973358110999925,
+    "cuda_peak_allocated_bytes": 1196469248,
+    "cuda_peak_reserved_bytes": 2103443456
+  },
+  "gcn-group2-43": {
+    "id": "gcn-group2-43",
+    "architecture": "gcn",
+    "role": "meta_train",
+    "group": 2,
+    "seed": 43,
+    "job": {
+      "id": "gcn-group2-43",
+      "architecture": "gcn",
+      "role": "meta_train",
+      "group": 2,
+      "seed": 43,
+      "model_spec": {
+        "architecture": "two_layer_gcn",
+        "config": {
+          "in_channels": 128,
+          "out_channels": 40,
+          "hidden_channels": 32,
+          "dropout": 0.5
+        }
+      },
+      "training_config": {
+        "max_epochs": 200,
+        "patience": 30,
+        "learning_rate": 0.01,
+        "weight_decay": 0.0005,
+        "model_seed": 43
+      }
+    },
+    "path": "models/gcn-group2-43/checkpoint.pt",
+    "identity_sha256": "9381f92d84edd5f5f5b11f813a92380dfd86b51381e6b71d73ec44c369f01834",
+    "checkpoint_sha256": "332dd64d93dbe92a620328b721884fe83f103920c9a1d41e08d9d9c079e5c4dc",
+    "state_sha256": "3532ed030cc78a365627ecdea52e5ccb84130090c40df36fd59e4074e0c103d7",
+    "selected_epoch": 199,
+    "fit_seconds": 18.942639498000062,
+    "cuda_peak_allocated_bytes": 1196469248,
+    "cuda_peak_reserved_bytes": 2103443456
+  },
+  "gcn-group2-44": {
+    "id": "gcn-group2-44",
+    "architecture": "gcn",
+    "role": "meta_train",
+    "group": 2,
+    "seed": 44,
+    "job": {
+      "id": "gcn-group2-44",
+      "architecture": "gcn",
+      "role": "meta_train",
+      "group": 2,
+      "seed": 44,
+      "model_spec": {
+        "architecture": "two_layer_gcn",
+        "config": {
+          "in_channels": 128,
+          "out_channels": 40,
+          "hidden_channels": 32,
+          "dropout": 0.5
+        }
+      },
+      "training_config": {
+        "max_epochs": 200,
+        "patience": 30,
+        "learning_rate": 0.01,
+        "weight_decay": 0.0005,
+        "model_seed": 44
+      }
+    },
+    "path": "models/gcn-group2-44/checkpoint.pt",
+    "identity_sha256": "9381f92d84edd5f5f5b11f813a92380dfd86b51381e6b71d73ec44c369f01834",
+    "checkpoint_sha256": "cf586f576868f87258c070a1db445e209aec0d452f7c539d07d90d1f68b76db4",
+    "state_sha256": "761b709e6d85e0f926b07c4b41315d5c29b102d9f983584cd4fd1448b182a0fc",
+    "selected_epoch": 199,
+    "fit_seconds": 18.916794761999995,
+    "cuda_peak_allocated_bytes": 1196469248,
+    "cuda_peak_reserved_bytes": 2103443456
+  },
+  "gcn-group2-45": {
+    "id": "gcn-group2-45",
+    "architecture": "gcn",
+    "role": "meta_train",
+    "group": 2,
+    "seed": 45,
+    "job": {
+      "id": "gcn-group2-45",
+      "architecture": "gcn",
+      "role": "meta_train",
+      "group": 2,
+      "seed": 45,
+      "model_spec": {
+        "architecture": "two_layer_gcn",
+        "config": {
+          "in_channels": 128,
+          "out_channels": 40,
+          "hidden_channels": 32,
+          "dropout": 0.5
+        }
+      },
+      "training_config": {
+        "max_epochs": 200,
+        "patience": 30,
+        "learning_rate": 0.01,
+        "weight_decay": 0.0005,
+        "model_seed": 45
+      }
+    },
+    "path": "models/gcn-group2-45/checkpoint.pt",
+    "identity_sha256": "9381f92d84edd5f5f5b11f813a92380dfd86b51381e6b71d73ec44c369f01834",
+    "checkpoint_sha256": "83e9497314ce86e15ef957e6ec532a87cf6cd1ec1f6ac1b61e05cf4cc38e8520",
+    "state_sha256": "99751d97521ed5e28834b2d8848340ae52e502a93ea0a12d6df59cee8aa4bb17",
+    "selected_epoch": 199,
+    "fit_seconds": 18.93076870999994,
+    "cuda_peak_allocated_bytes": 1196469248,
+    "cuda_peak_reserved_bytes": 2103443456
+  },
+  "gcn-group2-46": {
+    "id": "gcn-group2-46",
+    "architecture": "gcn",
+    "role": "meta_train",
+    "group": 2,
+    "seed": 46,
+    "job": {
+      "id": "gcn-group2-46",
+      "architecture": "gcn",
+      "role": "meta_train",
+      "group": 2,
+      "seed": 46,
+      "model_spec": {
+        "architecture": "two_layer_gcn",
+        "config": {
+          "in_channels": 128,
+          "out_channels": 40,
+          "hidden_channels": 32,
+          "dropout": 0.5
+        }
+      },
+      "training_config": {
+        "max_epochs": 200,
+        "patience": 30,
+        "learning_rate": 0.01,
+        "weight_decay": 0.0005,
+        "model_seed": 46
+      }
+    },
+    "path": "models/gcn-group2-46/checkpoint.pt",
+    "identity_sha256": "9381f92d84edd5f5f5b11f813a92380dfd86b51381e6b71d73ec44c369f01834",
+    "checkpoint_sha256": "a9a0b39f1b8afadb45e97aa9eaa899bc263c3759d653af1b9367cf504b505a76",
+    "state_sha256": "e424b5f9a8522642fb7ed88332d99b5a67c3886e02d622034e3e74fffa860313",
+    "selected_epoch": 200,
+    "fit_seconds": 18.928791106999938,
+    "cuda_peak_allocated_bytes": 1196469248,
+    "cuda_peak_reserved_bytes": 2103443456
+  },
+  "gcn-group2-47": {
+    "id": "gcn-group2-47",
+    "architecture": "gcn",
+    "role": "meta_train",
+    "group": 2,
+    "seed": 47,
+    "job": {
+      "id": "gcn-group2-47",
+      "architecture": "gcn",
+      "role": "meta_train",
+      "group": 2,
+      "seed": 47,
+      "model_spec": {
+        "architecture": "two_layer_gcn",
+        "config": {
+          "in_channels": 128,
+          "out_channels": 40,
+          "hidden_channels": 32,
+          "dropout": 0.5
+        }
+      },
+      "training_config": {
+        "max_epochs": 200,
+        "patience": 30,
+        "learning_rate": 0.01,
+        "weight_decay": 0.0005,
+        "model_seed": 47
+      }
+    },
+    "path": "models/gcn-group2-47/checkpoint.pt",
+    "identity_sha256": "9381f92d84edd5f5f5b11f813a92380dfd86b51381e6b71d73ec44c369f01834",
+    "checkpoint_sha256": "8c12505588756244eb42d14401bd424cd39a677b217ae56b4ce713b4cf9ee5bc",
+    "state_sha256": "1d38b2eca8aad29cd6aee7a02d8261a2485c3e5b3963d8fbc28ba0f07ceb1c3d",
+    "selected_epoch": 200,
+    "fit_seconds": 18.961133113000074,
+    "cuda_peak_allocated_bytes": 1196469248,
+    "cuda_peak_reserved_bytes": 2103443456
+  },
+  "gcn-group2-48": {
+    "id": "gcn-group2-48",
+    "architecture": "gcn",
+    "role": "meta_train",
+    "group": 2,
+    "seed": 48,
+    "job": {
+      "id": "gcn-group2-48",
+      "architecture": "gcn",
+      "role": "meta_train",
+      "group": 2,
+      "seed": 48,
+      "model_spec": {
+        "architecture": "two_layer_gcn",
+        "config": {
+          "in_channels": 128,
+          "out_channels": 40,
+          "hidden_channels": 32,
+          "dropout": 0.5
+        }
+      },
+      "training_config": {
+        "max_epochs": 200,
+        "patience": 30,
+        "learning_rate": 0.01,
+        "weight_decay": 0.0005,
+        "model_seed": 48
+      }
+    },
+    "path": "models/gcn-group2-48/checkpoint.pt",
+    "identity_sha256": "9381f92d84edd5f5f5b11f813a92380dfd86b51381e6b71d73ec44c369f01834",
+    "checkpoint_sha256": "9da2c9067462c4217f31a98e6f750236acdbc51e865a37bf57b4c9f3144a52df",
+    "state_sha256": "ac8d478d2aee447a50e6b645c227db9cbc8f5fd92e6fc537c876f635df144d16",
+    "selected_epoch": 200,
+    "fit_seconds": 18.914921548000052,
+    "cuda_peak_allocated_bytes": 1196469248,
+    "cuda_peak_reserved_bytes": 2103443456
+  },
+  "gcn-group3-49": {
+    "id": "gcn-group3-49",
+    "architecture": "gcn",
+    "role": "validation",
+    "group": 3,
+    "seed": 49,
+    "job": {
+      "id": "gcn-group3-49",
+      "architecture": "gcn",
+      "role": "validation",
+      "group": 3,
+      "seed": 49,
+      "model_spec": {
+        "architecture": "two_layer_gcn",
+        "config": {
+          "in_channels": 128,
+          "out_channels": 40,
+          "hidden_channels": 32,
+          "dropout": 0.5
+        }
+      },
+      "training_config": {
+        "max_epochs": 200,
+        "patience": 30,
+        "learning_rate": 0.01,
+        "weight_decay": 0.0005,
+        "model_seed": 49
+      }
+    },
+    "path": "models/gcn-group3-49/checkpoint.pt",
+    "identity_sha256": "9381f92d84edd5f5f5b11f813a92380dfd86b51381e6b71d73ec44c369f01834",
+    "checkpoint_sha256": "4c9b334e967f933cf6a57f81922b423326e97c7d8a764468b7e38f8a0fb77476",
+    "state_sha256": "b0a44ca045ce08fcee5298267390b92c7aa47943919b8d37e0d072db380011a1",
+    "selected_epoch": 200,
+    "fit_seconds": 18.920063759999948,
+    "cuda_peak_allocated_bytes": 1196469248,
+    "cuda_peak_reserved_bytes": 2103443456
+  },
+  "gcn-group3-50": {
+    "id": "gcn-group3-50",
+    "architecture": "gcn",
+    "role": "validation",
+    "group": 3,
+    "seed": 50,
+    "job": {
+      "id": "gcn-group3-50",
+      "architecture": "gcn",
+      "role": "validation",
+      "group": 3,
+      "seed": 50,
+      "model_spec": {
+        "architecture": "two_layer_gcn",
+        "config": {
+          "in_channels": 128,
+          "out_channels": 40,
+          "hidden_channels": 32,
+          "dropout": 0.5
+        }
+      },
+      "training_config": {
+        "max_epochs": 200,
+        "patience": 30,
+        "learning_rate": 0.01,
+        "weight_decay": 0.0005,
+        "model_seed": 50
+      }
+    },
+    "path": "models/gcn-group3-50/checkpoint.pt",
+    "identity_sha256": "9381f92d84edd5f5f5b11f813a92380dfd86b51381e6b71d73ec44c369f01834",
+    "checkpoint_sha256": "cbaa9c2b153afab0f63647b71fdb75d3c06ae444d0d1e4449d54227278ea73d6",
+    "state_sha256": "b2b8a6ac886b34b13d7cc1995a1627f6d8120ac87d2ebee6ab826bebb0667c2c",
+    "selected_epoch": 199,
+    "fit_seconds": 18.92598344299995,
+    "cuda_peak_allocated_bytes": 1196469248,
+    "cuda_peak_reserved_bytes": 2103443456
+  },
+  "gcn-group3-51": {
+    "id": "gcn-group3-51",
+    "architecture": "gcn",
+    "role": "validation",
+    "group": 3,
+    "seed": 51,
+    "job": {
+      "id": "gcn-group3-51",
+      "architecture": "gcn",
+      "role": "validation",
+      "group": 3,
+      "seed": 51,
+      "model_spec": {
+        "architecture": "two_layer_gcn",
+        "config": {
+          "in_channels": 128,
+          "out_channels": 40,
+          "hidden_channels": 32,
+          "dropout": 0.5
+        }
+      },
+      "training_config": {
+        "max_epochs": 200,
+        "patience": 30,
+        "learning_rate": 0.01,
+        "weight_decay": 0.0005,
+        "model_seed": 51
+      }
+    },
+    "path": "models/gcn-group3-51/checkpoint.pt",
+    "identity_sha256": "9381f92d84edd5f5f5b11f813a92380dfd86b51381e6b71d73ec44c369f01834",
+    "checkpoint_sha256": "5d8f36d634f0dd1e4e2b7f312f41ee016f7fa90a1ffd1b2c2a85fa9ab992c78b",
+    "state_sha256": "9f592c5d1e3a9006c60b764ac77511e2141eb1c04b7a713c417394a36644cdca",
+    "selected_epoch": 200,
+    "fit_seconds": 18.930853361999993,
+    "cuda_peak_allocated_bytes": 1196469248,
+    "cuda_peak_reserved_bytes": 2103443456
+  },
+  "gcn-group3-52": {
+    "id": "gcn-group3-52",
+    "architecture": "gcn",
+    "role": "validation",
+    "group": 3,
+    "seed": 52,
+    "job": {
+      "id": "gcn-group3-52",
+      "architecture": "gcn",
+      "role": "validation",
+      "group": 3,
+      "seed": 52,
+      "model_spec": {
+        "architecture": "two_layer_gcn",
+        "config": {
+          "in_channels": 128,
+          "out_channels": 40,
+          "hidden_channels": 32,
+          "dropout": 0.5
+        }
+      },
+      "training_config": {
+        "max_epochs": 200,
+        "patience": 30,
+        "learning_rate": 0.01,
+        "weight_decay": 0.0005,
+        "model_seed": 52
+      }
+    },
+    "path": "models/gcn-group3-52/checkpoint.pt",
+    "identity_sha256": "9381f92d84edd5f5f5b11f813a92380dfd86b51381e6b71d73ec44c369f01834",
+    "checkpoint_sha256": "7e512749fd25128e2b515600c5b984d555220d4b59589287f6940cbbded6bbc7",
+    "state_sha256": "859c3b1c87e1f0bab1950f4e254ea811780e9e3809352eecbb01fc3dc743becd",
+    "selected_epoch": 200,
+    "fit_seconds": 18.93348016999994,
+    "cuda_peak_allocated_bytes": 1196469248,
+    "cuda_peak_reserved_bytes": 2103443456
+  },
+  "gcn-group3-53": {
+    "id": "gcn-group3-53",
+    "architecture": "gcn",
+    "role": "validation",
+    "group": 3,
+    "seed": 53,
+    "job": {
+      "id": "gcn-group3-53",
+      "architecture": "gcn",
+      "role": "validation",
+      "group": 3,
+      "seed": 53,
+      "model_spec": {
+        "architecture": "two_layer_gcn",
+        "config": {
+          "in_channels": 128,
+          "out_channels": 40,
+          "hidden_channels": 32,
+          "dropout": 0.5
+        }
+      },
+      "training_config": {
+        "max_epochs": 200,
+        "patience": 30,
+        "learning_rate": 0.01,
+        "weight_decay": 0.0005,
+        "model_seed": 53
+      }
+    },
+    "path": "models/gcn-group3-53/checkpoint.pt",
+    "identity_sha256": "9381f92d84edd5f5f5b11f813a92380dfd86b51381e6b71d73ec44c369f01834",
+    "checkpoint_sha256": "da3663c467650a0c9f6f9dc6ce99ca63858dd0b9ea5017aac7f4148c1c8bd251",
+    "state_sha256": "d2e226da6514d29665a1d52fe8a9da128ce21032c8c37064473e8802c3dd4f70",
+    "selected_epoch": 200,
+    "fit_seconds": 18.939608374000045,
+    "cuda_peak_allocated_bytes": 1196469248,
+    "cuda_peak_reserved_bytes": 2103443456
+  },
+  "gcn-group3-54": {
+    "id": "gcn-group3-54",
+    "architecture": "gcn",
+    "role": "validation",
+    "group": 3,
+    "seed": 54,
+    "job": {
+      "id": "gcn-group3-54",
+      "architecture": "gcn",
+      "role": "validation",
+      "group": 3,
+      "seed": 54,
+      "model_spec": {
+        "architecture": "two_layer_gcn",
+        "config": {
+          "in_channels": 128,
+          "out_channels": 40,
+          "hidden_channels": 32,
+          "dropout": 0.5
+        }
+      },
+      "training_config": {
+        "max_epochs": 200,
+        "patience": 30,
+        "learning_rate": 0.01,
+        "weight_decay": 0.0005,
+        "model_seed": 54
+      }
+    },
+    "path": "models/gcn-group3-54/checkpoint.pt",
+    "identity_sha256": "9381f92d84edd5f5f5b11f813a92380dfd86b51381e6b71d73ec44c369f01834",
+    "checkpoint_sha256": "afab3e36e9b4974da270b7af266d6c7a1ab908c4dbec0c35187a589fc13359e1",
+    "state_sha256": "1b177a95518aa3564a5545a1e7ff4089501ca7f0e7e11f9921bd6a520a47e676",
+    "selected_epoch": 200,
+    "fit_seconds": 18.923177707000036,
+    "cuda_peak_allocated_bytes": 1196469248,
+    "cuda_peak_reserved_bytes": 2103443456
+  }
+}

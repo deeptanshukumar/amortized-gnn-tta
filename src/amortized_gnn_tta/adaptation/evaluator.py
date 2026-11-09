@@ -51,6 +51,7 @@ def evaluate_adaptation_pair(
     generator: HeadAdapterGenerator,
     device: str = "cpu",
     target_scope: str = "head",
+    candidate_seeds=None,
 ) -> AdaptationRecord:
     """Evaluate one model on one environment with and without adaptation.
 
@@ -62,12 +63,21 @@ def evaluate_adaptation_pair(
     with source_state(model), source_state(generator), torch.no_grad():
         base_logits = model(unlabeled.x, unlabeled.edge_index)
         validate_logits(base_logits, unlabeled.num_nodes)
-        target_weights, schema = extract_target_parameters(model, scope=target_scope)
-        desc_vec = descriptor(model, unlabeled).to(device)
-        finite(desc_vec, "conditioning")
-        delta = finite(generator(desc_vec, target_weights.to(device)), "generated delta")
-        delta_norm = float(torch.linalg.vector_norm(delta))
-        adapted_logits = adapted_forward(model, unlabeled, delta, schema)
+        if candidate_seeds is not None:
+            from .candidates import agreement_predictions
+            pool = "eval" if "eval" in bundle.graphs[env_id].splits else "test"
+            selected, _ = agreement_predictions(
+                model, unlabeled, descriptor, generator,
+                indices=bundle.select(env_id, pool), seeds=candidate_seeds,
+                scope=target_scope, device=device)
+            adapted_logits = selected.logits
+            delta_norm = float(selected.delta.norm())
+        else:
+            target_weights, schema = extract_target_parameters(model, scope=target_scope)
+            desc_vec = finite(descriptor(model, unlabeled).to(device), "conditioning")
+            delta = finite(generator(desc_vec, target_weights.to(device)), "generated delta")
+            delta_norm = float(torch.linalg.vector_norm(delta))
+            adapted_logits = adapted_forward(model, unlabeled, delta, schema)
         validate_logits(adapted_logits, unlabeled.num_nodes, base_logits.shape[1])
 
     # Label access happens only after all deployment predictions are complete.

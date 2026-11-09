@@ -1,0 +1,26 @@
+{
+  "protocol": "campaign-operational-source-snapshot-v1",
+  "source_directory": "workspace/compute-tools",
+  "files_sha256": {
+    "configure_kaggle_auth.py": "7abbb4624c56533abdb25ee0a5871703e58d8f48af9e432ca7f0d2d350965002",
+    "continue_research.py": "a2f9d3222308bfd851d57f75765249c79d7f58ca86ac8b4437164f244ebb5f65",
+    "diagnose_real_audit.py": "99168109e93f79113287776434754622e254dc6e31921ec21d37edc729f6b75b",
+    "evaluate_final_shard.py": "25c8f7333fca09e76e2bcadb4c302f60689cce83cff42648c90c9279e973f900",
+    "gcn_study_driver.py": "9e736dddb04c7f7e1fcec1c497f1a32abc1fc851e48658024af3242d8a534042",
+    "merge_final_shards.py": "314ca1ce10348fd53d77f4af65351ed7755ac5a70a46446687060f2671203653",
+    "plot_design_history.py": "cf2f5935cafa8c8e18d042d85d8d22be415c207f1088cf019f58bceea0989304",
+    "prepare_kaggle_bank_job.py": "ac2b58af5209ec5fe2db8cc00be34d5e10907934c16ec50edf581ae15878a9cf",
+    "prepare_kaggle_validation.py": "b62ba9c93ab2841e589f9cf561ef3eeae9e56b127a664d45f075da394ae387de",
+    "prepare_research_stage.py": "f67654fcf7bd09f39688ac886e6419903017862540fced6f7647d1a39bc16b8e",
+    "replay_real_study.py": "0a0146432a1bd25faed04b6a21f7d1da16e84086b930cb880c0c5d7a8598d312",
+    "research_stage_driver.py": "4db76a42de838ea212066b75f2da5befd366e1ed1afa83f063b656fe04ba05bc",
+    "summarize_bank_progress.py": "c3f577c5f993fe41fad402002e5cc1e442bc868868574b27e5fa548f4f03a5de",
+    "summarize_verified_design.py": "12f0972166da0c72edd0ea553fbec18204c634b9119860edd62d9e3afc219661",
+    "test_continuation_queue.py": "546edfd8b11565788b1e03fd518ae3ea72e923daaf23bc3c1165d6ec0c4feee8",
+    "test_final_shard.py": "a6101dd885d65dbce83a1bf0e1a6cc217a8e52875d9029c6040a9cf632a14dc3",
+    "verify_kaggle_outputs.py": "a5ae22a521bc3f6906f6b44cd5c87198fea615e3a5ec7db651e0f423d5513918",
+    "verify_study_outputs.py": "c10e0234a24587eb50c5e414f39b092d5cf18960d4982c4477fa2196f9ee0dc1"
+  },
+  "scientific_code_sha256": "26a40737a7c86e6a0d6d117e4ac5b2ee5c8fc6b21b96c81a3ac0c14dd3fbea56",
+  "running_workspace_files_unchanged": true
+}

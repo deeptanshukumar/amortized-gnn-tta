@@ -1,0 +1,126 @@
+{
+  "protocol": "arxiv_temporal-formal-bank-v1",
+  "architectures": [
+    "gcn",
+    "gat",
+    "graphsage"
+  ],
+  "direction": "undirected",
+  "pool_seed": 20281109,
+  "source_epochs": 200,
+  "source_patience": 30,
+  "hidden_channels": 32,
+  "threads": 1,
+  "device": "cuda",
+  "generator_seeds": [
+    202801,
+    202802,
+    202803
+  ],
+  "generator_epochs": 5,
+  "generator_lr": 0.001,
+  "teacher_steps": 30,
+  "teacher_lr": 0.01,
+  "delta_l2": 0.001,
+  "lora_rank": 4,
+  "diffusion_steps": 50,
+  "sampling_steps": 10,
+  "candidate_seeds": [
+    42,
+    43,
+    44,
+    45,
+    46
+  ],
+  "dataset": "ogbn-arxiv-temporal",
+  "bank_kind": "formal-real-v1",
+  "group_split_seeds": [
+    20281201,
+    20281202,
+    20281203,
+    20281204,
+    20281205
+  ],
+  "group_initialization_seeds": [
+    [
+      31,
+      32,
+      33,
+      34,
+      35,
+      36
+    ],
+    [
+      37,
+      38,
+      39,
+      40,
+      41,
+      42
+    ],
+    [
+      43,
+      44,
+      45,
+      46,
+      47,
+      48
+    ],
+    [
+      49,
+      50,
+      51,
+      52,
+      53,
+      54
+    ],
+    [
+      55,
+      56,
+      57,
+      58,
+      59,
+      60
+    ]
+  ],
+  "source_learning_rate": 0.01,
+  "source_weight_decay": 0.0005,
+  "checkpoint_seeds": {
+    "meta_train": [
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48
+    ],
+    "validation": [
+      49,
+      50,
+      51,
+      52,
+      53,
+      54
+    ],
+    "test": [
+      55,
+      56,
+      57,
+      58,
+      59,
+      60
+    ]
+  }
+}

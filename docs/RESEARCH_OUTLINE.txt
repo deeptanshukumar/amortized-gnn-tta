@@ -1,0 +1,485 @@
+Project Title: Amortized Weight Adaptation for GNNs under Distribution Shifts
+
+
+
+
+Project Description
+We want to adapt a pretrained GNN when it is used on a new graph whose distribution is different from the data it was trained on. Normally, one way to handle this is to fine-tune or adapt the model on the new target graph. The problem is that this usually requires running some optimization at test time.
+
+
+We want to train a generator beforehand that learns how GNNs should be adapted under different kinds of distribution shifts.
+
+
+When we later receive  a pretrained GNN, an unlabeled target graph, and information about how the pretrained GNN behaves on that graph, the generator should directly produce a small adaptation for the GNN.
+
+
+So instead of:
+Target graph → run several optimization steps → adapted GNN
+
+
+We want:
+Target graph + pretrained GNN → generator → adapted GNN
+
+
+The goal is to make adaptation much faster because no gradient-based fine-tuning is required on the target graph.
+
+
+
+
+What graph task are we working on?
+We will focus on node classification. We assume that we have a pretrained GNN trained on some source graph or domain and later receive an unlabeled target graph whose distribution is different.
+
+
+For example, the target graph may differ in:
+- node features,
+- connectivity,
+- degree patterns,
+- homophily,
+- or multiple properties at the same time.
+
+
+We may also want to focus on other graph tasks like graph classification and link prediction for the final research paper. But for the course project, node classification should be good enough.
+
+
+
+
+
+
+
+
+How do we define distribution shift?
+There are two useful ways of thinking about graph distribution shifts. In a large graph, we can observe changes in things such as:
+* node-feature distributions,
+* degree distributions,
+* neighborhood structures,
+* connectivity patterns,
+* homophily,
+* model embeddings and predictions.
+
+
+A graph can also be thought of as a sample from some underlying graph-generating distribution. Different domains can therefore produce graphs with different statistical properties.
+
+
+For this project, we do not need to explicitly estimate the complete probability distribution of a graph. Instead, we care about whether the source and target environments differ enough that the pretrained GNN starts performing worse.
+
+
+
+
+What information should we feed the generator at test time?
+The target graph is unlabeled, but that does not mean we feed only the raw graph, we should also feed how the pretrained GNN performs on the target graph, as weight updates can affect different pretrained GNNs differently.
+
+
+The most natural thing to feed is the weights of the pretrained GNN.
+
+
+We can also run the pretrained GNN on the target graph and obtain its hidden representations. These representations tell us how the current model is interpreting the target graph.
+
+
+We can also use the model's predicted probabilities. From these, we can calculate things such as predictive uncertainty (entropy).
+
+
+Therefore, we should test how different combinations of these help the generator. We should try:
+* Target graph only
+* Target graph + hidden representation
+* Target graph + predictive uncertainty
+* Target graph + pretrained weights
+* Target graph + hidden representation + predictive uncertainty
+* Target graph + predictive uncertainty + pretrained weights
+* Target graph + pretrained weights + hidden representation
+* Target graph + hidden representation + predictive uncertainty + pretrained weights
+
+
+
+
+
+
+
+
+Should we update every single parameter?
+We want to keep this method parameter efficient, so most of the parameters of the  pretrained model should remain frozen. The generator should produce a much smaller target-specific adaptation. We should test 2 main approaches to this.
+
+
+We can only modify the final classifier and this is the simplest form of adaptation. We can also do low-rank weight adaptation where for a pretrained weight matrix of order d x d, we generate matrix A of order d x r and matrix B of order r x d, where r << d and the adapted weight becomes W_new = W_old + AB. This directly changes the internal GNN computation while generating far fewer parameters than replacing the full weight matrix.
+
+
+Another interesting approach is to modify the hidden representation, but this is not the same as weight adaptation, so perhaps for the course project we shouldn’t test this, but for the final research paper, we probably should.
+
+
+
+
+Which pretrained GNNs should we use?
+We should evaluate our approach with the 3 most used GNNs, i.e, GCN, GraphSAGE, and GAT. However for the project we should frame this as 3 separate experiments where we build 3 independent generators specifically for GCN, GraphSAGE, and GAT respectively.
+
+
+Developing a cross architecture aware generator is probably too ambitious for the limited time we have as it increases the number of problems we have to solve by a lot, however we could explore this approach for the final research paper or any other future research. We will treat this as a limitation for now.
+
+
+
+
+How do we get the generator to generalize to a specific architecture?
+For each architecture we can create many independently trained GNN instances like . The generator will train on these models and later be evaluated on unseen pretrained models.
+
+
+
+
+How will we create different pretrained models?
+For each architecture and source dataset, we will train multiple independent models, but we risk the weights becoming very similar. So the main sources of variation should be:
+* Different random seeds: this will lead to different initializations of the weights and will lead to variance in our created dataset
+* Different labelled source splits: Different models will also be trained using different sets of  labelled source nodes
+
+
+For the experiments we should keep the number of layers, hidden dimensions, and architecture fixed. We could tackle this once we validate our solution. Additionally we should train 30 models per architecture and source dataset. A simple construction could be 5 labelled source splits x 6 independent training seeds.
+
+
+What kind of distribution shifts will we use?
+We want 3 broad types:
+* Attribute Shift: node features change while graph structure remains
+* Structural Shift: the connectivity of the graph changes
+* Combined Shift: both node features and connectivity changes
+
+
+
+
+Controlled Shifts and Natural Shifts
+We will use both, but they serve different purposes.
+
+
+Controlled shifts let us know exactly what changed. They are useful for:
+* training the generator,
+* varying shift severity,
+* debugging,
+* controlled experiments,
+* ablations.
+
+
+Whenever possible, we should use controlled-shift datasets and protocols that are already established in graph distribution-shift / graph TTA literature. We should avoid inventing our own benchmark if an accepted benchmark already exists.
+
+
+We also need environments where the shift occurred naturally rather than because we artificially modified the graph. These experiments are important because otherwise someone could argue that the generator simply learned our corruption process. At least one natural-shift benchmark should therefore be included in the final experimental setup. Before creating our own dataset, shift, metric or evaluation split, check what recent graph adaptation papers already use. We want our experiments to reflect the field.
+
+
+That means following established work for:
+* datasets,
+* source/target splits,
+* shift generation,
+* GNN configurations,
+* evaluation metrics,
+* baseline implementations,
+* reporting conventions.
+
+
+
+
+What does an unseen target mean?
+There are several levels of generalization. For all proper test cases, the exact target graph or environment should not have been used to train the generator.
+
+
+We will mainly evaluate:
+* Unseen target / shift realization: The exact target environment is new.
+* Unseen shift severity: The generator may have seen a type of shift during meta-training but not this particular severity.
+* Unseen shift family: The generator is tested on a type of shift it did not encounter during meta-training. This is much harder. We will treat this as an additional generalization experiment rather than making the entire project depend on succeeding here.
+
+
+
+
+How is the generator trained?
+During meta-training, we are allowed to use labels from training environments. We repeatedly create episodes containing a pretrained GNN, a shifted graph or environment, the pretrained model's behaviour on that environment.
+
+
+The generator produces an adaptation and we then evaluate the adapted GNN using the labels of that meta-training environment and use the loss to train the generator.
+
+
+This means the generator learns from previous examples of how models should adapt.
+
+
+
+
+We must control for the advantage of meta-training
+Because our generator has seen labelled shifted environments during meta-training, we cannot simply compare it to methods that never received that information and conclude that generation itself caused the improvement.
+
+
+One important baseline will be something like: Model trained using the same diverse meta-training environments, but without target-specific generated weight adaptation.
+
+
+This lets us separate the benefit from training on many shifts from the benefit from actually generating a different adaptation for each target.
+
+
+
+
+We should compare generated vs optimized adaptation
+Eventually, we should compare iteratively optimized PEFT against our generated PEFT
+using the same kind of parameter-efficient update.
+
+
+For example, both could use the same low-rank adaptation structure.The difference is that one performs optimization at test time, while ours predicts the adaptation directly.
+
+
+The iterative method must use only information permitted by its evaluation setting, such as an unlabeled target objective. Target-label fine-tuning can be reported separately as an oracle upper bound, but it is not a fair unlabeled test-time baseline.
+
+
+This comparison is important because the main practical reason for amortization is to remove repeated target-time optimization.
+
+
+An ideal result would be that generated adaptation achieves close to iterative adaptation performance while requiring zero target-time gradient updates.
+
+
+We should also measure actual adaptation latency, inference cost and memory use rather than assuming that eliminating optimization automatically makes the overall system faster.
+
+
+
+
+Limitations of our Project
+* Not a cross architecture aware generator
+* Focuses on node classification and not other graph tasks
+* Keeps everything other than architecture fixed
+* Focuses on Attribute and Structural Shift and not on Concept Shift
+
+
+
+
+
+
+
+
+
+
+
+
+1. Common Interfaces
+Build common interfaces so that we can change the dataset, GNN architectures, adaptation method, or generator without having to rewrite our training code.
+
+
+
+
+2. Preparing source datasets for evaluation
+Prepare and inspect datasets (we can use CSBM, Twitch-E, OGB-Arxiv).
+
+
+Implement a common dataset loader. The loader should handle dataset-specific preprocessing and return graphs in the same format. It should also handle source/target environment selection and preserve the official benchmark splits.
+
+
+Test the loader to make sure it’s working.
+
+
+
+
+3. Creating the weight bank for the pretrained GNNs
+Implement GCN, GraphSAGE, and GAT using the common GNN interface.
+
+
+For each architecture and source dataset, train 30 pretrained models using 5 different labelled source splits, and 6 independent random seeds per split.
+
+
+Save their weights and training configurations so that they can be reused.
+
+
+Divide each weight bank into 18 meta training, 6 validation, and 6 test models. Before using them to train the generator, compare their weights, predictions, and hidden representations to make sure they are different, if not, we have to change how we construct the weight bank.
+
+
+
+
+4. Implement and evaluate parameter efficient adaptation
+Implement the two main methods, i.e, head only adaptation, and low rank adaptation. Both methods should work across all three GNN architectures through the same adaptation interface.
+
+
+Take pretrained models, evaluate them on shifted graphs, then optimize small adaptations and evaluate them again.
+
+
+We should test both supervised adaptation on development environments (to estimate how much performance can be recovered) and unlabeled iterative adaptation (as a fair test-time baseline).
+
+
+
+
+5. Training the hypernetwork
+Start with a generator that receives target graph information, hidden representations and predictions, and produces a low-rank adaptation. Train it directly using classification loss on meta-training environments.
+
+
+Then add an encoder for pretrained GNN weights so the generator can take the particular weight instance into account.
+
+
+Test on unseen pretrained GNNs and target environments.
+
+
+
+
+6. Diffusion and Flow Matching
+For each permitted meta-training GNN–target pair, optimize a low-rank adaptation using the available training labels. Save the pretrained weights, target information and optimized adaptation. We can repeat the optimization with different initializations to obtain multiple successful adaptations for a pair. This dataset will be shared by the diffusion and flow-matching models.
+
+
+Train both methods to generate low rank updates conditioned on the pretrained model and target environment. Use the same evaluation framework as before.
+
+
+
+
+7. Run the main experiments
+
+
+
+
+Experiments to conduct
+We’ll run experiments to answer these questions:
+* What information should we give our generator?
+* Should we update only the last GNN layer or make changes across both layers?
+* Does diffusion provide an advantage over a simple hypernetwork?
+* Does our method work on unfamiliar models and graph changes?
+* Does it work on graphs with natural shifts?
+* When does it fail, and how much time does it save?
+Generators we will use:
+* Hypernetwork: Directly predicts one weight update.
+* Diffusion: Generates several candidate updates.
+For diffusion, we’ll initially generate five candidates. We’ll average their predicted probabilities on the same unlabeled target nodes, then select the candidate whose predictions are closest to that average.
+This selection uses no target labels. Agreement does not guarantee correctness, since candidates can share mistakes. We’ll keep the candidate count and selection rule fixed during final testing.
+Experiment 1: Inputs to the generator
+The question we will answer here is: what information does our generator need?
+Setup:
+* Dataset: ogbn-arxiv.
+* Model: GCN.
+* Generator: Hypernetwork.
+* Use LoRA updates across both GNN layers for all four versions.
+* Changes to the target graph will include feature masking, edge removal, and both.
+* Keep the training budget and update settings the same across versions.
+We’ll train four generator versions:
+* Version A: Target graph only.
+* Version B: Target graph + hidden representation.
+* Version C: Target graph + hidden representation + predictive uncertainty.
+* Version D: Target graph + hidden representation + predictive uncertainty + pretrained weights.
+Here, “target graph” means summaries of its features and connections. Hidden representations and predictive uncertainty come from the original pretrained GNN. Pretrained weights will be provided through a compact description.
+All inputs will be computed without target labels.
+This will show whether each additional input helps in this order. We’ll choose the input configuration using validation results. We won’t repeat every input combination with diffusion.
+Experiment 2: Head-only updates versus broader weight adaptation
+The question we will answer here is: where should our generator make changes?
+Setup:
+* Dataset: ogbn-arxiv.
+* Model: GCN.
+* Generator: Hypernetwork.
+* Use the input configuration selected in Experiment 1.
+* Use the same feature-only, edge-only, and combined changes.
+* Head-only adaptation will update the last GNN layer.
+* Broader adaptation will use LoRA across both GNN layers.
+We should compare:
+* Original pretrained GNN.
+* Iterative head-only adaptation.
+* Generated head-only adaptation.
+* Iterative LoRA adaptation.
+* Generated LoRA adaptation.
+This will help us choose the update type using validation results. We’ll also report how many parameters each method changes.
+If head-only updates work better, we’ll briefly compare input versions A and D with head-only updates. If this substantially changes the input ranking, we’ll revisit versions B and C.
+Experiment 3: Hypernetwork versus diffusion
+The question we will answer here is: does diffusion improve adaptation compared with a simple hypernetwork?
+Setup:
+* Dataset: ogbn-arxiv.
+* Start with GCN, then repeat with GraphSAGE and GAT.
+* Train separate generators for each architecture.
+* Use the selected generator inputs.
+* Use the same allowed update sites for the hypernetwork and diffusion.
+* Check the head-only versus LoRA choice on validation data for each architecture.
+* Test feature-only, edge-only, and combined changes.
+We should compare:
+* Original pretrained GNN.
+* Iterative adaptation.
+* Hypernetwork-generated adaptation.
+* Diffusion-generated adaptation using our fixed candidate-agreement rule.
+* A model trained on the same practice shifts, then kept fixed during testing.
+* One compatible existing graph-specific adaptation method.
+Both generators should receive comparable training data. If diffusion learns from saved adaptation updates, we should also give the hypernetwork a comparable teacher-trained version.
+This experiment will show whether diffusion’s additional generation work produces better accuracy or more reliable adaptation.
+Experiment 4: Generalization to unfamiliar conditions
+The question we will answer here is: can our generators handle conditions they haven’t seen during training?
+Setup:
+* Dataset: ogbn-arxiv.
+* Models: GCN, GraphSAGE, and GAT.
+* Reuse the trained hypernetwork and diffusion generators from Experiment 3.
+We’ll test on:
+* Pretrained GNN checkpoints excluded from generator training.
+* New random examples of familiar graph changes.
+* More severe changes than those used during training.
+* One new way of changing features and one new way of changing edges.
+This will show whether the generators learned reusable adaptation rules rather than memorizing their training cases.
+Diffusion will use the same candidate count and agreement rule throughout.
+Experiment 5: Naturally occurring shifts
+The question we will answer here is: does our method work when graph changes happen naturally?
+Setup:
+* Datasets: ogbn-arxiv and MAG country graphs.
+* Models: GCN, GraphSAGE, and GAT.
+* For Arxiv, pretrain on older papers and test adaptation on newer papers.
+* For MAG, pretrain on one country’s graph and test adaptation on other countries.
+* Use separate periods or countries for validation and final testing.
+* Train separate MAG generators using the selected design.
+We should compare:
+* Original pretrained GNN.
+* Iterative adaptation.
+* Hypernetwork-generated adaptation.
+* Diffusion-generated adaptation.
+These natural shifts may involve features, connections, and class proportions changing together. We won’t describe them as isolated feature-only or edge-only shifts.
+Training separate MAG generators tests whether our method works on another dataset. It does not test whether the same Arxiv generator transfers directly to MAG.
+Experiment 6: Failure diagnosis and efficiency
+The questions we will answer here are: when do our generators fail, and are generated updates worth the cost?
+Part A: Understand failures
+Setup:
+* Use a small selection of ogbn-arxiv development cases.
+* Start with GCN.
+* Include feature-only, edge-only, and combined changes.
+* Compare generated updates with supervised head-only, LoRA, and full-model adaptation.
+We’ll temporarily use labels for these diagnostic comparisons only.
+If supervised adaptation at the same update sites works but our generator fails, this suggests a weakness in the generator or its inputs. If only full-model adaptation works, our allowed updates may be too limited. If neither works, the cause remains unresolved.
+These diagnostic labels will not be used to select diffusion candidates during deployment.
+Part B: Measure efficiency
+Reuse the main Arxiv and MAG runs to measure:
+* Accuracy after adaptation.
+* Total time to compute generator inputs and generate/apply an update.
+* For diffusion, the time to generate and evaluate all candidates and select one.
+* Time taken by iterative adaptation.
+* Memory usage.
+* How often adaptation makes the original model worse.
+We’ll report generator training and adaptation-example collection costs separately.
+Rules we’ll follow in all experiments:
+* Keep edges unchanged when modifying only features.
+* Keep raw features unchanged when modifying only edges.
+* Include unchanged graphs to check whether adaptation hurts when no additional perturbation is applied.
+* Use identical starting checkpoints when comparing adaptation methods.
+* Train generators on some pretrained checkpoints and evaluate on held-out checkpoints.
+* Use validation data to choose inputs, update types, and other settings.
+* Keep final-test labels out of training, adaptation, and candidate selection.
+* Run the final generator configurations with three training seeds and report the variation.
+* Keep diffusion’s candidate count and agreement rule fixed during final evaluation.
+The main results will focus on real graphs. CSBM and flow matching can remain optional extensions.
+
+
+Hypernetwork generator pipeline
+
+
+* Take pretrained gnn and pass in shifted graph through it. Reason: the MLP needs a fixed input vector size so we cant pass in the entire shifted graph to the mlp.
+* For each of the 18 pretrained graphs, pass in all types of shifts into the graph and maybe some combinations of multiple shifts as well. This gives us multiple fixed vectors
+* Pass in each vector with the pretrained gnn to predict the weight delta for the graph.
+* Repeat the process for all the pretrained gnns
+
+
+Diffusion generator pipeline
+* Input to the model is the pretrained gnn and the distributed shifted graph. These things are used as the conditioning input to denoise gaussian samples into a weight update.
+* The weights are then updated and the shifted graph is passed through the new gnn
+
+
+
+
+Initial findings (with csbm generated graphs)
+
+
+* Graphsage sees a consisten 1-2% accuracy improvement, while gcn sees 0-1%
+* Gat doesnt improve at all
+* Gpt says due to the decoupledness of graphsage it does comparatively better
+
+
+* In diffusion all three of them do mid (around 0-1% increase) gat is usually negative tho
+
+
+In both cases, in csbm graphs at least, the speedup seen was around 45x over regular fine tuning. However this may reduce when tested on a real graph dataset as those are much larger
+
+
+Another thing was that when i removed the distribution shifted graph as an input to the generators during testing, it still had the same accuracy increase so i think just giving the model a graph descriptor is not enough. I tried it with different descriptors suggested by gpt, but they all perform similar.
+
+
+
+
+
+
+I changed the generator to generate weights for both layers of the gnns, and it did better (around 2-3% accuracy increase with hypernetworks). Another interesting thing is generating weights for the first layer ONLY actually does better than generating only for the classifier and for both together

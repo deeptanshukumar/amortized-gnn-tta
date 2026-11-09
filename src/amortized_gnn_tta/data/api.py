@@ -26,6 +26,7 @@ class GraphRecord:
     splits: dict[str, Tensor]
     role: EnvironmentRole
     metadata: dict[str, Any] = field(default_factory=dict)
+    split_policy: Literal["complete", "partial"] = "complete"
 
 
 def graph_fingerprint(graph: Data) -> str:
@@ -95,10 +96,13 @@ def validate_record(record: GraphRecord, num_classes: int) -> None:
         tensors.append(indices)
     if any(t.device.type != "cpu" for t in tensors):
         raise ValueError("Dataset storage must remain on CPU; move model inputs explicitly")
+    if record.split_policy not in {"complete", "partial"}:
+        raise ValueError("Unknown split coverage policy")
+    covered = bool(seen.all()) or record.split_policy == "partial"
     if record.role in {"source_train", "meta_train"}:
-        if not {"train", "val", "test"} <= record.splits.keys() or not seen.all():
+        if not {"train", "val", "test"} <= record.splits.keys() or not covered:
             raise ValueError("Training environments require covering train/val/test splits")
-    elif set(record.splits) != {"eval"} or not seen.all():
+    elif set(record.splits) != {"eval"} or not covered:
         raise ValueError("Validation/target environments require an eval-only covering split")
 
 

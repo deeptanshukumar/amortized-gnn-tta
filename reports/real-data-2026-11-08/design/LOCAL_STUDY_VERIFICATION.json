@@ -1,0 +1,90 @@
+{
+  "status": "complete",
+  "mode": "design",
+  "dataset": "ogbn-arxiv",
+  "architecture_shard": null,
+  "final_cases": null,
+  "diagnostic_replay_cases": null,
+  "study_source_sha256": "26a40737a7c86e6a0d6d117e4ac5b2ee5c8fc6b21b96c81a3ac0c14dd3fbea56",
+  "verified_files": 541,
+  "fits": [
+    {
+      "name": "gcn-A-head-hypernetwork-202801",
+      "architecture": "gcn",
+      "conditioning": "A",
+      "update": "head",
+      "method": "hypernetwork",
+      "seed": 202801,
+      "accuracy": 0.6289073299040077,
+      "selected_epoch": 0,
+      "fit_seconds": 355.59229543499987,
+      "records": 42
+    },
+    {
+      "name": "gcn-A-lora-hypernetwork-202801",
+      "architecture": "gcn",
+      "conditioning": "A",
+      "update": "lora",
+      "method": "hypernetwork",
+      "seed": 202801,
+      "accuracy": 0.6289073299040077,
+      "selected_epoch": 0,
+      "fit_seconds": 351.615401591,
+      "records": 42
+    },
+    {
+      "name": "gcn-B-lora-hypernetwork-202801",
+      "architecture": "gcn",
+      "conditioning": "B",
+      "update": "lora",
+      "method": "hypernetwork",
+      "seed": 202801,
+      "accuracy": 0.6289073299040077,
+      "selected_epoch": 0,
+      "fit_seconds": 399.957337123,
+      "records": 42
+    },
+    {
+      "name": "gcn-C-lora-hypernetwork-202801",
+      "architecture": "gcn",
+      "conditioning": "C",
+      "update": "lora",
+      "method": "hypernetwork",
+      "seed": 202801,
+      "accuracy": 0.6289073299040077,
+      "selected_epoch": 0,
+      "fit_seconds": 418.221386014,
+      "records": 42
+    },
+    {
+      "name": "gcn-D-head-hypernetwork-202801",
+      "architecture": "gcn",
+      "conditioning": "D",
+      "update": "head",
+      "method": "hypernetwork",
+      "seed": 202801,
+      "accuracy": 0.6289073299040077,
+      "selected_epoch": 0,
+      "fit_seconds": 413.29844012500007,
+      "records": 42
+    },
+    {
+      "name": "gcn-D-lora-hypernetwork-202801",
+      "architecture": "gcn",
+      "conditioning": "D",
+      "update": "lora",
+      "method": "hypernetwork",
+      "seed": 202801,
+      "accuracy": 0.6289073299040077,
+      "selected_epoch": 0,
+      "fit_seconds": 421.428838433,
+      "records": 42
+    }
+  ],
+  "frozen_design": false,
+  "frozen_design_sha256": null,
+  "independent_replay_cases": 420,
+  "prediction_class_differences": 0,
+  "final_test_scored": false,
+  "study_relative_path": "evidence/controlled-study"
+}

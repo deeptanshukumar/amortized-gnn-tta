@@ -2794,3 +2794,159 @@ Review/interview practice: explain why a 24× LoRA speedup can coexist with a 4�
 Second-opinion prompt:
 
 > We compare two-layer GCN/GAT/GraphSAGE on CSBM (5,000 nodes, 2,000 features, two classes). Hypernetwork and diffusion generate head deltas or [dA,B] LoRA factors around seeded random A0, with ranks 4/1 and frozen biases/attention in LoRA. The same 65-entry compact descriptor is used without extra raw weights. Main validation uses one excluded checkpoint/graph lineage per architecture, eleven shifted cases plus control and three generator seeds; no final-target labels are accessed. Hypernetwork has 180 CE updates; diffusion has 15 teacher-factor-MSE updates plus 1,080 supervised meta-training teacher steps, then one ten-step DDIM candidate. Hyper-LoRA accuracy is 78.86/78.14/83.84%, versus frozen 77.25/77.45/79.32% and iterative LoRA 78.54/79.39/81.92%. Complete CPU speedups are 24.30/25.75/18.09×. A separate same-model/graph development diagnostic uses seen meta-training pairs, saved train/validation masks for supervised fitting and test-node scoring afterward; GraphSAGE hyper-LoRA is 86.09% and fixed-budget supervised full fitting 85.07%. Explain which comparisons are valid, what they cannot establish, why full fitting is not a proven ceiling, what budget/teacher/constant-update controls are missing, and what offline costs a full amortization claim must include. Do not invent additional results.
+
+## Real graphs: what changes in our Arxiv and MAG work?
+
+**Current status:** the real-data software is being tested and the first Arxiv source models are training. The earlier CSBM accuracy/speedup tables do not become Arxiv results just because the same code can load Arxiv. A completed tiny test is evidence about software behavior, not research performance.
+
+### What exactly enters the model?
+
+For Arxiv, each **node** is a paper. Each stored **edge** is a directed citation connection. A **feature** is one numeric input describing a paper; the official dataset supplies 128 numbers per paper. The **label** is its research-subject class, one of 40 categories.
+
+| Object | Shape on the raw official graph | Plain-English meaning |
+|---|---|---|
+| `x` | 169,343 × 128 | One feature row for every paper |
+| `edge_index` | 2 × 1,166,243 | Each column identifies the two endpoints of one stored citation |
+| Labels, stored separately | 169,343 | Correct subject classes, available only under the experiment's rules |
+| Paper years, stored separately | 169,343 | Publication years used to define the time protocol |
+| Official split indices | 90,941 / 29,799 / 48,603 | Paper IDs whose labels belong to training / validation / final evaluation |
+
+A tensor is a table of numbers with a defined shape. An index is a position in that table. A mask or an index list selects rows; it does not automatically delete the other papers from the graph.
+
+Our two-layer GNN receives `model(x, edge_index)` and returns one row of 40 **logits** per paper. A logit is a raw class score. **Softmax** converts the scores into probabilities that sum to one. Training uses only selected rows and their permitted labels. The other rows may help **message passing**: the calculation in which a paper combines information from its neighbors.
+
+### Full graph or only older papers? These are different experiments
+
+**Transductive** means that the graph containing evaluation nodes is visible while learning, but their labels stay hidden. In controlled Experiments 1–4, every paper's features and connections can participate in message passing. This is explicitly allowed by our chosen full-graph protocol; it does not permit using final subject labels.
+
+**Temporal arrival** means newer papers are introduced later. Experiment 5 uses a smaller graph at each point in time. An **induced graph** keeps the selected nodes and only edges whose two endpoints are selected. That changes message passing, so we must not describe its accuracy as the same benchmark protocol as full-graph evaluation.
+
+| Role | Controlled Arxiv | Approved natural temporal Arxiv |
+|---|---|---|
+| Source-model fitting | Part of pre-2018 labels; full graph visible | Papers through 2014 only |
+| Generator practice | Disjoint part of pre-2018 labels, on controlled corruptions | 2015, 2016 and 2017 arrivals |
+| Validation | 2018 subjects | 2018 arrivals, graph through 2018 |
+| Final evaluation | Official 2019–2020 subjects, full graph visible | 2019–2020 arrivals, graph through 2020 |
+
+A **source model** is the original GNN before adaptation. A **generator** is a learned network that predicts how to change that GNN. These need separate labeled training pools; otherwise an apparent adaptation improvement might partly come from reusing the source model's own training labels.
+
+The current controlled development allocation assigns half of pre-2018 labels to the source pool and half to the generator pool. We further reserve inner stopping and diagnostic rows inside each permitted pool. These are starting choices, not evidence that 50% or the chosen training budget is best. Final evaluation rows never help create those pools.
+
+### What does “feature-only shift” guarantee?
+
+A **shift** is a change to the data seen by a model. A **controlled intervention** is a change we deliberately construct, so that we know which input changed.
+
+| Case | Features | Citation edges |
+|---|---|---|
+| Unchanged control | Original | Original |
+| Feature masking | Random entries replaced by zero | Exactly original |
+| Edge removal | Exactly original | Selected edges removed |
+| Combined | Exactly the feature-only draw | Exactly the edge-only draw |
+
+A **seed** is a recorded integer that controls a random-number generator. Separate feature and edge seeds let the combined case reuse the same changes as the isolated cases. Repeating independent random draws would not guarantee identical features or edges.
+
+The loader preserves native directed edges. Our configured symmetric view adds reverse connections and merges duplicates explicitly. It contains 2,315,598 stored entries; this is not exactly twice the original count because some reverse connections already exist. For that view, removing an edge pair removes both directions together. **Self-loops** connect a node to itself; the GNN layers handle their own documented self-loop behavior, rather than the common loader adding them again.
+
+### Why five diffusion updates, and what does selection do?
+
+Diffusion can sample several candidate weight updates. We use five fixed sampling seeds. Each candidate predicts probabilities for the same unlabeled evaluation-node pool. We average those probabilities, then select the candidate with the smallest average squared difference from that mean. This difference is **mean squared error**, or MSE.
+
+Example: suppose the five candidates predict a positive-class probability of .7, .72, .68, .2 and .71 for one node. Their mean is .602. The candidate closest to .602 is .68. We deploy that candidate's actual update. We do not deploy the average prediction as an ensemble. Real selection averages over many nodes and all classes, not this one-number example.
+
+Agreement is not correctness. All five candidates can share a wrong prediction. The rule never looks at correct target labels. Exact score ties select the earliest candidate. Timing must include creating and evaluating all five candidates, not just the selected one.
+
+### What makes the generator-family comparison fairer?
+
+A **teacher update** is an update obtained by fitting on permitted practice labels. **Distillation** means training another model to imitate that teacher. Our diffusion model learns from saved teacher updates. Therefore we also include a teacher-trained hypernetwork that gets the same teacher records. The original hypernetwork, trained directly through classification loss, remains a separate method.
+
+LoRA represents an update using two smaller matrices. Different matrix pairs can describe the same final weight change, so matching their individual numbers is not the same as matching predictions. We preserve the chosen factor initialization, save generated factors and their effective weight changes, and replay the latter to verify predictions. Arxiv uses 40 outputs, so we explicitly configure LoRA rank 4 in both layers rather than blindly inheriting the binary CSBM setup.
+
+A **fixed practice-trained GNN** learns offline on practice shifts and then stops changing at deployment. This asks whether offline training alone is enough. Our **GTrans feature-only variant** instead changes input features at test time using unlabeled agreement/contrastive information while freezing the GNN weights. It is a graph-specific control inspired by a published method; it is not the complete published joint feature-and-edge algorithm. Its feature changes must not be called weight changes.
+
+### MAG country graphs: which dataset do we mean?
+
+Native **ogbn-mag** is a graph with several kinds of nodes and edges. Such a graph is called **heterogeneous**. Our selected country benchmark is different: Pair-Align supplies separate paper-only country graphs, with 128 features and 20 venue groups. A **venue** is the journal or conference where a paper appeared. The last group combines less frequent venues.
+
+Our development country assignment is US for source models, CN/DE for generator practice, FR for validation, and JP/RU for final testing. These artifacts have no official node masks, so our seeded practice/source node splits are explicitly a new experimental choice. We train separate MAG generators. Success would show the method can work on another dataset; it would not show that the same Arxiv generator transfers to MAG without training.
+
+### Questions to practice explaining
+
+1. Why can a model use a 2019 paper's features in the controlled experiment but not in the 2014 source graph of the temporal experiment?
+2. Why do we need separate source and generator label pools?
+3. Why is removing reverse edges together necessary in a symmetric view?
+4. Why does five-candidate agreement need no target labels, yet still sometimes choose a bad update?
+5. Why is a teacher-trained hypernetwork a useful diffusion control?
+6. Why are published artifact checksums, saved splits and replayed deltas different kinds of evidence?
+7. Why do sampled process-memory numbers include more than the model's own tensors?
+8. Why do hitting epoch 200 and passing tests not prove that a source GNN is optimally trained?
+
+**Second-opinion prompt to paste into another chat:**
+
+> I am studying amortized GNN test-time adaptation. We use ogbn-arxiv with 169,343 papers, 128 features, 40 subject classes and the official pre-2018/2018/2019–2020 label windows. Controlled experiments retain the full graph, use disjoint source/generator label pools within pre-2018 papers, and construct unchanged, feature-masked, edge-removed and paired combined versions without labels. We compare generated head/LoRA updates, iterative unlabeled adaptation, a fixed practice-trained GNN and a declared GTrans feature-only variant. Diffusion generates five updates and selects one by minimum probability-MSE distance to their mean over a fixed unlabeled pool. A teacher-trained hypernetwork receives the same practice teacher updates as diffusion. A separate temporal experiment uses source through 2014, practice arrivals 2015–2017, validation 2018 and final arrivals 2019–2020. Pair-Align MAG countries use separately trained generators and a declared country partition. Explain the data flow, label boundaries, fair comparisons, possible leakage, limitations of agreement selection, and required timing/offline costs in simple English. Treat these as protocol choices, not claims that experiments succeeded. Do not invent numerical results.
+
+### A first real Arxiv observation, with the right interpretation
+
+The frozen GCN validation checkpoint scored **64.90%** on unchanged 2018 papers and **59.43%** when 40% feature-entry masking and 40% edge-pair removal were combined. The difference is **5.46 percentage points**. We checked these scores against OGB's official evaluator. No generator was used, and final 2019–2020 labels were not scored.
+
+This is an observed loss under our particular intervention, not a promise that adaptation can recover all of it. Masking can destroy useful information. A generator may recover some accuracy, do nothing, or make it worse; the later experiments test that. Comparing these numbers directly with our earlier synthetic CSBM accuracy would mix different datasets, class counts and protocols.
+
+The filename `gcn-validation-34` describes its **checkpoint role** in the generator study. This GNN was trained using the permitted pre-2018 source labels. It was not trained on the 2018 validation subjects. Its initialization seed is 34. These two kinds of splits—checkpoint roles and node-label pools—must not be confused.
+
+A source fit selecting its last allowed epoch means that this was its best observed stopping score within the budget. It does not prove the model has finished learning. A useful review answer is: “We use a declared baseline training budget and report it honestly. We have not established an optimal source model.”
+
+We also test a **constant update**: one average teacher correction used on every target graph. For LoRA, we average factor coordinates and then multiply the factors, keeping the allowed rank. If this control performs as well as the conditioned generator, improvements might come from a generic offline correction rather than learning how each target graph differs.
+
+
+### Why save the factors we actually used?
+
+A GPU can add graph messages in slightly different orders on repeated passes. Decimal addition on a computer has limited precision, so those orders can produce tiny differences. This is called **numerical nondeterminism**. It does not mean the labels or graph changed.
+
+If we generate an update once, then run the generator again to save its factors, we might save slightly different factors from those used for the predictions. Our export therefore saves the actual factor vector from that prediction call, together with its effective weight delta. Diffusion also saves which candidate was selected. The useful interview answer is: “Preserve the values that produced the result; do not assume a later recomputation is identical.”
+
+
+### From a pilot to a formal bank: three different kinds of evidence
+
+A **pilot** checks whether a small run works. Our five completed Arxiv GCN models are a pilot. A **formal bank** follows the declared sampling and role protocol: 30 models per architecture, from five supervision groups and six initializations each. Passing software tests does not turn a pilot into that bank.
+
+For controlled Arxiv, each formal group contains 40,933 fit labels and 4,529 stopping labels, entirely inside the same fixed source-owned union. We reshuffle which source nodes perform each role, preserving each class's original counts. The groups overlap substantially. We do not divide the source budget in half again, use generator-owned labels, or touch 2018/final subjects to construct them. Natural-source diagnostic labels remain excluded from fitting and stopping.
+
+An **initialization seed** controls model initialization and training randomness. A **split seed** controls which source labels are fitted versus reserved for stopping. Our real bank records 30 different initialization seeds: groups 0–2 use 31–48, validation uses 49–54, and final models use 55–60. The historical CSBM bank reused six paired seeds across groups. These designs answer different generalization questions and must be described accurately.
+
+**Atomic publication** means a completed checkpoint becomes visible as one completed item. We save and verify a checkpoint in a temporary directory, add its metadata, then rename the directory into its final location. If interruption happens before the index is updated, recovery can inspect and adopt that complete directory. If fitting itself was interrupted, we restart that model from its seed. We do not claim to resume its optimizer halfway through training.
+
+An **identity check** compares the source graph, supervision, model settings, training recipe, source files and dependencies with the saved record. Changed inputs cause a visible error. A similar filename is insufficient evidence that two checkpoints came from the same experiment. GPU details and actual peak allocated/reserved tensor memory are recorded separately from host RAM; source-fit memory is not automatically adaptation memory.
+
+The private Kaggle preflight first attempted tests and one source fit. A submitted job is evidence that the service accepted it. A completed status plus downloaded, hash-verified checkpoint is evidence of execution. A second job recovering that checkpoint from saved versioned outputs is evidence of durable remote recovery. These checks passed separately before larger source runs. All 270 formal source checkpoints are now downloaded and independently verified. Controlled GCN source fitting took 569.47 seconds for 30 models on a Tesla T4. This measures source fitting, not online adaptation or complete project duration.
+
+**Research-committee questions:** Why are five overlapping supervision groups not five independent graphs? What does holding out initialization seeds add? What can weight distance miss because hidden neurons can be permuted? Why can successful resume skip completed fits yet still restart an unfinished fit? Why does a green test suite say nothing about generator accuracy on real shifts?
+
+**Copyable second-opinion prompt:**
+
+> Audit this formal GNN bank design without inventing results. There are five overlapping source-only supervision groups and six globally distinct initialization seeds per group. Each class retains its declared source-fit/stop counts; source/generator ownership and natural-source diagnostic pools remain fixed. Groups 0–2 supply 18 generator-training models, group 3 six validation models, group 4 six final models. Checkpoints and native-ID masks have graph, supervision, recipe, source and dependency identities. Completed fits publish atomically and are verified on recovery; unfinished fits restart from their seeds. Label-free source-only diversity uses weight distance, prediction disagreement and linear CKA with an explicit saved probe, without a sufficient-diversity threshold. A private GPU preflight must pass regression, factor/delta/prediction replay, one measured source fit and remote versioned-output recovery before larger shards. Explain statistical dependence, leakage risks, recovery guarantees, what evidence is still required, and which conclusions these checks cannot support.
+
+
+### What does selecting epoch zero mean?
+
+We compare each trained hypernetwork with its initial zero-update checkpoint using validation data. If none of the trained epochs does better, the selected checkpoint remains epoch zero. The training still ran and consumed its recorded time; selection chose not to apply its learned correction. A completed generator run can therefore produce no useful adaptation.
+
+The completed real-Arxiv study verified this outcome for all four A–D LoRA inputs and the A/D head follow-up. All 252 selected-fit saved dense deltas were exactly zero; all 420 selected/donor prediction cases passed numerical replay with zero class mismatches. Mean validation accuracy was 62.891%, identical to frozen. The practice-fixed baseline gained only 0.062 percentage points, and the other tested baselines regressed. These are 2018 design-selection observations; final labels remain sealed. This differs from earlier CSBM development experiments, where some compact generators improved average shifted accuracy modestly. Synthetic success does not guarantee improvement on a larger real graph with different features, classes and shifts. The Arxiv generators were trained separately; we did not deploy CSBM-trained generator weights onto Arxiv.
+
+The cyclic-donor control also needs care: if the selected update is identically zero, changing its conditioning descriptor cannot establish useful graph sensitivity. A zero sensitivity score for that checkpoint is expected; it is not evidence that our descriptor captures everything needed. Keep fitting failures, validation selection, diagnostic controls and final generalization as separate observations.
+
+
+### Why might the real-data generators fail? Evidence versus explanations
+
+A generator sees numbers in a descriptor, so their units and scales matter. Our saved Arxiv A descriptor has273 entries, but one maximum-degree/mean-degree value is roughly962–965 and supplies more than99% of the vector's squared magnitude. There is no descriptor standardization in the current generator. That is a concrete reason to examine optimization conditioning; it does not prove that deleting this statistic would improve accuracy. We have applied no such change.
+
+The training histories also show real overshooting: A-LoRA averaged cross-entropy348.745 and update norm296.30 in its first epoch. The updates later shrank and losses fell. This shows why “training ran” and “adaptation helped validation” are separate statements. It is not yet evidence that a longer run or a smaller learning rate will solve the problem.
+
+Input A describes the graph without describing the source model. The same graph therefore gives the same A vector to all18 training models. Yet their teacher corrections point in substantially different directions. A simple analogy is giving one set of steering instructions to cars whose controls are arranged differently. Hidden-unit permutations are a mathematical example of this coordinate ambiguity: two equivalent networks can require differently arranged parameter corrections. B/C/D do contain additional model information, so A's limitation cannot alone explain every failed configuration.
+
+The next reasoning question is: which controlled comparison could separate input scale, source-model information and optimization order without changing all three at once? That is a future methodological discussion. The owner currently requested documentation only; existing settings and the live Kaggle run remain unchanged. See the failure-investigation subsection in PROJECT_STATE.md for measured quantities and their limits.
+
+
+### Five training epochs, checkpoint selection, and what a tie means
+
+The GCN generator plot stops at epoch5 because that was the declared training budget. Each direct-CE fit executed18 models ×7 practice environments ×5 epochs =630 optimizer steps. Early stopping did not cut this run short. Validation then retained the initial checkpoint because none of the five trained epochs improved its mean accuracy. “Selected epoch0” describes the exported checkpoint, not how long the training ran.
+
+When A/B/C/D all select the same identity update, the declared A-first tie rule gives a reproducible continuation recipe. It does not show that A contains the most useful information. The head/LoRA tie likewise does not prove that head is the best update site. We can compare generator families under one fixed recipe in Experiment3, but must label that comparison conditional and budget-limited. The late improving LoRA curves are a reason not to claim convergence. Finishing the planned campaign and reporting this negative finding honestly is compatible with the deadline; it does not justify silently inventing a successful choice or launching another tuning grid.

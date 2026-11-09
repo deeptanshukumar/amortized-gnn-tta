@@ -1,0 +1,88 @@
+{
+  "verified_models": 270,
+  "expected_models": 270,
+  "summary": [
+    {
+      "dataset": "ogbn-arxiv",
+      "architecture": "gcn",
+      "verified_models": 30,
+      "expected_models": 30,
+      "fit_seconds": 569.4736626939999,
+      "mean_fit_seconds": 18.98245542313333,
+      "max_cuda_allocated_bytes": 1196469248
+    },
+    {
+      "dataset": "ogbn-arxiv",
+      "architecture": "gat",
+      "verified_models": 30,
+      "expected_models": 30,
+      "fit_seconds": 1048.457073239,
+      "mean_fit_seconds": 34.94856910796667,
+      "max_cuda_allocated_bytes": 2495859200
+    },
+    {
+      "dataset": "ogbn-arxiv",
+      "architecture": "graphsage",
+      "verified_models": 30,
+      "expected_models": 30,
+      "fit_seconds": 659.1569560180003,
+      "mean_fit_seconds": 21.971898533933345,
+      "max_cuda_allocated_bytes": 1557305856
+    },
+    {
+      "dataset": "ogbn-arxiv-temporal",
+      "architecture": "gcn",
+      "verified_models": 30,
+      "expected_models": 30,
+      "fit_seconds": 82.22691943000018,
+      "mean_fit_seconds": 2.7408973143333393,
+      "max_cuda_allocated_bytes": 167175168
+    },
+    {
+      "dataset": "ogbn-arxiv-temporal",
+      "architecture": "gat",
+      "verified_models": 30,
+      "expected_models": 30,
+      "fit_seconds": 133.4844187399998,
+      "mean_fit_seconds": 4.44948062466666,
+      "max_cuda_allocated_bytes": 293272064
+    },
+    {
+      "dataset": "ogbn-arxiv-temporal",
+      "architecture": "graphsage",
+      "verified_models": 30,
+      "expected_models": 30,
+      "fit_seconds": 73.80083746699972,
+      "mean_fit_seconds": 2.4600279155666573,
+      "max_cuda_allocated_bytes": 201292288
+    },
+    {
+      "dataset": "pair-align-mag-country",
+      "architecture": "gcn",
+      "verified_models": 30,
+      "expected_models": 30,
+      "fit_seconds": 336.07171832300037,
+      "mean_fit_seconds": 11.20239061076668,
+      "max_cuda_allocated_bytes": 586692096
+    },
+    {
+      "dataset": "pair-align-mag-country",
+      "architecture": "gat",
+      "verified_models": 30,
+      "expected_models": 30,
+      "fit_seconds": 614.0823644490004,
+      "mean_fit_seconds": 20.469412148300012,
+      "max_cuda_allocated_bytes": 1077560320
+    },
+    {
+      "dataset": "pair-align-mag-country",
+      "architecture": "graphsage",
+      "verified_models": 30,
+      "expected_models": 30,
+      "fit_seconds": 351.47627774199896,
+      "mean_fit_seconds": 11.715875924733298,
+      "max_cuda_allocated_bytes": 984416768
+    }
+  ],
+  "final_target_labels_scored": false
+}

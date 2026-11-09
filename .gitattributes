@@ -1,0 +1,3 @@
+# Preserve byte-identical CSV/SVG evidence emitted by the research tools.
+reports/**/*.csv -text whitespace=cr-at-eol
+reports/**/*.svg -text whitespace=-blank-at-eol

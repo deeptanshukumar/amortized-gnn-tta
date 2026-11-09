@@ -169,8 +169,14 @@ def fit_source(model_factory: Callable[[], nn.Module], data: SourceTrainingData,
 
 
 def software_versions() -> dict[str, str]:
-    return {"python": platform.python_version(), "torch": str(torch.__version__),
-            **{name: importlib.metadata.version(name) for name in ("numpy", "torch-geometric")}}
+    versions = {"python": platform.python_version(), "torch": str(torch.__version__),
+                **{name: importlib.metadata.version(name) for name in ("numpy", "torch-geometric")}}
+    for name in ("ogb", "psutil"):
+        try:
+            versions[name] = importlib.metadata.version(name)
+        except importlib.metadata.PackageNotFoundError:
+            pass  # Optional tooling must not become a core import dependency.
+    return versions
 
 
 def save_checkpoint(path: Path, result: TrainingResult, model_spec: dict[str, Any]) -> None:

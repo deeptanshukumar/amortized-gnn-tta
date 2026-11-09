@@ -1,0 +1,11 @@
+{
+  "phase": "complete",
+  "state": "complete",
+  "elapsed_seconds": 4443.417199850082,
+  "experiments": [
+    1,
+    2
+  ],
+  "conditioning_diagnostic": true,
+  "final_test_scored": false
+}

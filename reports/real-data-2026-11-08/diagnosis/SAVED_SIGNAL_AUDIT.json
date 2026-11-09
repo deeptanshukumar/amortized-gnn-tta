@@ -1,0 +1,166 @@
+{
+  "status": "complete",
+  "labels_access": "Only previously saved practice training scores; no final labels read",
+  "conditioning_A_is_model_independent_by_construction": true,
+  "generator_contains_descriptor_standardization": false,
+  "environment_diagnostics": [
+    {
+      "environment": "meta_train-control",
+      "models": 18,
+      "max_model_descriptor_difference": 0.0,
+      "largest_descriptor_field": "degree_max_over_mean",
+      "largest_descriptor_abs": 962.4827270507812,
+      "largest_field_fraction_input_squared_norm": 0.9945160746574402,
+      "initial_hidden_l1": 1634.9522705078125,
+      "initial_hidden_l2": 246.66717529296875,
+      "first_adam_step_output_coordinate_bound_ignoring_epsilon": 1.6359522705078124,
+      "teacher_delta_mean_norm": 4.668355941772461,
+      "source_head_mean_norm": 17.20738983154297,
+      "teacher_relative_mean_norm": 0.27148061990737915,
+      "teacher_mean_pairwise_cosine": 0.047100573778152466,
+      "norm_mean_update_over_mean_norm": 0.3163570165634155,
+      "teacher_mean_train_gain_pp": 1.1973970466189914
+    },
+    {
+      "environment": "meta_train-attribute-0",
+      "models": 18,
+      "max_model_descriptor_difference": 0.0,
+      "largest_descriptor_field": "degree_max_over_mean",
+      "largest_descriptor_abs": 962.4827270507812,
+      "largest_field_fraction_input_squared_norm": 0.9945163726806641,
+      "initial_hidden_l1": 1634.984619140625,
+      "initial_hidden_l2": 246.6704559326172,
+      "first_adam_step_output_coordinate_bound_ignoring_epsilon": 1.635984619140625,
+      "teacher_delta_mean_norm": 5.023168563842773,
+      "source_head_mean_norm": 17.20738983154297,
+      "teacher_relative_mean_norm": 0.2920323610305786,
+      "teacher_mean_pairwise_cosine": 0.03921103477478027,
+      "norm_mean_update_over_mean_norm": 0.3044534921646118,
+      "teacher_mean_train_gain_pp": 0.9925156831741333
+    },
+    {
+      "environment": "meta_train-structural-0",
+      "models": 18,
+      "max_model_descriptor_difference": 0.0,
+      "largest_descriptor_field": "degree_max_over_mean",
+      "largest_descriptor_abs": 965.0194702148438,
+      "largest_field_fraction_input_squared_norm": 0.9955624341964722,
+      "initial_hidden_l1": 1640.687744140625,
+      "initial_hidden_l2": 247.3585205078125,
+      "first_adam_step_output_coordinate_bound_ignoring_epsilon": 1.641687744140625,
+      "teacher_delta_mean_norm": 4.503095626831055,
+      "source_head_mean_norm": 17.20738983154297,
+      "teacher_relative_mean_norm": 0.26189103722572327,
+      "teacher_mean_pairwise_cosine": 0.04805232211947441,
+      "norm_mean_update_over_mean_norm": 0.31778261065483093,
+      "teacher_mean_train_gain_pp": 1.1877841419643826
+    },
+    {
+      "environment": "meta_train-combined-0",
+      "models": 18,
+      "max_model_descriptor_difference": 0.0,
+      "largest_descriptor_field": "degree_max_over_mean",
+      "largest_descriptor_abs": 965.0194702148438,
+      "largest_field_fraction_input_squared_norm": 0.9955627918243408,
+      "initial_hidden_l1": 1640.719970703125,
+      "initial_hidden_l2": 247.3617706298828,
+      "first_adam_step_output_coordinate_bound_ignoring_epsilon": 1.6417199707031251,
+      "teacher_delta_mean_norm": 4.866445064544678,
+      "source_head_mean_norm": 17.20738983154297,
+      "teacher_relative_mean_norm": 0.28294432163238525,
+      "teacher_mean_pairwise_cosine": 0.04018665477633476,
+      "norm_mean_update_over_mean_norm": 0.3059436082839966,
+      "teacher_mean_train_gain_pp": 0.945834649933709
+    },
+    {
+      "environment": "meta_train-attribute-1",
+      "models": 18,
+      "max_model_descriptor_difference": 0.0,
+      "largest_descriptor_field": "degree_max_over_mean",
+      "largest_descriptor_abs": 962.4827270507812,
+      "largest_field_fraction_input_squared_norm": 0.9945182800292969,
+      "initial_hidden_l1": 1635.072265625,
+      "initial_hidden_l2": 246.67929077148438,
+      "first_adam_step_output_coordinate_bound_ignoring_epsilon": 1.636072265625,
+      "teacher_delta_mean_norm": 5.418344497680664,
+      "source_head_mean_norm": 17.20738983154297,
+      "teacher_relative_mean_norm": 0.314885675907135,
+      "teacher_mean_pairwise_cosine": 0.04781109839677811,
+      "norm_mean_update_over_mean_norm": 0.31760427355766296,
+      "teacher_mean_train_gain_pp": 0.5035804377661811
+    },
+    {
+      "environment": "meta_train-structural-1",
+      "models": 18,
+      "max_model_descriptor_difference": 0.0,
+      "largest_descriptor_field": "degree_max_over_mean",
+      "largest_descriptor_abs": 961.66552734375,
+      "largest_field_fraction_input_squared_norm": 0.997291088104248,
+      "initial_hidden_l1": 1637.773681640625,
+      "initial_hidden_l2": 246.61941528320312,
+      "first_adam_step_output_coordinate_bound_ignoring_epsilon": 1.638773681640625,
+      "teacher_delta_mean_norm": 4.084836483001709,
+      "source_head_mean_norm": 17.20738983154297,
+      "teacher_relative_mean_norm": 0.23762324452400208,
+      "teacher_mean_pairwise_cosine": 0.05311785265803337,
+      "norm_mean_update_over_mean_norm": 0.32517799735069275,
+      "teacher_mean_train_gain_pp": 1.025772425863478
+    },
+    {
+      "environment": "meta_train-combined-1",
+      "models": 18,
+      "max_model_descriptor_difference": 0.0,
+      "largest_descriptor_field": "degree_max_over_mean",
+      "largest_descriptor_abs": 961.66552734375,
+      "largest_field_fraction_input_squared_norm": 0.99729323387146,
+      "initial_hidden_l1": 1637.893798828125,
+      "initial_hidden_l2": 246.6313934326172,
+      "first_adam_step_output_coordinate_bound_ignoring_epsilon": 1.6388937988281251,
+      "teacher_delta_mean_norm": 4.943147659301758,
+      "source_head_mean_norm": 17.20738983154297,
+      "teacher_relative_mean_norm": 0.2873305082321167,
+      "teacher_mean_pairwise_cosine": 0.04810880124568939,
+      "norm_mean_update_over_mean_norm": 0.3179093897342682,
+      "teacher_mean_train_gain_pp": 0.44622090127733016
+    }
+  ],
+  "first_epoch_history": [
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "ce_loss": "2.9928055500227306",
+      "delta_norm": "13.576890496034471",
+      "val_gain": "-0.005656150174422601"
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "ce_loss": "348.74482974835803",
+      "delta_norm": "296.3015747297378",
+      "val_gain": "-0.26587741039568286"
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "ce_loss": "74.41351900403461",
+      "delta_norm": "103.31427445487371",
+      "val_gain": "-0.5255545488103629"
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "ce_loss": "76.47862780377979",
+      "delta_norm": "122.97926054303608",
+      "val_gain": "-0.501824126408844"
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "ce_loss": "2.0445516251382374",
+      "delta_norm": "6.434017858275818",
+      "val_gain": "-0.0006887415525289386"
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "ce_loss": "26.301479376497724",
+      "delta_norm": "57.883209591820126",
+      "val_gain": "-0.4127119957684742"
+    }
+  ],
+  "first_step_bound_interpretation": "Analytic magnitude bound for a zero-initialized output layer after one Adam step at lr.001, holding the initial hidden activation fixed and ignoring Adam epsilon/weight decay. It is not a measured first update or a proven causal effect."
+}

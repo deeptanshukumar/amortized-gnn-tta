@@ -1,0 +1,3537 @@
+{
+  "status": "complete",
+  "source_zip_sha256": "6e429d26463c4eb27b2b63690a2f6f5bf9529a8f333fbc6b8d9493396ac63932",
+  "verified_output_files": 198,
+  "replays": [],
+  "source_fit": {
+    "id": "graphsage-group4-60",
+    "architecture": "graphsage",
+    "role": "test",
+    "group": 4,
+    "seed": 60,
+    "job": {
+      "id": "graphsage-group4-60",
+      "architecture": "graphsage",
+      "role": "test",
+      "group": 4,
+      "seed": 60,
+      "model_spec": {
+        "architecture": "two_layer_graphsage",
+        "config": {
+          "in_channels": 128,
+          "out_channels": 40,
+          "hidden_channels": 32,
+          "dropout": 0.5
+        }
+      },
+      "training_config": {
+        "max_epochs": 200,
+        "patience": 30,
+        "learning_rate": 0.01,
+        "weight_decay": 0.0005,
+        "model_seed": 60
+      }
+    },
+    "path": "models/graphsage-group4-60/checkpoint.pt",
+    "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+    "checkpoint_sha256": "87bc07e87c34eeb61966f9a74cdc3b2212753a5e04bce44bf7d4eb0b1e92eb9a",
+    "state_sha256": "a0e1061d890fd4130f9dce75e2cd55aba40dbfdede094b0ae340e602f353dfc7",
+    "selected_epoch": 199,
+    "fit_seconds": 2.459127794999972,
+    "cuda_peak_allocated_bytes": 201292288,
+    "cuda_peak_reserved_bytes": 440401920
+  },
+  "source_fits": [
+    {
+      "id": "gcn-group0-31",
+      "architecture": "gcn",
+      "role": "meta_train",
+      "group": 0,
+      "seed": 31,
+      "job": {
+        "id": "gcn-group0-31",
+        "architecture": "gcn",
+        "role": "meta_train",
+        "group": 0,
+        "seed": 31,
+        "model_spec": {
+          "architecture": "two_layer_gcn",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 31
+        }
+      },
+      "path": "models/gcn-group0-31/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "53e69f51b61edcfbea17dd4d5b7d20424179b7618c8a3462c171ee2b302ee16e",
+      "state_sha256": "83b2861c59f98722a8553b2bfe540d44ff7d249d708c23d98f4fce4ec9933022",
+      "selected_epoch": 200,
+      "fit_seconds": 4.156095053999991,
+      "cuda_peak_allocated_bytes": 167175168,
+      "cuda_peak_reserved_bytes": 213909504
+    },
+    {
+      "id": "gcn-group0-32",
+      "architecture": "gcn",
+      "role": "meta_train",
+      "group": 0,
+      "seed": 32,
+      "job": {
+        "id": "gcn-group0-32",
+        "architecture": "gcn",
+        "role": "meta_train",
+        "group": 0,
+        "seed": 32,
+        "model_spec": {
+          "architecture": "two_layer_gcn",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 32
+        }
+      },
+      "path": "models/gcn-group0-32/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "e18f637da109f5ce1d38b4c6224b3dcf093f5d6d67bece319331d020647b10e0",
+      "state_sha256": "016c1a504a0fa833a3b0d98120a4354270a959846e8db73f00226130dcd05a63",
+      "selected_epoch": 200,
+      "fit_seconds": 2.6685844309999993,
+      "cuda_peak_allocated_bytes": 167175168,
+      "cuda_peak_reserved_bytes": 213909504
+    },
+    {
+      "id": "gcn-group0-33",
+      "architecture": "gcn",
+      "role": "meta_train",
+      "group": 0,
+      "seed": 33,
+      "job": {
+        "id": "gcn-group0-33",
+        "architecture": "gcn",
+        "role": "meta_train",
+        "group": 0,
+        "seed": 33,
+        "model_spec": {
+          "architecture": "two_layer_gcn",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 33
+        }
+      },
+      "path": "models/gcn-group0-33/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "a91a2d4fa002fe18e6dc698fd67cb2fda7d5a184fb25fce5cedf3cf8c792492b",
+      "state_sha256": "2d8a5bab556f5d6c319f5c992e87f688ce24c43c2b6a2045dd0f07255c806741",
+      "selected_epoch": 200,
+      "fit_seconds": 2.6703421779999985,
+      "cuda_peak_allocated_bytes": 167175168,
+      "cuda_peak_reserved_bytes": 213909504
+    },
+    {
+      "id": "gcn-group0-34",
+      "architecture": "gcn",
+      "role": "meta_train",
+      "group": 0,
+      "seed": 34,
+      "job": {
+        "id": "gcn-group0-34",
+        "architecture": "gcn",
+        "role": "meta_train",
+        "group": 0,
+        "seed": 34,
+        "model_spec": {
+          "architecture": "two_layer_gcn",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 34
+        }
+      },
+      "path": "models/gcn-group0-34/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "49509bca990a48015b098f04905669ea6e9b739b8bb4d6e92d96eeb9ff9788a2",
+      "state_sha256": "f69c433cdb54ea3fd9638ba8b8ee561bd310982ff2031404984ede8f08d62dbc",
+      "selected_epoch": 200,
+      "fit_seconds": 2.68049432600003,
+      "cuda_peak_allocated_bytes": 167175168,
+      "cuda_peak_reserved_bytes": 213909504
+    },
+    {
+      "id": "gcn-group0-35",
+      "architecture": "gcn",
+      "role": "meta_train",
+      "group": 0,
+      "seed": 35,
+      "job": {
+        "id": "gcn-group0-35",
+        "architecture": "gcn",
+        "role": "meta_train",
+        "group": 0,
+        "seed": 35,
+        "model_spec": {
+          "architecture": "two_layer_gcn",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 35
+        }
+      },
+      "path": "models/gcn-group0-35/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "ca6ff775daf35bd480eb70cf27561632f61717e9c3d861ea3c7526f30311d6f9",
+      "state_sha256": "a1686dfd6ab4acf7b76282b664e4b1b17e5ccbfdbb4cd789a59e6f44c54c8594",
+      "selected_epoch": 200,
+      "fit_seconds": 2.6504424940000035,
+      "cuda_peak_allocated_bytes": 167175168,
+      "cuda_peak_reserved_bytes": 213909504
+    },
+    {
+      "id": "gcn-group0-36",
+      "architecture": "gcn",
+      "role": "meta_train",
+      "group": 0,
+      "seed": 36,
+      "job": {
+        "id": "gcn-group0-36",
+        "architecture": "gcn",
+        "role": "meta_train",
+        "group": 0,
+        "seed": 36,
+        "model_spec": {
+          "architecture": "two_layer_gcn",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 36
+        }
+      },
+      "path": "models/gcn-group0-36/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "c02bdb18f4ed3e6d310108e6f62a9553a3d2e58ae9e9a263a96a13411042c4de",
+      "state_sha256": "e8b8545152c5ce1686cbe5d2c2c3e6812bf5cf73138c57f7e7d80d5b07d0a3a9",
+      "selected_epoch": 199,
+      "fit_seconds": 2.6723114610000493,
+      "cuda_peak_allocated_bytes": 167175168,
+      "cuda_peak_reserved_bytes": 213909504
+    },
+    {
+      "id": "gcn-group1-37",
+      "architecture": "gcn",
+      "role": "meta_train",
+      "group": 1,
+      "seed": 37,
+      "job": {
+        "id": "gcn-group1-37",
+        "architecture": "gcn",
+        "role": "meta_train",
+        "group": 1,
+        "seed": 37,
+        "model_spec": {
+          "architecture": "two_layer_gcn",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 37
+        }
+      },
+      "path": "models/gcn-group1-37/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "7750d20eebd9ef997c9c2241fff127183282a7337cb19eade1311c0665e2886c",
+      "state_sha256": "0e12a2ce06859af8beef9d12a1804d27ddf1106f879224d41a9112eacf929e4f",
+      "selected_epoch": 197,
+      "fit_seconds": 2.7068542860000093,
+      "cuda_peak_allocated_bytes": 167175168,
+      "cuda_peak_reserved_bytes": 213909504
+    },
+    {
+      "id": "gcn-group1-38",
+      "architecture": "gcn",
+      "role": "meta_train",
+      "group": 1,
+      "seed": 38,
+      "job": {
+        "id": "gcn-group1-38",
+        "architecture": "gcn",
+        "role": "meta_train",
+        "group": 1,
+        "seed": 38,
+        "model_spec": {
+          "architecture": "two_layer_gcn",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 38
+        }
+      },
+      "path": "models/gcn-group1-38/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "609679e55e9fa325d393f73f03ac2972a3d50e0cd21410a5b60c635727f7f333",
+      "state_sha256": "639de866e26283f1f8f76d94eadc061f8d3f3f99145df6ef21d64ac4fb1612e9",
+      "selected_epoch": 200,
+      "fit_seconds": 2.6755853239999965,
+      "cuda_peak_allocated_bytes": 167175168,
+      "cuda_peak_reserved_bytes": 213909504
+    },
+    {
+      "id": "gcn-group1-39",
+      "architecture": "gcn",
+      "role": "meta_train",
+      "group": 1,
+      "seed": 39,
+      "job": {
+        "id": "gcn-group1-39",
+        "architecture": "gcn",
+        "role": "meta_train",
+        "group": 1,
+        "seed": 39,
+        "model_spec": {
+          "architecture": "two_layer_gcn",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 39
+        }
+      },
+      "path": "models/gcn-group1-39/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "4ee3bdd27acb82e06af2b13a8c51c5e480aba14507f9b4f4e20468445412cc20",
+      "state_sha256": "afe276b5105683c51dec171cb8bcea9fd6b8391150bd4d2c97712fbff88f8e2f",
+      "selected_epoch": 199,
+      "fit_seconds": 2.673521558999994,
+      "cuda_peak_allocated_bytes": 167175168,
+      "cuda_peak_reserved_bytes": 213909504
+    },
+    {
+      "id": "gcn-group1-40",
+      "architecture": "gcn",
+      "role": "meta_train",
+      "group": 1,
+      "seed": 40,
+      "job": {
+        "id": "gcn-group1-40",
+        "architecture": "gcn",
+        "role": "meta_train",
+        "group": 1,
+        "seed": 40,
+        "model_spec": {
+          "architecture": "two_layer_gcn",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 40
+        }
+      },
+      "path": "models/gcn-group1-40/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "f708c573b01a828356b29649c730fef104081fcf96060c78743f6a0173ecf366",
+      "state_sha256": "4a3a582e91f1166547d14d121c16f02828fb8cf5b3730338c6d77283fb12623a",
+      "selected_epoch": 200,
+      "fit_seconds": 2.6778362759999936,
+      "cuda_peak_allocated_bytes": 167175168,
+      "cuda_peak_reserved_bytes": 213909504
+    },
+    {
+      "id": "gcn-group1-41",
+      "architecture": "gcn",
+      "role": "meta_train",
+      "group": 1,
+      "seed": 41,
+      "job": {
+        "id": "gcn-group1-41",
+        "architecture": "gcn",
+        "role": "meta_train",
+        "group": 1,
+        "seed": 41,
+        "model_spec": {
+          "architecture": "two_layer_gcn",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 41
+        }
+      },
+      "path": "models/gcn-group1-41/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "78eeb5bcaa4723da28bab649c029b8bc08e9a62f0ed35d4576afab8ead66f7c4",
+      "state_sha256": "9e14f04c7ef3226c82bd6acddadcb839aae2ce1cd676f3fad20df8318bd53d64",
+      "selected_epoch": 200,
+      "fit_seconds": 2.6996104030000083,
+      "cuda_peak_allocated_bytes": 167175168,
+      "cuda_peak_reserved_bytes": 213909504
+    },
+    {
+      "id": "gcn-group1-42",
+      "architecture": "gcn",
+      "role": "meta_train",
+      "group": 1,
+      "seed": 42,
+      "job": {
+        "id": "gcn-group1-42",
+        "architecture": "gcn",
+        "role": "meta_train",
+        "group": 1,
+        "seed": 42,
+        "model_spec": {
+          "architecture": "two_layer_gcn",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 42
+        }
+      },
+      "path": "models/gcn-group1-42/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "c43fa000603d848007e9ebf23289ea893f7acacf774d07481381bcfa0d8b20b0",
+      "state_sha256": "1c565ca058bd8bacf309719acd353f359101616ccaeff2720c149fc18b5c658c",
+      "selected_epoch": 200,
+      "fit_seconds": 2.6860025950000477,
+      "cuda_peak_allocated_bytes": 167175168,
+      "cuda_peak_reserved_bytes": 213909504
+    },
+    {
+      "id": "gcn-group2-43",
+      "architecture": "gcn",
+      "role": "meta_train",
+      "group": 2,
+      "seed": 43,
+      "job": {
+        "id": "gcn-group2-43",
+        "architecture": "gcn",
+        "role": "meta_train",
+        "group": 2,
+        "seed": 43,
+        "model_spec": {
+          "architecture": "two_layer_gcn",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 43
+        }
+      },
+      "path": "models/gcn-group2-43/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "d6ad9381c963419e5225b6c375c12ab44572ba24e0d5b0377b8ddfda813fe435",
+      "state_sha256": "49b249cfaa3bd6171815d8d3e8b8c59d1af51a25b071b3efeaac3ad30b80eb4d",
+      "selected_epoch": 200,
+      "fit_seconds": 2.6978506620000076,
+      "cuda_peak_allocated_bytes": 167175168,
+      "cuda_peak_reserved_bytes": 213909504
+    },
+    {
+      "id": "gcn-group2-44",
+      "architecture": "gcn",
+      "role": "meta_train",
+      "group": 2,
+      "seed": 44,
+      "job": {
+        "id": "gcn-group2-44",
+        "architecture": "gcn",
+        "role": "meta_train",
+        "group": 2,
+        "seed": 44,
+        "model_spec": {
+          "architecture": "two_layer_gcn",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 44
+        }
+      },
+      "path": "models/gcn-group2-44/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "c33efd58d1f6d605014b0d882ec04111e1eef6b38215bf4cb49e37d7e123059d",
+      "state_sha256": "07c4e44e1d0f6b4ca9c32c72b25cb9ce54369bbf617a9114c3306f4e5430a26d",
+      "selected_epoch": 200,
+      "fit_seconds": 2.6912006889999702,
+      "cuda_peak_allocated_bytes": 167175168,
+      "cuda_peak_reserved_bytes": 213909504
+    },
+    {
+      "id": "gcn-group2-45",
+      "architecture": "gcn",
+      "role": "meta_train",
+      "group": 2,
+      "seed": 45,
+      "job": {
+        "id": "gcn-group2-45",
+        "architecture": "gcn",
+        "role": "meta_train",
+        "group": 2,
+        "seed": 45,
+        "model_spec": {
+          "architecture": "two_layer_gcn",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 45
+        }
+      },
+      "path": "models/gcn-group2-45/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "672d1a560c40f5413bfb74b5c763db31493a8ba063dcdb20eee22d08dd231c2b",
+      "state_sha256": "c4c0443af982f544f6b128ebc08ac1c2128d73db9bfe6222186be9d2f58e511a",
+      "selected_epoch": 200,
+      "fit_seconds": 2.6904083509999737,
+      "cuda_peak_allocated_bytes": 167175168,
+      "cuda_peak_reserved_bytes": 213909504
+    },
+    {
+      "id": "gcn-group2-46",
+      "architecture": "gcn",
+      "role": "meta_train",
+      "group": 2,
+      "seed": 46,
+      "job": {
+        "id": "gcn-group2-46",
+        "architecture": "gcn",
+        "role": "meta_train",
+        "group": 2,
+        "seed": 46,
+        "model_spec": {
+          "architecture": "two_layer_gcn",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 46
+        }
+      },
+      "path": "models/gcn-group2-46/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "83dc9a05a81e12e35371ddba46f8e0ac61b56ed3729defc07cf9e73d903ed0cb",
+      "state_sha256": "ecaa6d44b951dc1f50e407e645799d50d9a49b90209a562833d4ad949197411f",
+      "selected_epoch": 197,
+      "fit_seconds": 2.684178030000055,
+      "cuda_peak_allocated_bytes": 167175168,
+      "cuda_peak_reserved_bytes": 213909504
+    },
+    {
+      "id": "gcn-group2-47",
+      "architecture": "gcn",
+      "role": "meta_train",
+      "group": 2,
+      "seed": 47,
+      "job": {
+        "id": "gcn-group2-47",
+        "architecture": "gcn",
+        "role": "meta_train",
+        "group": 2,
+        "seed": 47,
+        "model_spec": {
+          "architecture": "two_layer_gcn",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 47
+        }
+      },
+      "path": "models/gcn-group2-47/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "c146af566fcbd5937eca2235184330c8369ecfc7e87a22923f778076701193cf",
+      "state_sha256": "6ed661f0d244457fc45bf9dd77e1ab37fa613eb4107d7a2ddd453ea73e2d2419",
+      "selected_epoch": 200,
+      "fit_seconds": 2.6960400439999717,
+      "cuda_peak_allocated_bytes": 167175168,
+      "cuda_peak_reserved_bytes": 213909504
+    },
+    {
+      "id": "gcn-group2-48",
+      "architecture": "gcn",
+      "role": "meta_train",
+      "group": 2,
+      "seed": 48,
+      "job": {
+        "id": "gcn-group2-48",
+        "architecture": "gcn",
+        "role": "meta_train",
+        "group": 2,
+        "seed": 48,
+        "model_spec": {
+          "architecture": "two_layer_gcn",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 48
+        }
+      },
+      "path": "models/gcn-group2-48/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "6705b50f61fdcd4f01d1df3c2e3ab6579672f62e033a20a60eb8f570440fdbd9",
+      "state_sha256": "81d42d32ee2c197e7d78847a8a47b7db5aaf1148ab9899a86ed3e2ecf5764670",
+      "selected_epoch": 198,
+      "fit_seconds": 2.7092124249999756,
+      "cuda_peak_allocated_bytes": 167175168,
+      "cuda_peak_reserved_bytes": 213909504
+    },
+    {
+      "id": "gcn-group3-49",
+      "architecture": "gcn",
+      "role": "validation",
+      "group": 3,
+      "seed": 49,
+      "job": {
+        "id": "gcn-group3-49",
+        "architecture": "gcn",
+        "role": "validation",
+        "group": 3,
+        "seed": 49,
+        "model_spec": {
+          "architecture": "two_layer_gcn",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 49
+        }
+      },
+      "path": "models/gcn-group3-49/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "ee1e492a724fd7833bbb9d234acaae97253fa7dbb62d6004169e39ff436952ca",
+      "state_sha256": "b577b1a5bceb874d8b8f3e0b2584a52b2a61f80b604b9aa6e5c10e590dcda3c2",
+      "selected_epoch": 195,
+      "fit_seconds": 2.683391001000018,
+      "cuda_peak_allocated_bytes": 167175168,
+      "cuda_peak_reserved_bytes": 213909504
+    },
+    {
+      "id": "gcn-group3-50",
+      "architecture": "gcn",
+      "role": "validation",
+      "group": 3,
+      "seed": 50,
+      "job": {
+        "id": "gcn-group3-50",
+        "architecture": "gcn",
+        "role": "validation",
+        "group": 3,
+        "seed": 50,
+        "model_spec": {
+          "architecture": "two_layer_gcn",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 50
+        }
+      },
+      "path": "models/gcn-group3-50/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "0ee226f4eb457fcde9d93ec6bcce162bfb36df63e6fa7b7ea45e3de3735be8e5",
+      "state_sha256": "afee9fea165af57e9b84af1d6c3647a7bdd858d19642dd4db0cfcdf7aa1c1c3f",
+      "selected_epoch": 197,
+      "fit_seconds": 2.6932493810000437,
+      "cuda_peak_allocated_bytes": 167175168,
+      "cuda_peak_reserved_bytes": 213909504
+    },
+    {
+      "id": "gcn-group3-51",
+      "architecture": "gcn",
+      "role": "validation",
+      "group": 3,
+      "seed": 51,
+      "job": {
+        "id": "gcn-group3-51",
+        "architecture": "gcn",
+        "role": "validation",
+        "group": 3,
+        "seed": 51,
+        "model_spec": {
+          "architecture": "two_layer_gcn",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 51
+        }
+      },
+      "path": "models/gcn-group3-51/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "1f3031932978cb18a5dba62609e77d1269c0977b4feda2228427d806e4b52fe3",
+      "state_sha256": "38b5fe2bb77fb3ccdd4466d2a7bb159cd6a18c5697b9e1936d7240e4437457ad",
+      "selected_epoch": 199,
+      "fit_seconds": 2.6893740460000117,
+      "cuda_peak_allocated_bytes": 167175168,
+      "cuda_peak_reserved_bytes": 213909504
+    },
+    {
+      "id": "gcn-group3-52",
+      "architecture": "gcn",
+      "role": "validation",
+      "group": 3,
+      "seed": 52,
+      "job": {
+        "id": "gcn-group3-52",
+        "architecture": "gcn",
+        "role": "validation",
+        "group": 3,
+        "seed": 52,
+        "model_spec": {
+          "architecture": "two_layer_gcn",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 52
+        }
+      },
+      "path": "models/gcn-group3-52/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "60e8a2bc6eeae7754660ad0bd63d79d2470e1f6a1bc0391ed3d401f840722b06",
+      "state_sha256": "f392a6d5249e3ac6ceb711f83b08741d56aaf4eddb3f4f3e005c0c79c8cff1de",
+      "selected_epoch": 200,
+      "fit_seconds": 2.705527460999974,
+      "cuda_peak_allocated_bytes": 167175168,
+      "cuda_peak_reserved_bytes": 213909504
+    },
+    {
+      "id": "gcn-group3-53",
+      "architecture": "gcn",
+      "role": "validation",
+      "group": 3,
+      "seed": 53,
+      "job": {
+        "id": "gcn-group3-53",
+        "architecture": "gcn",
+        "role": "validation",
+        "group": 3,
+        "seed": 53,
+        "model_spec": {
+          "architecture": "two_layer_gcn",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 53
+        }
+      },
+      "path": "models/gcn-group3-53/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "01a86a4450e684623571122f652135b57378feeef4fde1eceae5d44c431ad335",
+      "state_sha256": "d192bc582d59cc9088aa94bf67bead84a5df82cd422e577fb3ee4bcb77f4110c",
+      "selected_epoch": 198,
+      "fit_seconds": 2.702348549000021,
+      "cuda_peak_allocated_bytes": 167175168,
+      "cuda_peak_reserved_bytes": 213909504
+    },
+    {
+      "id": "gcn-group3-54",
+      "architecture": "gcn",
+      "role": "validation",
+      "group": 3,
+      "seed": 54,
+      "job": {
+        "id": "gcn-group3-54",
+        "architecture": "gcn",
+        "role": "validation",
+        "group": 3,
+        "seed": 54,
+        "model_spec": {
+          "architecture": "two_layer_gcn",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 54
+        }
+      },
+      "path": "models/gcn-group3-54/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "0acb281e1d9f6c3f5088fef8fce4cc5f357b74ab65e69745a2869cb053ef6e5f",
+      "state_sha256": "22d499ec0778a281ce239427df9a60a94061299ff802b6436addb859b7b9d23f",
+      "selected_epoch": 200,
+      "fit_seconds": 2.699766727999986,
+      "cuda_peak_allocated_bytes": 167175168,
+      "cuda_peak_reserved_bytes": 213909504
+    },
+    {
+      "id": "gcn-group4-55",
+      "architecture": "gcn",
+      "role": "test",
+      "group": 4,
+      "seed": 55,
+      "job": {
+        "id": "gcn-group4-55",
+        "architecture": "gcn",
+        "role": "test",
+        "group": 4,
+        "seed": 55,
+        "model_spec": {
+          "architecture": "two_layer_gcn",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 55
+        }
+      },
+      "path": "models/gcn-group4-55/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "ff090c409d750eae6f20ba57088bd2356c59dfcbd032f20dd4df173201ece8b4",
+      "state_sha256": "4e3c89af9110a87000c0d152e55c81bea6cfbc63387bb609c46124d38e6be639",
+      "selected_epoch": 197,
+      "fit_seconds": 2.699685819000024,
+      "cuda_peak_allocated_bytes": 167175168,
+      "cuda_peak_reserved_bytes": 213909504
+    },
+    {
+      "id": "gcn-group4-56",
+      "architecture": "gcn",
+      "role": "test",
+      "group": 4,
+      "seed": 56,
+      "job": {
+        "id": "gcn-group4-56",
+        "architecture": "gcn",
+        "role": "test",
+        "group": 4,
+        "seed": 56,
+        "model_spec": {
+          "architecture": "two_layer_gcn",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 56
+        }
+      },
+      "path": "models/gcn-group4-56/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "f56dc5b1108438955096e32fab5da67bbe3b96f3529f1e441b91d0c0078d4ac6",
+      "state_sha256": "4bb3714a362f685940ded417a298674b270c40562ce7b5722426d0cadba4fa31",
+      "selected_epoch": 196,
+      "fit_seconds": 2.7024710470000173,
+      "cuda_peak_allocated_bytes": 167175168,
+      "cuda_peak_reserved_bytes": 213909504
+    },
+    {
+      "id": "gcn-group4-57",
+      "architecture": "gcn",
+      "role": "test",
+      "group": 4,
+      "seed": 57,
+      "job": {
+        "id": "gcn-group4-57",
+        "architecture": "gcn",
+        "role": "test",
+        "group": 4,
+        "seed": 57,
+        "model_spec": {
+          "architecture": "two_layer_gcn",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 57
+        }
+      },
+      "path": "models/gcn-group4-57/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "ac14e6197d251d1c70852bf9340c76eac794f6a6ab427b936d1bbf52f940f183",
+      "state_sha256": "cd7e3c4de43442a8e18f76a9074d401c37a15ff27171b5b99700b6b3fc7e53c2",
+      "selected_epoch": 200,
+      "fit_seconds": 2.698686682000016,
+      "cuda_peak_allocated_bytes": 167175168,
+      "cuda_peak_reserved_bytes": 213909504
+    },
+    {
+      "id": "gcn-group4-58",
+      "architecture": "gcn",
+      "role": "test",
+      "group": 4,
+      "seed": 58,
+      "job": {
+        "id": "gcn-group4-58",
+        "architecture": "gcn",
+        "role": "test",
+        "group": 4,
+        "seed": 58,
+        "model_spec": {
+          "architecture": "two_layer_gcn",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 58
+        }
+      },
+      "path": "models/gcn-group4-58/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "8be08a1955c22b34db6f8287b47f2feefd4967e2de218741ca6d78a8922843de",
+      "state_sha256": "4c14ec50ecad1ca805c215cd91cc4d78e422e3ed44ddc149ceda46459221e46f",
+      "selected_epoch": 199,
+      "fit_seconds": 2.706277489999991,
+      "cuda_peak_allocated_bytes": 167175168,
+      "cuda_peak_reserved_bytes": 213909504
+    },
+    {
+      "id": "gcn-group4-59",
+      "architecture": "gcn",
+      "role": "test",
+      "group": 4,
+      "seed": 59,
+      "job": {
+        "id": "gcn-group4-59",
+        "architecture": "gcn",
+        "role": "test",
+        "group": 4,
+        "seed": 59,
+        "model_spec": {
+          "architecture": "two_layer_gcn",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 59
+        }
+      },
+      "path": "models/gcn-group4-59/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "1cb10ab747ea4c608cc456721a6ac18a0d6d522f0c0d30d5727abc13ee0c496f",
+      "state_sha256": "d87d8f652857b8e4dbcfe239b3977739e8f8ece1811e48abfa9d025861f723e6",
+      "selected_epoch": 200,
+      "fit_seconds": 2.7431143339999835,
+      "cuda_peak_allocated_bytes": 167175168,
+      "cuda_peak_reserved_bytes": 213909504
+    },
+    {
+      "id": "gcn-group4-60",
+      "architecture": "gcn",
+      "role": "test",
+      "group": 4,
+      "seed": 60,
+      "job": {
+        "id": "gcn-group4-60",
+        "architecture": "gcn",
+        "role": "test",
+        "group": 4,
+        "seed": 60,
+        "model_spec": {
+          "architecture": "two_layer_gcn",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 60
+        }
+      },
+      "path": "models/gcn-group4-60/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "fa24e7a00e331222c3d40c234d388e7cb0b80c6e5e812905cf2693f44074030e",
+      "state_sha256": "308a85b0ec4f631b6d0dfb50f81acbfd02fb9c59e85b4cf4f0465a48151113d0",
+      "selected_epoch": 200,
+      "fit_seconds": 2.716456304000019,
+      "cuda_peak_allocated_bytes": 167175168,
+      "cuda_peak_reserved_bytes": 213909504
+    },
+    {
+      "id": "gat-group0-31",
+      "architecture": "gat",
+      "role": "meta_train",
+      "group": 0,
+      "seed": 31,
+      "job": {
+        "id": "gat-group0-31",
+        "architecture": "gat",
+        "role": "meta_train",
+        "group": 0,
+        "seed": 31,
+        "model_spec": {
+          "architecture": "two_layer_gat",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5,
+            "heads": 4,
+            "attention_dropout": 0.0
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 31
+        }
+      },
+      "path": "models/gat-group0-31/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "0356b70be04a3f3a5a74d498e0f6ea6d46e4e3bf2b83fd89878002ea6b1ca38d",
+      "state_sha256": "ff81b6bc3256cb1547b79b458ea59504810094d3817974011ea51f55e5d02977",
+      "selected_epoch": 200,
+      "fit_seconds": 4.648483612000007,
+      "cuda_peak_allocated_bytes": 293272064,
+      "cuda_peak_reserved_bytes": 337641472
+    },
+    {
+      "id": "gat-group0-32",
+      "architecture": "gat",
+      "role": "meta_train",
+      "group": 0,
+      "seed": 32,
+      "job": {
+        "id": "gat-group0-32",
+        "architecture": "gat",
+        "role": "meta_train",
+        "group": 0,
+        "seed": 32,
+        "model_spec": {
+          "architecture": "two_layer_gat",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5,
+            "heads": 4,
+            "attention_dropout": 0.0
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 32
+        }
+      },
+      "path": "models/gat-group0-32/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "b2dd354c19de123060be8e0bd9409a46f2cd5e772cd3228d529d02c87f78dec1",
+      "state_sha256": "2ec54f6f18d2a81233862a7464d236424398a9a64440e6b3559a33739954f0fb",
+      "selected_epoch": 200,
+      "fit_seconds": 4.49058613699998,
+      "cuda_peak_allocated_bytes": 293272064,
+      "cuda_peak_reserved_bytes": 337641472
+    },
+    {
+      "id": "gat-group0-33",
+      "architecture": "gat",
+      "role": "meta_train",
+      "group": 0,
+      "seed": 33,
+      "job": {
+        "id": "gat-group0-33",
+        "architecture": "gat",
+        "role": "meta_train",
+        "group": 0,
+        "seed": 33,
+        "model_spec": {
+          "architecture": "two_layer_gat",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5,
+            "heads": 4,
+            "attention_dropout": 0.0
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 33
+        }
+      },
+      "path": "models/gat-group0-33/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "bf3785b8b86710fe8a8154d8bcfaac0138feeca04cf6b925fedcb50943963117",
+      "state_sha256": "92606e8f9787e7c55329e11249734ce1f6ba73f391eae6d50c11f9cbb6f7370e",
+      "selected_epoch": 200,
+      "fit_seconds": 4.45953743299998,
+      "cuda_peak_allocated_bytes": 293272064,
+      "cuda_peak_reserved_bytes": 337641472
+    },
+    {
+      "id": "gat-group0-34",
+      "architecture": "gat",
+      "role": "meta_train",
+      "group": 0,
+      "seed": 34,
+      "job": {
+        "id": "gat-group0-34",
+        "architecture": "gat",
+        "role": "meta_train",
+        "group": 0,
+        "seed": 34,
+        "model_spec": {
+          "architecture": "two_layer_gat",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5,
+            "heads": 4,
+            "attention_dropout": 0.0
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 34
+        }
+      },
+      "path": "models/gat-group0-34/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "3bde70a057be199112a1f833ecf7043c67b7692d081c2cb21ba76d0752844490",
+      "state_sha256": "d0aad1f37b48f02312e0078ca26123d193bd0b8227be01566f0c38fccbf56d0b",
+      "selected_epoch": 200,
+      "fit_seconds": 4.463040834000026,
+      "cuda_peak_allocated_bytes": 293272064,
+      "cuda_peak_reserved_bytes": 337641472
+    },
+    {
+      "id": "gat-group0-35",
+      "architecture": "gat",
+      "role": "meta_train",
+      "group": 0,
+      "seed": 35,
+      "job": {
+        "id": "gat-group0-35",
+        "architecture": "gat",
+        "role": "meta_train",
+        "group": 0,
+        "seed": 35,
+        "model_spec": {
+          "architecture": "two_layer_gat",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5,
+            "heads": 4,
+            "attention_dropout": 0.0
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 35
+        }
+      },
+      "path": "models/gat-group0-35/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "99401667a03c4ce6c2a881cf5d7343ca30cd7b93982394d56500f93585bde977",
+      "state_sha256": "94645dc2c2a596b0ba3a227f4dec1d4e5f459260ae58efa010620c843cdc82fe",
+      "selected_epoch": 200,
+      "fit_seconds": 4.4376883979999775,
+      "cuda_peak_allocated_bytes": 293272064,
+      "cuda_peak_reserved_bytes": 337641472
+    },
+    {
+      "id": "gat-group0-36",
+      "architecture": "gat",
+      "role": "meta_train",
+      "group": 0,
+      "seed": 36,
+      "job": {
+        "id": "gat-group0-36",
+        "architecture": "gat",
+        "role": "meta_train",
+        "group": 0,
+        "seed": 36,
+        "model_spec": {
+          "architecture": "two_layer_gat",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5,
+            "heads": 4,
+            "attention_dropout": 0.0
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 36
+        }
+      },
+      "path": "models/gat-group0-36/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "b4cbdb667b304b508330516bb35ce2874105e2f79910750fab2df7bf3e503244",
+      "state_sha256": "136fb4f80a58ef0e703ea4db980abba319833667146214412b79721fdb393336",
+      "selected_epoch": 200,
+      "fit_seconds": 4.44643188699996,
+      "cuda_peak_allocated_bytes": 293272064,
+      "cuda_peak_reserved_bytes": 337641472
+    },
+    {
+      "id": "gat-group1-37",
+      "architecture": "gat",
+      "role": "meta_train",
+      "group": 1,
+      "seed": 37,
+      "job": {
+        "id": "gat-group1-37",
+        "architecture": "gat",
+        "role": "meta_train",
+        "group": 1,
+        "seed": 37,
+        "model_spec": {
+          "architecture": "two_layer_gat",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5,
+            "heads": 4,
+            "attention_dropout": 0.0
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 37
+        }
+      },
+      "path": "models/gat-group1-37/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "2fe6ff13ab6634b4275988049933d61dfeaead48c78a8a4fcfed3762f617bae2",
+      "state_sha256": "b2fd9786142834e3b576e6cf701ef16e33477a2084e889b56bfae76c4956bb88",
+      "selected_epoch": 200,
+      "fit_seconds": 4.433267070999989,
+      "cuda_peak_allocated_bytes": 293272064,
+      "cuda_peak_reserved_bytes": 337641472
+    },
+    {
+      "id": "gat-group1-38",
+      "architecture": "gat",
+      "role": "meta_train",
+      "group": 1,
+      "seed": 38,
+      "job": {
+        "id": "gat-group1-38",
+        "architecture": "gat",
+        "role": "meta_train",
+        "group": 1,
+        "seed": 38,
+        "model_spec": {
+          "architecture": "two_layer_gat",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5,
+            "heads": 4,
+            "attention_dropout": 0.0
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 38
+        }
+      },
+      "path": "models/gat-group1-38/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "70ccd071e36ce62147b487ce2fc2dd80d11946e1b45b2181c72cf87ed7773230",
+      "state_sha256": "c079d959bc13c01ba76d3812eadd93a5a159569c988ac005212baba0f9702bc9",
+      "selected_epoch": 199,
+      "fit_seconds": 4.4309852839999735,
+      "cuda_peak_allocated_bytes": 293272064,
+      "cuda_peak_reserved_bytes": 337641472
+    },
+    {
+      "id": "gat-group1-39",
+      "architecture": "gat",
+      "role": "meta_train",
+      "group": 1,
+      "seed": 39,
+      "job": {
+        "id": "gat-group1-39",
+        "architecture": "gat",
+        "role": "meta_train",
+        "group": 1,
+        "seed": 39,
+        "model_spec": {
+          "architecture": "two_layer_gat",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5,
+            "heads": 4,
+            "attention_dropout": 0.0
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 39
+        }
+      },
+      "path": "models/gat-group1-39/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "404c763fec586949fcc63d32d6cf943ff62f4e35618f00c02b617a17c0d7e6d6",
+      "state_sha256": "c06209ee5bf1422a75a6c839ea295b3775beaeb37104cbd02f94f58a8c569ddd",
+      "selected_epoch": 200,
+      "fit_seconds": 4.425283200000024,
+      "cuda_peak_allocated_bytes": 293272064,
+      "cuda_peak_reserved_bytes": 337641472
+    },
+    {
+      "id": "gat-group1-40",
+      "architecture": "gat",
+      "role": "meta_train",
+      "group": 1,
+      "seed": 40,
+      "job": {
+        "id": "gat-group1-40",
+        "architecture": "gat",
+        "role": "meta_train",
+        "group": 1,
+        "seed": 40,
+        "model_spec": {
+          "architecture": "two_layer_gat",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5,
+            "heads": 4,
+            "attention_dropout": 0.0
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 40
+        }
+      },
+      "path": "models/gat-group1-40/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "d5fde62cfba42220ccfdde1fa553bdf82e7d3943a5e27fa1cbc0b080b881a5dc",
+      "state_sha256": "34b2466825cae7e8612e2c5ef371178fd644c483c404974b3e9ca53efd913b77",
+      "selected_epoch": 200,
+      "fit_seconds": 4.420380578000049,
+      "cuda_peak_allocated_bytes": 293272064,
+      "cuda_peak_reserved_bytes": 337641472
+    },
+    {
+      "id": "gat-group1-41",
+      "architecture": "gat",
+      "role": "meta_train",
+      "group": 1,
+      "seed": 41,
+      "job": {
+        "id": "gat-group1-41",
+        "architecture": "gat",
+        "role": "meta_train",
+        "group": 1,
+        "seed": 41,
+        "model_spec": {
+          "architecture": "two_layer_gat",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5,
+            "heads": 4,
+            "attention_dropout": 0.0
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 41
+        }
+      },
+      "path": "models/gat-group1-41/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "f2dd1e82ead95405e1daca7304d2d89384b204a0d38c147269a0d9a5e0270362",
+      "state_sha256": "3bc669f4f0d16719a48e5e9c4b93f1fb315ee65f05ebc6f71fda237607a454bc",
+      "selected_epoch": 199,
+      "fit_seconds": 4.426745767999989,
+      "cuda_peak_allocated_bytes": 293272064,
+      "cuda_peak_reserved_bytes": 337641472
+    },
+    {
+      "id": "gat-group1-42",
+      "architecture": "gat",
+      "role": "meta_train",
+      "group": 1,
+      "seed": 42,
+      "job": {
+        "id": "gat-group1-42",
+        "architecture": "gat",
+        "role": "meta_train",
+        "group": 1,
+        "seed": 42,
+        "model_spec": {
+          "architecture": "two_layer_gat",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5,
+            "heads": 4,
+            "attention_dropout": 0.0
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 42
+        }
+      },
+      "path": "models/gat-group1-42/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "99638641f5bd4f101ffd6c4ed1a80b9bc9a5dcf7786f1a409f6f29ccdc345be5",
+      "state_sha256": "8c1b92e925c4bb96c0ab8eb27e73dabeb8a5686741ef56899aa7333a450c9402",
+      "selected_epoch": 200,
+      "fit_seconds": 4.420306588000017,
+      "cuda_peak_allocated_bytes": 293272064,
+      "cuda_peak_reserved_bytes": 337641472
+    },
+    {
+      "id": "gat-group2-43",
+      "architecture": "gat",
+      "role": "meta_train",
+      "group": 2,
+      "seed": 43,
+      "job": {
+        "id": "gat-group2-43",
+        "architecture": "gat",
+        "role": "meta_train",
+        "group": 2,
+        "seed": 43,
+        "model_spec": {
+          "architecture": "two_layer_gat",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5,
+            "heads": 4,
+            "attention_dropout": 0.0
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 43
+        }
+      },
+      "path": "models/gat-group2-43/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "b34b0e238c15c2f40070cdfba7971f823bc0f7a992ecb34fbf0083068f3f44e1",
+      "state_sha256": "c92314127548babdfcf06ec7bc3334fbda11cdba9538c763b2dddd91524ec328",
+      "selected_epoch": 200,
+      "fit_seconds": 4.444120236999993,
+      "cuda_peak_allocated_bytes": 293272064,
+      "cuda_peak_reserved_bytes": 337641472
+    },
+    {
+      "id": "gat-group2-44",
+      "architecture": "gat",
+      "role": "meta_train",
+      "group": 2,
+      "seed": 44,
+      "job": {
+        "id": "gat-group2-44",
+        "architecture": "gat",
+        "role": "meta_train",
+        "group": 2,
+        "seed": 44,
+        "model_spec": {
+          "architecture": "two_layer_gat",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5,
+            "heads": 4,
+            "attention_dropout": 0.0
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 44
+        }
+      },
+      "path": "models/gat-group2-44/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "94f20501668edd8718d8ba4597e605b418f1c5d10b0fda6d63348cbf57e75fda",
+      "state_sha256": "777d7fd23d6ec208f4a444b532f112f5e80e198448b504bfb6a9bdf2699b81ef",
+      "selected_epoch": 200,
+      "fit_seconds": 4.43928104400004,
+      "cuda_peak_allocated_bytes": 293272064,
+      "cuda_peak_reserved_bytes": 337641472
+    },
+    {
+      "id": "gat-group2-45",
+      "architecture": "gat",
+      "role": "meta_train",
+      "group": 2,
+      "seed": 45,
+      "job": {
+        "id": "gat-group2-45",
+        "architecture": "gat",
+        "role": "meta_train",
+        "group": 2,
+        "seed": 45,
+        "model_spec": {
+          "architecture": "two_layer_gat",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5,
+            "heads": 4,
+            "attention_dropout": 0.0
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 45
+        }
+      },
+      "path": "models/gat-group2-45/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "e019b497598645c578d4ef607bd3288a2540523ae849a3297408983695be17b2",
+      "state_sha256": "f13217f55527db58575cfbbd88d610508825a002413587428196cf8f846f8f78",
+      "selected_epoch": 200,
+      "fit_seconds": 4.457864751999978,
+      "cuda_peak_allocated_bytes": 293272064,
+      "cuda_peak_reserved_bytes": 337641472
+    },
+    {
+      "id": "gat-group2-46",
+      "architecture": "gat",
+      "role": "meta_train",
+      "group": 2,
+      "seed": 46,
+      "job": {
+        "id": "gat-group2-46",
+        "architecture": "gat",
+        "role": "meta_train",
+        "group": 2,
+        "seed": 46,
+        "model_spec": {
+          "architecture": "two_layer_gat",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5,
+            "heads": 4,
+            "attention_dropout": 0.0
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 46
+        }
+      },
+      "path": "models/gat-group2-46/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "6b0b5c4ccd2bb3794dc8fdc248bea1f1e759c5df02c91a5eb05855a8a114d9f4",
+      "state_sha256": "d755679a1fb466e7ec5c93f0dd9452d2c11d63c886e9cd76f2150bd0c01c3f9e",
+      "selected_epoch": 200,
+      "fit_seconds": 4.43631674400001,
+      "cuda_peak_allocated_bytes": 293272064,
+      "cuda_peak_reserved_bytes": 337641472
+    },
+    {
+      "id": "gat-group2-47",
+      "architecture": "gat",
+      "role": "meta_train",
+      "group": 2,
+      "seed": 47,
+      "job": {
+        "id": "gat-group2-47",
+        "architecture": "gat",
+        "role": "meta_train",
+        "group": 2,
+        "seed": 47,
+        "model_spec": {
+          "architecture": "two_layer_gat",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5,
+            "heads": 4,
+            "attention_dropout": 0.0
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 47
+        }
+      },
+      "path": "models/gat-group2-47/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "43d5714087f92eab3ea0899bdb8340deed9f39a7d99f0b0bd3a0bf9fed12f84b",
+      "state_sha256": "eb5f58f17ea7799bd248f02370d5ee9c03f7df1fcc8d273284131a034b874275",
+      "selected_epoch": 199,
+      "fit_seconds": 4.436430174999998,
+      "cuda_peak_allocated_bytes": 293272064,
+      "cuda_peak_reserved_bytes": 337641472
+    },
+    {
+      "id": "gat-group2-48",
+      "architecture": "gat",
+      "role": "meta_train",
+      "group": 2,
+      "seed": 48,
+      "job": {
+        "id": "gat-group2-48",
+        "architecture": "gat",
+        "role": "meta_train",
+        "group": 2,
+        "seed": 48,
+        "model_spec": {
+          "architecture": "two_layer_gat",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5,
+            "heads": 4,
+            "attention_dropout": 0.0
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 48
+        }
+      },
+      "path": "models/gat-group2-48/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "71a6a0b90e0835090f2e0b38d9b6018a05718fac89ef289b7cc83f4e47668919",
+      "state_sha256": "42d56577ef46f876070e4ee5379287d713a9a5248d93398fe81bb6245093389d",
+      "selected_epoch": 199,
+      "fit_seconds": 4.448626522999973,
+      "cuda_peak_allocated_bytes": 293272064,
+      "cuda_peak_reserved_bytes": 337641472
+    },
+    {
+      "id": "gat-group3-49",
+      "architecture": "gat",
+      "role": "validation",
+      "group": 3,
+      "seed": 49,
+      "job": {
+        "id": "gat-group3-49",
+        "architecture": "gat",
+        "role": "validation",
+        "group": 3,
+        "seed": 49,
+        "model_spec": {
+          "architecture": "two_layer_gat",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5,
+            "heads": 4,
+            "attention_dropout": 0.0
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 49
+        }
+      },
+      "path": "models/gat-group3-49/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "7f43a32287146f730896a768410a7797a991fd0ec1aac4034fd982f579fc2fdb",
+      "state_sha256": "2dccc9b2716ec6d976d3cc5cee71e038a8f9685f03838a3f93d9e16e119ad4d9",
+      "selected_epoch": 200,
+      "fit_seconds": 4.450504711999997,
+      "cuda_peak_allocated_bytes": 293272064,
+      "cuda_peak_reserved_bytes": 337641472
+    },
+    {
+      "id": "gat-group3-50",
+      "architecture": "gat",
+      "role": "validation",
+      "group": 3,
+      "seed": 50,
+      "job": {
+        "id": "gat-group3-50",
+        "architecture": "gat",
+        "role": "validation",
+        "group": 3,
+        "seed": 50,
+        "model_spec": {
+          "architecture": "two_layer_gat",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5,
+            "heads": 4,
+            "attention_dropout": 0.0
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 50
+        }
+      },
+      "path": "models/gat-group3-50/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "912908385f077708565c8e18c4d464ec150e6cde7614d2c65709e92457e98157",
+      "state_sha256": "4a1465d516b69dceb7827b5618617efa784515c0f0e7c6fd4a6e0a8bc3a49b09",
+      "selected_epoch": 200,
+      "fit_seconds": 4.458950637000044,
+      "cuda_peak_allocated_bytes": 293272064,
+      "cuda_peak_reserved_bytes": 337641472
+    },
+    {
+      "id": "gat-group3-51",
+      "architecture": "gat",
+      "role": "validation",
+      "group": 3,
+      "seed": 51,
+      "job": {
+        "id": "gat-group3-51",
+        "architecture": "gat",
+        "role": "validation",
+        "group": 3,
+        "seed": 51,
+        "model_spec": {
+          "architecture": "two_layer_gat",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5,
+            "heads": 4,
+            "attention_dropout": 0.0
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 51
+        }
+      },
+      "path": "models/gat-group3-51/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "6d3b0a93dbfb6cc0faac17c00f9864e04650f8f620e6cc0b2939611f5c809d93",
+      "state_sha256": "7ff6f4fbc4367af584958e1bb0c1d0f4692ab84b86c4b3f93e6edac530662049",
+      "selected_epoch": 200,
+      "fit_seconds": 4.456319529999973,
+      "cuda_peak_allocated_bytes": 293272064,
+      "cuda_peak_reserved_bytes": 337641472
+    },
+    {
+      "id": "gat-group3-52",
+      "architecture": "gat",
+      "role": "validation",
+      "group": 3,
+      "seed": 52,
+      "job": {
+        "id": "gat-group3-52",
+        "architecture": "gat",
+        "role": "validation",
+        "group": 3,
+        "seed": 52,
+        "model_spec": {
+          "architecture": "two_layer_gat",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5,
+            "heads": 4,
+            "attention_dropout": 0.0
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 52
+        }
+      },
+      "path": "models/gat-group3-52/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "2f4ac7533281da26b0d0d57dbf8b3d77573ed0c0aef237e103d5a3405b2d10be",
+      "state_sha256": "1901713d6fcd804cf0a3348e2a441ddb81d60d698415c481a67d412b98d72ebf",
+      "selected_epoch": 199,
+      "fit_seconds": 4.44951890599998,
+      "cuda_peak_allocated_bytes": 293272064,
+      "cuda_peak_reserved_bytes": 337641472
+    },
+    {
+      "id": "gat-group3-53",
+      "architecture": "gat",
+      "role": "validation",
+      "group": 3,
+      "seed": 53,
+      "job": {
+        "id": "gat-group3-53",
+        "architecture": "gat",
+        "role": "validation",
+        "group": 3,
+        "seed": 53,
+        "model_spec": {
+          "architecture": "two_layer_gat",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5,
+            "heads": 4,
+            "attention_dropout": 0.0
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 53
+        }
+      },
+      "path": "models/gat-group3-53/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "e670da2ced385caacc999b4423718509651c7a85647ab80c717a0616c022b58a",
+      "state_sha256": "60c82dbab7a3f1ca792a6e754692f36c742fc3bd889f633be543bbc53f4459da",
+      "selected_epoch": 200,
+      "fit_seconds": 4.436514310999996,
+      "cuda_peak_allocated_bytes": 293272064,
+      "cuda_peak_reserved_bytes": 337641472
+    },
+    {
+      "id": "gat-group3-54",
+      "architecture": "gat",
+      "role": "validation",
+      "group": 3,
+      "seed": 54,
+      "job": {
+        "id": "gat-group3-54",
+        "architecture": "gat",
+        "role": "validation",
+        "group": 3,
+        "seed": 54,
+        "model_spec": {
+          "architecture": "two_layer_gat",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5,
+            "heads": 4,
+            "attention_dropout": 0.0
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 54
+        }
+      },
+      "path": "models/gat-group3-54/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "7dc16b6304c94dcbd1761643cfc2299166a53e53ec31e1ea6f4b500759b508b3",
+      "state_sha256": "6a957d739dc864b7b4167f72b56f18faa2edee0b0280e7832ed95859c81ae556",
+      "selected_epoch": 200,
+      "fit_seconds": 4.444847450999987,
+      "cuda_peak_allocated_bytes": 293272064,
+      "cuda_peak_reserved_bytes": 337641472
+    },
+    {
+      "id": "gat-group4-55",
+      "architecture": "gat",
+      "role": "test",
+      "group": 4,
+      "seed": 55,
+      "job": {
+        "id": "gat-group4-55",
+        "architecture": "gat",
+        "role": "test",
+        "group": 4,
+        "seed": 55,
+        "model_spec": {
+          "architecture": "two_layer_gat",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5,
+            "heads": 4,
+            "attention_dropout": 0.0
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 55
+        }
+      },
+      "path": "models/gat-group4-55/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "d2f8d1604c740bbbb9f91eaafe5e64363d2841df331411126a373fab4c2cf95d",
+      "state_sha256": "69a9784f2f60f215b932afdc80f6a1b25badeb3a5a97b09e6230a8810c5a7549",
+      "selected_epoch": 200,
+      "fit_seconds": 4.43366405900008,
+      "cuda_peak_allocated_bytes": 293272064,
+      "cuda_peak_reserved_bytes": 337641472
+    },
+    {
+      "id": "gat-group4-56",
+      "architecture": "gat",
+      "role": "test",
+      "group": 4,
+      "seed": 56,
+      "job": {
+        "id": "gat-group4-56",
+        "architecture": "gat",
+        "role": "test",
+        "group": 4,
+        "seed": 56,
+        "model_spec": {
+          "architecture": "two_layer_gat",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5,
+            "heads": 4,
+            "attention_dropout": 0.0
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 56
+        }
+      },
+      "path": "models/gat-group4-56/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "e4416773ae881c43ff5a1415c1bd6813192d34afb194553f4a73c5378f7d307d",
+      "state_sha256": "e49da6ab69892d8327114f62ef37d4d72eb089d72328e64a3f7799529bd07302",
+      "selected_epoch": 199,
+      "fit_seconds": 4.448590527999954,
+      "cuda_peak_allocated_bytes": 293272064,
+      "cuda_peak_reserved_bytes": 337641472
+    },
+    {
+      "id": "gat-group4-57",
+      "architecture": "gat",
+      "role": "test",
+      "group": 4,
+      "seed": 57,
+      "job": {
+        "id": "gat-group4-57",
+        "architecture": "gat",
+        "role": "test",
+        "group": 4,
+        "seed": 57,
+        "model_spec": {
+          "architecture": "two_layer_gat",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5,
+            "heads": 4,
+            "attention_dropout": 0.0
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 57
+        }
+      },
+      "path": "models/gat-group4-57/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "fa0c3f34bc56bf173444b243710d53d1df098b64b001c819a5052a651361df39",
+      "state_sha256": "f1bf2c3a28f60a02dfe322111ffee016afc0a36b23fafd01ee1d98267fa17949",
+      "selected_epoch": 200,
+      "fit_seconds": 4.436584942999957,
+      "cuda_peak_allocated_bytes": 293272064,
+      "cuda_peak_reserved_bytes": 337641472
+    },
+    {
+      "id": "gat-group4-58",
+      "architecture": "gat",
+      "role": "test",
+      "group": 4,
+      "seed": 58,
+      "job": {
+        "id": "gat-group4-58",
+        "architecture": "gat",
+        "role": "test",
+        "group": 4,
+        "seed": 58,
+        "model_spec": {
+          "architecture": "two_layer_gat",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5,
+            "heads": 4,
+            "attention_dropout": 0.0
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 58
+        }
+      },
+      "path": "models/gat-group4-58/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "5443f65f1c5cc993431326caa17b43514f2b1af1a1f8222db50f9f8480067c23",
+      "state_sha256": "c6b644bd1cdd87427fa39cbd8fd3df941a06eafdc27cf6eacaa5a67c4be278e6",
+      "selected_epoch": 200,
+      "fit_seconds": 4.428636368999946,
+      "cuda_peak_allocated_bytes": 293272064,
+      "cuda_peak_reserved_bytes": 337641472
+    },
+    {
+      "id": "gat-group4-59",
+      "architecture": "gat",
+      "role": "test",
+      "group": 4,
+      "seed": 59,
+      "job": {
+        "id": "gat-group4-59",
+        "architecture": "gat",
+        "role": "test",
+        "group": 4,
+        "seed": 59,
+        "model_spec": {
+          "architecture": "two_layer_gat",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5,
+            "heads": 4,
+            "attention_dropout": 0.0
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 59
+        }
+      },
+      "path": "models/gat-group4-59/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "4874e2c24f7fbabcd805dfecd7718ba6de7e9fb80e2e24f7f3622d1a24c1c461",
+      "state_sha256": "6d3bf1cc104491a94649dbbdf7bad8ed65bf3fa5f697cd450795820741cce3eb",
+      "selected_epoch": 200,
+      "fit_seconds": 4.442002026999944,
+      "cuda_peak_allocated_bytes": 293272064,
+      "cuda_peak_reserved_bytes": 337641472
+    },
+    {
+      "id": "gat-group4-60",
+      "architecture": "gat",
+      "role": "test",
+      "group": 4,
+      "seed": 60,
+      "job": {
+        "id": "gat-group4-60",
+        "architecture": "gat",
+        "role": "test",
+        "group": 4,
+        "seed": 60,
+        "model_spec": {
+          "architecture": "two_layer_gat",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5,
+            "heads": 4,
+            "attention_dropout": 0.0
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 60
+        }
+      },
+      "path": "models/gat-group4-60/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "76e962a5ceb1a18e5218b12c41c088e0979023930bad8090b3ca8d547dfb95fa",
+      "state_sha256": "a8eb4ce426f21625caf60a1832f2d9c8a0e289c4fe5ccaae268eb8e74aa10762",
+      "selected_epoch": 200,
+      "fit_seconds": 4.432909001999974,
+      "cuda_peak_allocated_bytes": 293272064,
+      "cuda_peak_reserved_bytes": 337641472
+    },
+    {
+      "id": "graphsage-group0-31",
+      "architecture": "graphsage",
+      "role": "meta_train",
+      "group": 0,
+      "seed": 31,
+      "job": {
+        "id": "graphsage-group0-31",
+        "architecture": "graphsage",
+        "role": "meta_train",
+        "group": 0,
+        "seed": 31,
+        "model_spec": {
+          "architecture": "two_layer_graphsage",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 31
+        }
+      },
+      "path": "models/graphsage-group0-31/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "2e53c3d5c5552f45e0139920268246e550afc1a407245fb77ce0c3fa47a9641b",
+      "state_sha256": "bc8cf8317c33b82d5902f3540f9b2715c2d36b0dd4eb574e0b08593bb1334249",
+      "selected_epoch": 200,
+      "fit_seconds": 2.495969882000054,
+      "cuda_peak_allocated_bytes": 201292288,
+      "cuda_peak_reserved_bytes": 440401920
+    },
+    {
+      "id": "graphsage-group0-32",
+      "architecture": "graphsage",
+      "role": "meta_train",
+      "group": 0,
+      "seed": 32,
+      "job": {
+        "id": "graphsage-group0-32",
+        "architecture": "graphsage",
+        "role": "meta_train",
+        "group": 0,
+        "seed": 32,
+        "model_spec": {
+          "architecture": "two_layer_graphsage",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 32
+        }
+      },
+      "path": "models/graphsage-group0-32/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "530639f8618a75d1a718b8fa15ec63e227c8c7017765b00d6438c39187b2cb50",
+      "state_sha256": "2b7b030efc31514c270ad681f6f0953975eab1ff55dbb389be5b049c7c72c130",
+      "selected_epoch": 194,
+      "fit_seconds": 2.44857985200008,
+      "cuda_peak_allocated_bytes": 201292288,
+      "cuda_peak_reserved_bytes": 440401920
+    },
+    {
+      "id": "graphsage-group0-33",
+      "architecture": "graphsage",
+      "role": "meta_train",
+      "group": 0,
+      "seed": 33,
+      "job": {
+        "id": "graphsage-group0-33",
+        "architecture": "graphsage",
+        "role": "meta_train",
+        "group": 0,
+        "seed": 33,
+        "model_spec": {
+          "architecture": "two_layer_graphsage",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 33
+        }
+      },
+      "path": "models/graphsage-group0-33/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "b8717785ac8b05b4112967aaab175185ca348a55c686a779be8b0bee5ed5aaea",
+      "state_sha256": "8ee58071e4ff3d989d3a597d1cdaddbedde2d61dc418a40671efc77ad1c0a12a",
+      "selected_epoch": 198,
+      "fit_seconds": 2.4536724859999595,
+      "cuda_peak_allocated_bytes": 201292288,
+      "cuda_peak_reserved_bytes": 440401920
+    },
+    {
+      "id": "graphsage-group0-34",
+      "architecture": "graphsage",
+      "role": "meta_train",
+      "group": 0,
+      "seed": 34,
+      "job": {
+        "id": "graphsage-group0-34",
+        "architecture": "graphsage",
+        "role": "meta_train",
+        "group": 0,
+        "seed": 34,
+        "model_spec": {
+          "architecture": "two_layer_graphsage",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 34
+        }
+      },
+      "path": "models/graphsage-group0-34/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "99e55ec4d678c730f07440c9fd3e4595919a45bc14a53502aab57a1d3576c19d",
+      "state_sha256": "9b7cafed3e79769a21dd846c6fd635be73657e9e8d9b78c26a5650030ff4f712",
+      "selected_epoch": 195,
+      "fit_seconds": 2.4499119800000244,
+      "cuda_peak_allocated_bytes": 201292288,
+      "cuda_peak_reserved_bytes": 440401920
+    },
+    {
+      "id": "graphsage-group0-35",
+      "architecture": "graphsage",
+      "role": "meta_train",
+      "group": 0,
+      "seed": 35,
+      "job": {
+        "id": "graphsage-group0-35",
+        "architecture": "graphsage",
+        "role": "meta_train",
+        "group": 0,
+        "seed": 35,
+        "model_spec": {
+          "architecture": "two_layer_graphsage",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 35
+        }
+      },
+      "path": "models/graphsage-group0-35/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "aae79068047fee9beb81ab252ea356e4edc2d8cc757f3587ea381eafab9adafc",
+      "state_sha256": "ade63233f5472c57535e4ae3203cbc5216ace4744700c8ab063feb312de3d8ce",
+      "selected_epoch": 198,
+      "fit_seconds": 2.4625864180000008,
+      "cuda_peak_allocated_bytes": 201292288,
+      "cuda_peak_reserved_bytes": 440401920
+    },
+    {
+      "id": "graphsage-group0-36",
+      "architecture": "graphsage",
+      "role": "meta_train",
+      "group": 0,
+      "seed": 36,
+      "job": {
+        "id": "graphsage-group0-36",
+        "architecture": "graphsage",
+        "role": "meta_train",
+        "group": 0,
+        "seed": 36,
+        "model_spec": {
+          "architecture": "two_layer_graphsage",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 36
+        }
+      },
+      "path": "models/graphsage-group0-36/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "7096d26dc2c908bb268093c3a27187853f69c50115c12f908b21e01aa23fca80",
+      "state_sha256": "ffa127aa8dcd8f94b8874509af47481236c3226c2618f34099da8b3f232747b7",
+      "selected_epoch": 198,
+      "fit_seconds": 2.457694932000095,
+      "cuda_peak_allocated_bytes": 201292288,
+      "cuda_peak_reserved_bytes": 440401920
+    },
+    {
+      "id": "graphsage-group1-37",
+      "architecture": "graphsage",
+      "role": "meta_train",
+      "group": 1,
+      "seed": 37,
+      "job": {
+        "id": "graphsage-group1-37",
+        "architecture": "graphsage",
+        "role": "meta_train",
+        "group": 1,
+        "seed": 37,
+        "model_spec": {
+          "architecture": "two_layer_graphsage",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 37
+        }
+      },
+      "path": "models/graphsage-group1-37/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "ca81de16f7b4ff683295493cfcc9ef1481834a2f20a6ddf5ed34fc119a581f51",
+      "state_sha256": "1133a7f4bfa6c37184fe784478bd1dd61380ebafcf73628f5db8011ecba7d4a7",
+      "selected_epoch": 199,
+      "fit_seconds": 2.45465281700001,
+      "cuda_peak_allocated_bytes": 201292288,
+      "cuda_peak_reserved_bytes": 440401920
+    },
+    {
+      "id": "graphsage-group1-38",
+      "architecture": "graphsage",
+      "role": "meta_train",
+      "group": 1,
+      "seed": 38,
+      "job": {
+        "id": "graphsage-group1-38",
+        "architecture": "graphsage",
+        "role": "meta_train",
+        "group": 1,
+        "seed": 38,
+        "model_spec": {
+          "architecture": "two_layer_graphsage",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 38
+        }
+      },
+      "path": "models/graphsage-group1-38/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "3af016dd9a040a8e16a98c7da5131355bace0b6cdc0dedf81272c6c490f13bf9",
+      "state_sha256": "2312e85c3fd4eaf7c6c4f6699f175a3f6b091e266c6bbff1ad194c90be39a065",
+      "selected_epoch": 199,
+      "fit_seconds": 2.4568652299999485,
+      "cuda_peak_allocated_bytes": 201292288,
+      "cuda_peak_reserved_bytes": 440401920
+    },
+    {
+      "id": "graphsage-group1-39",
+      "architecture": "graphsage",
+      "role": "meta_train",
+      "group": 1,
+      "seed": 39,
+      "job": {
+        "id": "graphsage-group1-39",
+        "architecture": "graphsage",
+        "role": "meta_train",
+        "group": 1,
+        "seed": 39,
+        "model_spec": {
+          "architecture": "two_layer_graphsage",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 39
+        }
+      },
+      "path": "models/graphsage-group1-39/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "8884fccb4627bd3682ef26ebfaed287e7a73e1c3db3de510ce0bcc8ff4b0d056",
+      "state_sha256": "7d31240d3b2c574d08eea1b13700e655af40faf09ed203b33c958a8a51002b1d",
+      "selected_epoch": 199,
+      "fit_seconds": 2.4608654819999174,
+      "cuda_peak_allocated_bytes": 201292288,
+      "cuda_peak_reserved_bytes": 440401920
+    },
+    {
+      "id": "graphsage-group1-40",
+      "architecture": "graphsage",
+      "role": "meta_train",
+      "group": 1,
+      "seed": 40,
+      "job": {
+        "id": "graphsage-group1-40",
+        "architecture": "graphsage",
+        "role": "meta_train",
+        "group": 1,
+        "seed": 40,
+        "model_spec": {
+          "architecture": "two_layer_graphsage",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 40
+        }
+      },
+      "path": "models/graphsage-group1-40/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "38537bbf6a8f4b7ae0072948d9747174b8bcaa509d6003f5f50dbfa68f3ae127",
+      "state_sha256": "93bd8c5556518fe4254b451c86def5e3711408161ea2874d68e06766025e9d92",
+      "selected_epoch": 199,
+      "fit_seconds": 2.468993859999955,
+      "cuda_peak_allocated_bytes": 201292288,
+      "cuda_peak_reserved_bytes": 440401920
+    },
+    {
+      "id": "graphsage-group1-41",
+      "architecture": "graphsage",
+      "role": "meta_train",
+      "group": 1,
+      "seed": 41,
+      "job": {
+        "id": "graphsage-group1-41",
+        "architecture": "graphsage",
+        "role": "meta_train",
+        "group": 1,
+        "seed": 41,
+        "model_spec": {
+          "architecture": "two_layer_graphsage",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 41
+        }
+      },
+      "path": "models/graphsage-group1-41/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "beb180825daf422a86c93e8a096dbf232fb016113e81c2300174038b500ea548",
+      "state_sha256": "48303dd97057b0380609e99020ca1b3791d64ee4db248014d80839f185079420",
+      "selected_epoch": 197,
+      "fit_seconds": 2.4551994939999986,
+      "cuda_peak_allocated_bytes": 201292288,
+      "cuda_peak_reserved_bytes": 440401920
+    },
+    {
+      "id": "graphsage-group1-42",
+      "architecture": "graphsage",
+      "role": "meta_train",
+      "group": 1,
+      "seed": 42,
+      "job": {
+        "id": "graphsage-group1-42",
+        "architecture": "graphsage",
+        "role": "meta_train",
+        "group": 1,
+        "seed": 42,
+        "model_spec": {
+          "architecture": "two_layer_graphsage",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 42
+        }
+      },
+      "path": "models/graphsage-group1-42/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "3280cb4fb8dd2dad0f1d411999dc914fdce6ed91d36a7a03baf06e16183afe66",
+      "state_sha256": "2a39d5d0e8f5b17a537252e3bbd7ec78b713616e9b08e7dbb310524b68c15a69",
+      "selected_epoch": 193,
+      "fit_seconds": 2.4552835810000033,
+      "cuda_peak_allocated_bytes": 201292288,
+      "cuda_peak_reserved_bytes": 440401920
+    },
+    {
+      "id": "graphsage-group2-43",
+      "architecture": "graphsage",
+      "role": "meta_train",
+      "group": 2,
+      "seed": 43,
+      "job": {
+        "id": "graphsage-group2-43",
+        "architecture": "graphsage",
+        "role": "meta_train",
+        "group": 2,
+        "seed": 43,
+        "model_spec": {
+          "architecture": "two_layer_graphsage",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 43
+        }
+      },
+      "path": "models/graphsage-group2-43/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "2c5b38a0916fc33c073bb992363a8b4074c426484335b3399f99bb37ebab2ae7",
+      "state_sha256": "32c1190e31b25402edc99ff02de7c18b62d1279cdc1b1d6be78487250a720334",
+      "selected_epoch": 199,
+      "fit_seconds": 2.4737678980000055,
+      "cuda_peak_allocated_bytes": 201292288,
+      "cuda_peak_reserved_bytes": 440401920
+    },
+    {
+      "id": "graphsage-group2-44",
+      "architecture": "graphsage",
+      "role": "meta_train",
+      "group": 2,
+      "seed": 44,
+      "job": {
+        "id": "graphsage-group2-44",
+        "architecture": "graphsage",
+        "role": "meta_train",
+        "group": 2,
+        "seed": 44,
+        "model_spec": {
+          "architecture": "two_layer_graphsage",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 44
+        }
+      },
+      "path": "models/graphsage-group2-44/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "e2dffbd286a80ad056ee8fa430db6c753990bab40155acaf36371e5de0eeb95d",
+      "state_sha256": "65bf9cb05e5b50e4c66132d8f02b72df03132948b4cc095d3f519378b7076003",
+      "selected_epoch": 200,
+      "fit_seconds": 2.457150859999956,
+      "cuda_peak_allocated_bytes": 201292288,
+      "cuda_peak_reserved_bytes": 440401920
+    },
+    {
+      "id": "graphsage-group2-45",
+      "architecture": "graphsage",
+      "role": "meta_train",
+      "group": 2,
+      "seed": 45,
+      "job": {
+        "id": "graphsage-group2-45",
+        "architecture": "graphsage",
+        "role": "meta_train",
+        "group": 2,
+        "seed": 45,
+        "model_spec": {
+          "architecture": "two_layer_graphsage",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 45
+        }
+      },
+      "path": "models/graphsage-group2-45/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "8d54125a9ce790fd796b433443b69303c5c4d8c44c7ea272166b230007a178b8",
+      "state_sha256": "f8377923a1ff9a55cbe4020b922d5700f55f108d0c5936cbe66b5eefb77611dd",
+      "selected_epoch": 196,
+      "fit_seconds": 2.4565307180000673,
+      "cuda_peak_allocated_bytes": 201292288,
+      "cuda_peak_reserved_bytes": 440401920
+    },
+    {
+      "id": "graphsage-group2-46",
+      "architecture": "graphsage",
+      "role": "meta_train",
+      "group": 2,
+      "seed": 46,
+      "job": {
+        "id": "graphsage-group2-46",
+        "architecture": "graphsage",
+        "role": "meta_train",
+        "group": 2,
+        "seed": 46,
+        "model_spec": {
+          "architecture": "two_layer_graphsage",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 46
+        }
+      },
+      "path": "models/graphsage-group2-46/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "bbbd1f9572203e3ac03ebc1e3d0f4117801ea8d8b7c1c6824ad28638812a7334",
+      "state_sha256": "e8e76a17642b7afc343cbd0683b2af1adc8068a84f4f041938236a12e81b69c7",
+      "selected_epoch": 198,
+      "fit_seconds": 2.4556708709999384,
+      "cuda_peak_allocated_bytes": 201292288,
+      "cuda_peak_reserved_bytes": 440401920
+    },
+    {
+      "id": "graphsage-group2-47",
+      "architecture": "graphsage",
+      "role": "meta_train",
+      "group": 2,
+      "seed": 47,
+      "job": {
+        "id": "graphsage-group2-47",
+        "architecture": "graphsage",
+        "role": "meta_train",
+        "group": 2,
+        "seed": 47,
+        "model_spec": {
+          "architecture": "two_layer_graphsage",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 47
+        }
+      },
+      "path": "models/graphsage-group2-47/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "8dcfde349fcef86fdd13f5ede21134335d76640e0d11169786955f201f2eb6ab",
+      "state_sha256": "2bbc8076fa840dafff01f0bb5317f345ee7fd8dfce7f0a8e8374a856d7d2ebfa",
+      "selected_epoch": 199,
+      "fit_seconds": 2.4700867450000032,
+      "cuda_peak_allocated_bytes": 201292288,
+      "cuda_peak_reserved_bytes": 440401920
+    },
+    {
+      "id": "graphsage-group2-48",
+      "architecture": "graphsage",
+      "role": "meta_train",
+      "group": 2,
+      "seed": 48,
+      "job": {
+        "id": "graphsage-group2-48",
+        "architecture": "graphsage",
+        "role": "meta_train",
+        "group": 2,
+        "seed": 48,
+        "model_spec": {
+          "architecture": "two_layer_graphsage",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 48
+        }
+      },
+      "path": "models/graphsage-group2-48/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "ca6fc9cdc86ba7e7d7e1c13a7aefa896bb8bd07ace40db129bc1da602e5f4976",
+      "state_sha256": "a55eeefcec0d295d33089299b893192ef162bcfd080c140df8c58ea78565eca6",
+      "selected_epoch": 200,
+      "fit_seconds": 2.4576384239999243,
+      "cuda_peak_allocated_bytes": 201292288,
+      "cuda_peak_reserved_bytes": 440401920
+    },
+    {
+      "id": "graphsage-group3-49",
+      "architecture": "graphsage",
+      "role": "validation",
+      "group": 3,
+      "seed": 49,
+      "job": {
+        "id": "graphsage-group3-49",
+        "architecture": "graphsage",
+        "role": "validation",
+        "group": 3,
+        "seed": 49,
+        "model_spec": {
+          "architecture": "two_layer_graphsage",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 49
+        }
+      },
+      "path": "models/graphsage-group3-49/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "0497988a8bd22a3465f5bbf8c452350a71ffc0f08a5f4b5362d3364500890178",
+      "state_sha256": "41ade05ee379b4f3d13ec299813db73df4d6d799eb935086880e819f1e87cfa9",
+      "selected_epoch": 200,
+      "fit_seconds": 2.456657328999995,
+      "cuda_peak_allocated_bytes": 201292288,
+      "cuda_peak_reserved_bytes": 440401920
+    },
+    {
+      "id": "graphsage-group3-50",
+      "architecture": "graphsage",
+      "role": "validation",
+      "group": 3,
+      "seed": 50,
+      "job": {
+        "id": "graphsage-group3-50",
+        "architecture": "graphsage",
+        "role": "validation",
+        "group": 3,
+        "seed": 50,
+        "model_spec": {
+          "architecture": "two_layer_graphsage",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 50
+        }
+      },
+      "path": "models/graphsage-group3-50/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "bed341d4052e8294c75bb3d7f9d6846e8c3ef376c37d0d2ce925c8493be8169d",
+      "state_sha256": "8d2a90ab24e124a5bb6c892c1be405e94861b69671d3b5bb96c7a93a91128e98",
+      "selected_epoch": 200,
+      "fit_seconds": 2.4601039149999906,
+      "cuda_peak_allocated_bytes": 201292288,
+      "cuda_peak_reserved_bytes": 440401920
+    },
+    {
+      "id": "graphsage-group3-51",
+      "architecture": "graphsage",
+      "role": "validation",
+      "group": 3,
+      "seed": 51,
+      "job": {
+        "id": "graphsage-group3-51",
+        "architecture": "graphsage",
+        "role": "validation",
+        "group": 3,
+        "seed": 51,
+        "model_spec": {
+          "architecture": "two_layer_graphsage",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 51
+        }
+      },
+      "path": "models/graphsage-group3-51/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "7bf1de2672221aad037e0c850c7106691cd3a3b7e84faf969f526119dfdfb639",
+      "state_sha256": "051aa1f5116223a65667ed78efaee832af6419e5ea2869178e1e38d105660b63",
+      "selected_epoch": 195,
+      "fit_seconds": 2.4745405819999178,
+      "cuda_peak_allocated_bytes": 201292288,
+      "cuda_peak_reserved_bytes": 440401920
+    },
+    {
+      "id": "graphsage-group3-52",
+      "architecture": "graphsage",
+      "role": "validation",
+      "group": 3,
+      "seed": 52,
+      "job": {
+        "id": "graphsage-group3-52",
+        "architecture": "graphsage",
+        "role": "validation",
+        "group": 3,
+        "seed": 52,
+        "model_spec": {
+          "architecture": "two_layer_graphsage",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 52
+        }
+      },
+      "path": "models/graphsage-group3-52/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "3b400c9d63b3949e2bb06afe9db5c842cef08f6af71e4b0a4a98e7266057c1f0",
+      "state_sha256": "953789ece9ab798fc283d945c3b4cf5466834404f16c091cb8f998109ab423a3",
+      "selected_epoch": 197,
+      "fit_seconds": 2.4586695039999995,
+      "cuda_peak_allocated_bytes": 201292288,
+      "cuda_peak_reserved_bytes": 440401920
+    },
+    {
+      "id": "graphsage-group3-53",
+      "architecture": "graphsage",
+      "role": "validation",
+      "group": 3,
+      "seed": 53,
+      "job": {
+        "id": "graphsage-group3-53",
+        "architecture": "graphsage",
+        "role": "validation",
+        "group": 3,
+        "seed": 53,
+        "model_spec": {
+          "architecture": "two_layer_graphsage",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 53
+        }
+      },
+      "path": "models/graphsage-group3-53/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "adc5be5e26aa1a0b9dfae99caab2236562709ae6af7d91992408acd83c7e6f47",
+      "state_sha256": "189d33bba850d272e7beca841aa41bed8c44e68b7924716beb7ffd3d7db70216",
+      "selected_epoch": 200,
+      "fit_seconds": 2.4556305439999733,
+      "cuda_peak_allocated_bytes": 201292288,
+      "cuda_peak_reserved_bytes": 440401920
+    },
+    {
+      "id": "graphsage-group3-54",
+      "architecture": "graphsage",
+      "role": "validation",
+      "group": 3,
+      "seed": 54,
+      "job": {
+        "id": "graphsage-group3-54",
+        "architecture": "graphsage",
+        "role": "validation",
+        "group": 3,
+        "seed": 54,
+        "model_spec": {
+          "architecture": "two_layer_graphsage",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 54
+        }
+      },
+      "path": "models/graphsage-group3-54/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "9b748cc9f894e290266e73f8286420ebf09923d665a8dd4ab358bedf5ee1396b",
+      "state_sha256": "2dcca7ea90611a8cd2639bf66d99245a2ac213ab86fd98e9cf8a65f081c79372",
+      "selected_epoch": 200,
+      "fit_seconds": 2.4590684709999096,
+      "cuda_peak_allocated_bytes": 201292288,
+      "cuda_peak_reserved_bytes": 440401920
+    },
+    {
+      "id": "graphsage-group4-55",
+      "architecture": "graphsage",
+      "role": "test",
+      "group": 4,
+      "seed": 55,
+      "job": {
+        "id": "graphsage-group4-55",
+        "architecture": "graphsage",
+        "role": "test",
+        "group": 4,
+        "seed": 55,
+        "model_spec": {
+          "architecture": "two_layer_graphsage",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 55
+        }
+      },
+      "path": "models/graphsage-group4-55/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "4943e50a25a8d030c3c74f37b0f0c3db3690ecf09f553166efe3b8a5cd889c0e",
+      "state_sha256": "47455e9fe461dbf03376a73637b97584e7d8ba5417a73c98c081c653e3db794d",
+      "selected_epoch": 198,
+      "fit_seconds": 2.4584786500000746,
+      "cuda_peak_allocated_bytes": 201292288,
+      "cuda_peak_reserved_bytes": 440401920
+    },
+    {
+      "id": "graphsage-group4-56",
+      "architecture": "graphsage",
+      "role": "test",
+      "group": 4,
+      "seed": 56,
+      "job": {
+        "id": "graphsage-group4-56",
+        "architecture": "graphsage",
+        "role": "test",
+        "group": 4,
+        "seed": 56,
+        "model_spec": {
+          "architecture": "two_layer_graphsage",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 56
+        }
+      },
+      "path": "models/graphsage-group4-56/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "84f858c6ced83ecbe9a4b595ad732106872851a3d9ff1cf193c4e7a816a4b0e0",
+      "state_sha256": "19035416ddf0869f77e9e0ff2cfb4e9041ce2b1fe01e759a83bbb1bdcafe4067",
+      "selected_epoch": 196,
+      "fit_seconds": 2.4555100630000197,
+      "cuda_peak_allocated_bytes": 201292288,
+      "cuda_peak_reserved_bytes": 440401920
+    },
+    {
+      "id": "graphsage-group4-57",
+      "architecture": "graphsage",
+      "role": "test",
+      "group": 4,
+      "seed": 57,
+      "job": {
+        "id": "graphsage-group4-57",
+        "architecture": "graphsage",
+        "role": "test",
+        "group": 4,
+        "seed": 57,
+        "model_spec": {
+          "architecture": "two_layer_graphsage",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 57
+        }
+      },
+      "path": "models/graphsage-group4-57/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "d4bbd944e6ecdcd6ac43a530dc2e4f5a4702bdab30e991ce257bb0af07d841b6",
+      "state_sha256": "959660354eb9f386b92f128b1f60c168d06c515e0bfc2dca9a926359acd9ccdc",
+      "selected_epoch": 199,
+      "fit_seconds": 2.4562503089999836,
+      "cuda_peak_allocated_bytes": 201292288,
+      "cuda_peak_reserved_bytes": 440401920
+    },
+    {
+      "id": "graphsage-group4-58",
+      "architecture": "graphsage",
+      "role": "test",
+      "group": 4,
+      "seed": 58,
+      "job": {
+        "id": "graphsage-group4-58",
+        "architecture": "graphsage",
+        "role": "test",
+        "group": 4,
+        "seed": 58,
+        "model_spec": {
+          "architecture": "two_layer_graphsage",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 58
+        }
+      },
+      "path": "models/graphsage-group4-58/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "0f7bc4bba783036e5daf264d1e7a54ec50200e35f092df84a0d328b1f2e32c1e",
+      "state_sha256": "cabfb969296271070f3357f9f602f41937775913fecf8e5f10ce7587b54c76af",
+      "selected_epoch": 199,
+      "fit_seconds": 2.4537966359999928,
+      "cuda_peak_allocated_bytes": 201292288,
+      "cuda_peak_reserved_bytes": 440401920
+    },
+    {
+      "id": "graphsage-group4-59",
+      "architecture": "graphsage",
+      "role": "test",
+      "group": 4,
+      "seed": 59,
+      "job": {
+        "id": "graphsage-group4-59",
+        "architecture": "graphsage",
+        "role": "test",
+        "group": 4,
+        "seed": 59,
+        "model_spec": {
+          "architecture": "two_layer_graphsage",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 59
+        }
+      },
+      "path": "models/graphsage-group4-59/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "35d0d1187f8e942fd1f2f40974c61d14f1263abec9416e3e614fc198b312b794",
+      "state_sha256": "29af52e23da7a31db8d2a4f0e0574be4f382733dbffa12771d0dd3179e929c68",
+      "selected_epoch": 198,
+      "fit_seconds": 2.461882138999954,
+      "cuda_peak_allocated_bytes": 201292288,
+      "cuda_peak_reserved_bytes": 440401920
+    },
+    {
+      "id": "graphsage-group4-60",
+      "architecture": "graphsage",
+      "role": "test",
+      "group": 4,
+      "seed": 60,
+      "job": {
+        "id": "graphsage-group4-60",
+        "architecture": "graphsage",
+        "role": "test",
+        "group": 4,
+        "seed": 60,
+        "model_spec": {
+          "architecture": "two_layer_graphsage",
+          "config": {
+            "in_channels": 128,
+            "out_channels": 40,
+            "hidden_channels": 32,
+            "dropout": 0.5
+          }
+        },
+        "training_config": {
+          "max_epochs": 200,
+          "patience": 30,
+          "learning_rate": 0.01,
+          "weight_decay": 0.0005,
+          "model_seed": 60
+        }
+      },
+      "path": "models/graphsage-group4-60/checkpoint.pt",
+      "identity_sha256": "71f3a1f2a1f851b032e3d42e098925d7a100ad9f0c1259c5d37427c2248e7f78",
+      "checkpoint_sha256": "87bc07e87c34eeb61966f9a74cdc3b2212753a5e04bce44bf7d4eb0b1e92eb9a",
+      "state_sha256": "a0e1061d890fd4130f9dce75e2cd55aba40dbfdede094b0ae340e602f353dfc7",
+      "selected_epoch": 199,
+      "fit_seconds": 2.459127794999972,
+      "cuda_peak_allocated_bytes": 201292288,
+      "cuda_peak_reserved_bytes": 440401920
+    }
+  ],
+  "hardware": {
+    "python": "3.13.16 (main, Oct  1 2026, 15:40:24) [GCC 13.3.0]",
+    "platform": "Linux-6.18.55+-x86_64-with-glibc2.39",
+    "torch": "2.11.0+cu130",
+    "cuda": "13.0",
+    "gpu": "Tesla T4",
+    "gpu_memory_bytes": 15636037632,
+    "source_zip_sha256": "6e429d26463c4eb27b2b63690a2f6f5bf9529a8f333fbc6b8d9493396ac63932"
+  },
+  "final_test_scored": false,
+  "remote_versioned_resume_verified": false
+}

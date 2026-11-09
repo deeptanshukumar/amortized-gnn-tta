@@ -1,0 +1,1271 @@
+{
+  "status": "complete",
+  "cases": 252,
+  "all_saved_dense_updates_exactly_zero": true,
+  "saved_logits_match_saved_classes": true,
+  "labels_read": false,
+  "seconds": 1.1034940969839226,
+  "study_verification_sha256": "09439e173448124533a9fee04d03e5a1bc9902791b2c91ac071c884a66dfd24c",
+  "rows": [
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "artifact": "gcn-group3-49--validation-control.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "artifact": "gcn-group3-50--validation-control.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "artifact": "gcn-group3-51--validation-control.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "artifact": "gcn-group3-52--validation-control.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "artifact": "gcn-group3-53--validation-control.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "artifact": "gcn-group3-54--validation-control.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "artifact": "gcn-group3-49--validation-attribute-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "artifact": "gcn-group3-50--validation-attribute-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "artifact": "gcn-group3-51--validation-attribute-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "artifact": "gcn-group3-52--validation-attribute-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "artifact": "gcn-group3-53--validation-attribute-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "artifact": "gcn-group3-54--validation-attribute-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "artifact": "gcn-group3-49--validation-structural-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "artifact": "gcn-group3-50--validation-structural-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "artifact": "gcn-group3-51--validation-structural-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "artifact": "gcn-group3-52--validation-structural-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "artifact": "gcn-group3-53--validation-structural-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "artifact": "gcn-group3-54--validation-structural-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "artifact": "gcn-group3-49--validation-combined-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "artifact": "gcn-group3-50--validation-combined-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "artifact": "gcn-group3-51--validation-combined-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "artifact": "gcn-group3-52--validation-combined-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "artifact": "gcn-group3-53--validation-combined-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "artifact": "gcn-group3-54--validation-combined-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "artifact": "gcn-group3-49--validation-attribute-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "artifact": "gcn-group3-50--validation-attribute-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "artifact": "gcn-group3-51--validation-attribute-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "artifact": "gcn-group3-52--validation-attribute-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "artifact": "gcn-group3-53--validation-attribute-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "artifact": "gcn-group3-54--validation-attribute-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "artifact": "gcn-group3-49--validation-structural-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "artifact": "gcn-group3-50--validation-structural-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "artifact": "gcn-group3-51--validation-structural-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "artifact": "gcn-group3-52--validation-structural-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "artifact": "gcn-group3-53--validation-structural-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "artifact": "gcn-group3-54--validation-structural-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "artifact": "gcn-group3-49--validation-combined-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "artifact": "gcn-group3-50--validation-combined-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "artifact": "gcn-group3-51--validation-combined-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "artifact": "gcn-group3-52--validation-combined-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "artifact": "gcn-group3-53--validation-combined-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-head-hypernetwork-202801",
+      "artifact": "gcn-group3-54--validation-combined-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-49--validation-control.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-50--validation-control.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-51--validation-control.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-52--validation-control.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-53--validation-control.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-54--validation-control.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-49--validation-attribute-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-50--validation-attribute-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-51--validation-attribute-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-52--validation-attribute-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-53--validation-attribute-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-54--validation-attribute-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-49--validation-structural-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-50--validation-structural-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-51--validation-structural-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-52--validation-structural-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-53--validation-structural-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-54--validation-structural-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-49--validation-combined-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-50--validation-combined-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-51--validation-combined-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-52--validation-combined-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-53--validation-combined-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-54--validation-combined-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-49--validation-attribute-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-50--validation-attribute-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-51--validation-attribute-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-52--validation-attribute-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-53--validation-attribute-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-54--validation-attribute-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-49--validation-structural-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-50--validation-structural-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-51--validation-structural-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-52--validation-structural-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-53--validation-structural-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-54--validation-structural-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-49--validation-combined-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-50--validation-combined-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-51--validation-combined-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-52--validation-combined-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-53--validation-combined-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-A-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-54--validation-combined-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-49--validation-control.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-50--validation-control.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-51--validation-control.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-52--validation-control.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-53--validation-control.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-54--validation-control.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-49--validation-attribute-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-50--validation-attribute-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-51--validation-attribute-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-52--validation-attribute-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-53--validation-attribute-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-54--validation-attribute-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-49--validation-structural-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-50--validation-structural-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-51--validation-structural-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-52--validation-structural-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-53--validation-structural-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-54--validation-structural-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-49--validation-combined-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-50--validation-combined-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-51--validation-combined-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-52--validation-combined-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-53--validation-combined-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-54--validation-combined-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-49--validation-attribute-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-50--validation-attribute-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-51--validation-attribute-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-52--validation-attribute-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-53--validation-attribute-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-54--validation-attribute-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-49--validation-structural-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-50--validation-structural-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-51--validation-structural-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-52--validation-structural-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-53--validation-structural-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-54--validation-structural-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-49--validation-combined-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-50--validation-combined-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-51--validation-combined-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-52--validation-combined-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-53--validation-combined-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-B-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-54--validation-combined-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-49--validation-control.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-50--validation-control.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-51--validation-control.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-52--validation-control.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-53--validation-control.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-54--validation-control.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-49--validation-attribute-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-50--validation-attribute-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-51--validation-attribute-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-52--validation-attribute-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-53--validation-attribute-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-54--validation-attribute-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-49--validation-structural-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-50--validation-structural-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-51--validation-structural-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-52--validation-structural-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-53--validation-structural-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-54--validation-structural-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-49--validation-combined-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-50--validation-combined-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-51--validation-combined-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-52--validation-combined-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-53--validation-combined-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-54--validation-combined-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-49--validation-attribute-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-50--validation-attribute-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-51--validation-attribute-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-52--validation-attribute-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-53--validation-attribute-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-54--validation-attribute-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-49--validation-structural-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-50--validation-structural-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-51--validation-structural-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-52--validation-structural-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-53--validation-structural-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-54--validation-structural-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-49--validation-combined-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-50--validation-combined-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-51--validation-combined-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-52--validation-combined-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-53--validation-combined-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-C-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-54--validation-combined-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "artifact": "gcn-group3-49--validation-control.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "artifact": "gcn-group3-50--validation-control.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "artifact": "gcn-group3-51--validation-control.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "artifact": "gcn-group3-52--validation-control.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "artifact": "gcn-group3-53--validation-control.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "artifact": "gcn-group3-54--validation-control.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "artifact": "gcn-group3-49--validation-attribute-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "artifact": "gcn-group3-50--validation-attribute-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "artifact": "gcn-group3-51--validation-attribute-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "artifact": "gcn-group3-52--validation-attribute-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "artifact": "gcn-group3-53--validation-attribute-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "artifact": "gcn-group3-54--validation-attribute-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "artifact": "gcn-group3-49--validation-structural-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "artifact": "gcn-group3-50--validation-structural-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "artifact": "gcn-group3-51--validation-structural-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "artifact": "gcn-group3-52--validation-structural-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "artifact": "gcn-group3-53--validation-structural-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "artifact": "gcn-group3-54--validation-structural-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "artifact": "gcn-group3-49--validation-combined-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "artifact": "gcn-group3-50--validation-combined-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "artifact": "gcn-group3-51--validation-combined-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "artifact": "gcn-group3-52--validation-combined-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "artifact": "gcn-group3-53--validation-combined-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "artifact": "gcn-group3-54--validation-combined-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "artifact": "gcn-group3-49--validation-attribute-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "artifact": "gcn-group3-50--validation-attribute-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "artifact": "gcn-group3-51--validation-attribute-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "artifact": "gcn-group3-52--validation-attribute-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "artifact": "gcn-group3-53--validation-attribute-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "artifact": "gcn-group3-54--validation-attribute-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "artifact": "gcn-group3-49--validation-structural-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "artifact": "gcn-group3-50--validation-structural-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "artifact": "gcn-group3-51--validation-structural-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "artifact": "gcn-group3-52--validation-structural-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "artifact": "gcn-group3-53--validation-structural-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "artifact": "gcn-group3-54--validation-structural-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "artifact": "gcn-group3-49--validation-combined-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "artifact": "gcn-group3-50--validation-combined-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "artifact": "gcn-group3-51--validation-combined-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "artifact": "gcn-group3-52--validation-combined-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "artifact": "gcn-group3-53--validation-combined-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-head-hypernetwork-202801",
+      "artifact": "gcn-group3-54--validation-combined-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-49--validation-control.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-50--validation-control.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-51--validation-control.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-52--validation-control.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-53--validation-control.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-54--validation-control.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-49--validation-attribute-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-50--validation-attribute-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-51--validation-attribute-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-52--validation-attribute-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-53--validation-attribute-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-54--validation-attribute-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-49--validation-structural-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-50--validation-structural-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-51--validation-structural-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-52--validation-structural-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-53--validation-structural-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-54--validation-structural-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-49--validation-combined-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-50--validation-combined-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-51--validation-combined-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-52--validation-combined-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-53--validation-combined-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-54--validation-combined-0.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-49--validation-attribute-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-50--validation-attribute-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-51--validation-attribute-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-52--validation-attribute-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-53--validation-attribute-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-54--validation-attribute-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-49--validation-structural-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-50--validation-structural-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-51--validation-structural-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-52--validation-structural-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-53--validation-structural-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-54--validation-structural-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-49--validation-combined-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-50--validation-combined-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-51--validation-combined-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-52--validation-combined-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-53--validation-combined-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    },
+    {
+      "fit": "gcn-D-lora-hypernetwork-202801",
+      "artifact": "gcn-group3-54--validation-combined-1.pt",
+      "nonzero_dense_delta_coordinates": 0
+    }
+  ]
+}

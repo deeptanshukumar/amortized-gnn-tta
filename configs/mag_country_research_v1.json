@@ -1,0 +1,49 @@
+{
+  "protocol": "mag_country-research-v1",
+  "architectures": [
+    "gcn",
+    "gat",
+    "graphsage"
+  ],
+  "direction": "undirected",
+  "pool_seed": 20281110,
+  "checkpoint_seeds": {
+    "meta_train": [
+      31,
+      32,
+      33
+    ],
+    "validation": [
+      34
+    ],
+    "test": [
+      35
+    ]
+  },
+  "source_epochs": 200,
+  "source_patience": 30,
+  "hidden_channels": 32,
+  "threads": 1,
+  "device": "cpu",
+  "generator_seeds": [
+    202801,
+    202802,
+    202803
+  ],
+  "generator_epochs": 5,
+  "generator_lr": 0.001,
+  "teacher_steps": 30,
+  "teacher_lr": 0.01,
+  "delta_l2": 0.001,
+  "lora_rank": 4,
+  "diffusion_steps": 50,
+  "sampling_steps": 10,
+  "candidate_seeds": [
+    42,
+    43,
+    44,
+    45,
+    46
+  ],
+  "dataset": "pair-align-mag-country"
+}

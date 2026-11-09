@@ -1,0 +1,44 @@
+........................................................................ [ 15%]
+...........................sss.......................................... [ 31%]
+........................................................................ [ 46%]
+........................................................................ [ 62%]
+......................................................s................. [ 77%]
+................sss..................................................... [ 93%]
+...............................                                          [100%]
+=============================== warnings summary ===============================
+../../../../../../../miniconda3/lib/python3.13/site-packages/torch/jit/_script.py:1488
+../../../../../../../miniconda3/lib/python3.13/site-packages/torch/jit/_script.py:1488
+  /home/deeptanshukumar/miniconda3/lib/python3.13/site-packages/torch/jit/_script.py:1488: DeprecationWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+    warnings.warn(
+
+tests/test_adaptation.py: 2095 warnings
+tests/test_adaptation_review.py: 5764 warnings
+tests/test_arxiv_runner.py: 524 warnings
+tests/test_bank_analysis.py: 1892 warnings
+tests/test_conditioning_controls.py: 96 warnings
+tests/test_data.py: 37 warnings
+tests/test_diffusion.py: 66 warnings
+tests/test_formal_bank.py: 286 warnings
+tests/test_generated_lora.py: 266 warnings
+tests/test_generator.py: 418 warnings
+tests/test_generator_cli.py: 1110 warnings
+tests/test_generator_experiments.py: 1110 warnings
+tests/test_generator_reliability.py: 3098 warnings
+tests/test_models.py: 2106 warnings
+tests/test_natural_runner.py: 264 warnings
+tests/test_real_data.py: 44 warnings
+tests/test_shift_environments.py: 74 warnings
+tests/test_source_subsets.py: 44 warnings
+tests/test_training.py: 154 warnings
+tests/test_weight_bank.py: 572 warnings
+  /home/deeptanshukumar/Downloads/AFML PROJECT/amortized-gnn-tta/.venv/lib/python3.13/site-packages/torch_geometric/inspector.py:433: DeprecationWarning: Failing to pass a value to the 'type_params' parameter of 'typing._eval_type' is deprecated, as it leads to incorrect behaviour when calling typing._eval_type on a stringified annotation that references a PEP 695 type parameter. It will be disallowed in Python 3.15.
+    return typing._eval_type(value, _globals, None)  # type: ignore
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+SKIPPED [3] tests/test_conditioning_controls.py:15: Actual CUDA device required
+SKIPPED [1] tests/test_memory_measurement.py:7: Actual CUDA allocator required
+SKIPPED [1] tests/test_real_data_integration.py:22: Set AFML_OGB_ROOT to verified official Arxiv data
+SKIPPED [1] tests/test_real_data_integration.py:70: Set AFML_MAG_ROOT to published Pair-Align country artifacts
+SKIPPED [1] tests/test_real_data_integration.py:92: CUDA artifact probe requires an actual GPU
+456 passed, 7 skipped, 20022 warnings in 229.62s (0:03:49)

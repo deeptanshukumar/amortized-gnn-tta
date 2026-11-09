@@ -497,6 +497,8 @@ def train_diffusion_generator(
     verbose: bool = True,
     target_scope: str = "head",
     checkpoint_callback: Callable | None = None,
+    candidate_seeds=None,
+    teacher_targets=None,
 ) -> MetaTrainResult:
     """Train the conditional diffusion head generator using oracle distillation."""
     conditioning_contract(descriptor, generator)
@@ -513,22 +515,37 @@ def train_diffusion_generator(
 
     # 2. Fit supervised teacher target deltas
     teacher_start = time.perf_counter()
-    targets = fit_oracle_deltas(
-        models=model_items,
-        manifest=manifest,
-        load_env_fn=load_env_fn,
-        descriptor=descriptor,
-        steps=oracle_steps,
-        lr=oracle_lr,
-        delta_l2_reg=delta_l2_reg,
-        max_environments=max_environments,
-        device=device,
-        verbose=verbose,
-        target_scope=target_scope,
-        update_space=getattr(generator, "update_space", None),
-    )
+    if teacher_targets is None:
+        targets = fit_oracle_deltas(
+            models=model_items,
+            manifest=manifest,
+            load_env_fn=load_env_fn,
+            descriptor=descriptor,
+            steps=oracle_steps,
+            lr=oracle_lr,
+            delta_l2_reg=delta_l2_reg,
+            max_environments=max_environments,
+            device=device,
+            verbose=verbose,
+            target_scope=target_scope,
+            update_space=getattr(generator, "update_space", None),
+        )
+    else:
+        targets = list(teacher_targets)
+        expected = {(mid, env["id"]) for mid in model_items
+                    for env in subsample_environments(
+                        [e for e in manifest["environments"] if e["role"] == "meta_train"],
+                        max_environments)}
+        actual = [(r.model_id, r.environment_id) for r in targets]
+        if len(actual) != len(set(actual)) or set(actual) != expected:
+            raise ValueError("Cached teacher identities disagree with permitted training pairs")
+        for record in targets:
+            if record.descriptor.shape != (descriptor.output_dim,) or record.target_delta.shape != (getattr(generator, "latent_dim", generator.head_dim),):
+                raise ValueError("Cached teacher dimensions disagree with generator")
+            finite(record.descriptor, "teacher conditioning")
+            finite(record.target_delta, "teacher delta")
 
-    teacher_seconds = time.perf_counter() - teacher_start
+    teacher_seconds = time.perf_counter() - teacher_start if teacher_targets is None else 0.
     if not targets:
         raise ValueError("No oracle targets were fitted. Check manifest and max_environments.")
 
@@ -559,7 +576,7 @@ def train_diffusion_generator(
             v_bundle = load_env_fn(manifest, v_env["id"])
             for v_mid, v_m in val_models.items():
                 r = evaluate_adaptation_pair(
-                    v_m, v_mid, v_bundle, v_env["id"], v_env, descriptor, generator, device=device, target_scope=target_scope
+                    v_m, v_mid, v_bundle, v_env["id"], v_env, descriptor, generator, device=device, target_scope=target_scope, candidate_seeds=candidate_seeds
                 )
                 baseline_records.append(r)
         baseline_summary = summarize_records(baseline_records)
@@ -610,7 +627,7 @@ def train_diffusion_generator(
                 v_bundle = load_env_fn(manifest, v_env["id"])
                 for v_mid, v_m in val_models.items():
                     r = evaluate_adaptation_pair(
-                        v_m, v_mid, v_bundle, v_env["id"], v_env, descriptor, generator, device=device, target_scope=target_scope
+                        v_m, v_mid, v_bundle, v_env["id"], v_env, descriptor, generator, device=device, target_scope=target_scope, candidate_seeds=candidate_seeds
                     )
                     val_records.append(r)
 

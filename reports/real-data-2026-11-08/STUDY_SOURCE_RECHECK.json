@@ -1,0 +1,6 @@
+{
+  "study_source_sha256": "26a40737a7c86e6a0d6d117e4ac5b2ee5c8fc6b21b96c81a3ac0c14dd3fbea56",
+  "checked_source_files": 71,
+  "changed_source_files": [],
+  "check_type": "Host source files versus the immutable fitting archive; documentation changes excluded"
+}

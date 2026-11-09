@@ -2,25 +2,71 @@
 
 Research project for Advanced Foundations of Machine Learning (UE24AM342AA1), PES University.
 
-We investigate whether an offline-trained generator can predict small parameter updates for a pretrained GNN on an unlabeled shifted target graph, without target-time gradient optimization. This branch implements a CSBM direct-update hypernetwork/diffusion prototype alongside the existing iterative head/LoRA baselines. Generated LoRA has passed component, complete-checkpoint and numerical replay validation on this integration branch; the planned real-graph studies remain future work.
+We investigate whether an offline-trained generator can predict small parameter updates for a pretrained GNN on an unlabeled shifted target graph, without target-time gradient optimization. The verified CSBM system includes head and LoRA generators alongside iterative adaptation. Real-graph loaders and experiment runners are now being validated on ogbn-arxiv and Pair-Align MAG countries; their numerical studies are in progress. See project state for the distinction between implemented software and completed experiments.
 
 Deeptanshu owns GCN experiments; teammates handle GAT and GraphSAGE. At the owner's request, the shared codebase now implements all three architectures with the same data/training/bank interfaces.
 
+## Verified evidence and operational source
+
+The owner-authorized main checkpoint includes [formal source-bank and GCN design evidence](reports/real-data-2026-11-08/README.md), including CSVs/plots, and [Kaggle operational helper source/restoration notes](tools/kaggle/README.md). All 270 source checkpoints are verified; Experiments 1–2 completed with no generator gain and the broader comparison is in progress. The five-epoch design budget completed normally; A/head is a tie fallback, not an established optimal recipe. This commit does not replace the immutable source ZIP used by running Kaggle jobs. Large datasets, weights, raw predictions and bundles remain outside Git.
+
 ## Implemented and verified
 
-- **Latest integration:** generated head/LoRA for both generators on all three GNNs; 431 full-suite tests plus the expanded CLI checks; 36 generator fits and 780 independently replayed saved update cases. Hyper-LoRA's complete CPU pipeline was 18.09–25.75× faster than matched LoRA IM30, with architecture-dependent accuracy tradeoffs. See [verified results and limitations](docs/PROJECT_STATE.md#completed-generated-lora-comparison).
-- **CSBM only:** balanced two-class Gaussian graphs with explicit connection probabilities, independent edge/feature/split RNG streams, and recorded generation settings.
+- **Completed CSBM integration:** generated head/LoRA for both generators on all three GNNs; 431 full-suite tests plus the expanded CLI checks; 36 generator fits and 780 independently replayed saved update cases. Hyper-LoRA's complete CPU pipeline was 18.09–25.75× faster than matched LoRA IM30, with architecture-dependent accuracy tradeoffs. See [verified results and limitations](docs/PROJECT_STATE.md#completed-generated-lora-comparison).
+- **CSBM foundation:** balanced two-class Gaussian graphs with explicit connection probabilities, independent edge/feature/split RNG streams, and recorded generation settings.
 - CPU PyG graphs, separate ground truth, named split indices, explicit source/meta-training/validation/target roles.
 - Stratified source splits, initially 60/20/20; held-out graphs expose an eval-only split. Full graph context is preserved; split indices select supervision, not induced subgraphs.
 - Allowlisted, cloned target inputs without labels or diagnostic metadata. Training-label access rejects held-out environments.
 - Paired attribute, structural and combined CSBM shifts; saved whole-lineage environment partitions, severity holdouts, optional family holdouts, and sequential construction audits.
 - Head-only/LoRA updates for all three models, explicit supervised-development and label-free objectives, and validated initial/adapted/delta artifacts.
-- The historical core milestone had **227 tests**, including the supervised full-fine-tuning diagnostic. Current generator-repair verification and results are recorded in [project state](docs/PROJECT_STATE.md); numerical execution is CPU-verified. A Colab notebook/device probe is provided; CUDA is not yet verified here.
+- The historical core milestone had **227 tests**, including the supervised full-fine-tuning diagnostic. Current generator-repair verification and results are recorded in [project state](docs/PROJECT_STATE.md); numerical execution is CPU-verified. A Colab notebook/device probe is provided; Later CUDA verification is documented separately in the formal real-data milestone.
 - Small and paper-sized (5,000 nodes × 2,000 features per graph) data/interface examples executed successfully.
 
-**The CSBM pretraining/bank foundation is verified for GCN, GAT and GraphSAGE:** shared loading/training/evaluation, a full-budget 30-model bank per architecture, validated artifact loading, saved 18/6/6 partitions, and weight/prediction/representation diagnostics. PEFT and the CSBM generator prototype are described below; real datasets remain later work; the current generated-LoRA milestone is recorded in project state. These development runs are not final paper benchmarks.
+**The CSBM pretraining/bank foundation is verified for GCN, GAT and GraphSAGE:** shared loading/training/evaluation, a full-budget 30-model bank per architecture, validated artifact loading, saved 18/6/6 partitions, and weight/prediction/representation diagnostics. PEFT and the CSBM generator prototype are described below; real-data studies are in progress; their verification is recorded separately in project state. These development runs are not final paper benchmarks.
 
 GAT and GraphSAGE implementations now use those same entry points. Architecture-specific definitions and commands are below; matching hidden dimensions does not imply matching parameter budgets or optimal tuning for each model.
+
+
+## Formal real-data source banks
+
+`configs/*_formal_v1.json` declare 30 models per architecture: five overlapping, source-only supervision groups × six distinct initialization seeds, with 18/6/6 whole-group generator roles. Five-model `*_research_v1.json` profiles remain developmental. Formal planning was checked on all three actual source protocols; all 270 formal source fits are downloaded and independently verified; generator experiments are in progress. [Current evidence and limitations](docs/PROJECT_STATE.md#current-formal-bank-and-research-execution-milestone--2026-11-08).
+
+```bash
+# Prepare source manifests and jobs without training; use a fresh directory.
+python examples/prepare_formal_bank.py --config configs/arxiv_formal_v1.json --data-root /path/to/ogb --output-dir runs/formal-arxiv
+# On CUDA only: run a bounded shard; repeat with identical inputs to recover.
+python examples/prepare_formal_bank.py --config configs/arxiv_formal_v1.json --data-root /path/to/ogb --output-dir runs/formal-arxiv --fit --max-models 1
+# After the desired source architecture is ready, save explicit probe diagnostics.
+python examples/audit_formal_bank.py --config configs/arxiv_formal_v1.json --data-root /path/to/ogb --bank runs/formal-arxiv --probe-nodes 1024 --probe-seed 901
+```
+
+The audit command's probe size/seed are explicit example settings, not a validated diversity threshold. Resume verifies recipe, graph, supervision, source, dependency and checkpoint identities; completed fits survive interruptions, while an unfinished fit restarts from its seed. CPU fitting is refused by the CLI. A different GPU software environment needs its own freshly prepared output directory. Private Kaggle validation, nonzero CUDA export/replay and versioned-output recovery are verified. All three complete 90-model source banks are downloaded and checked. The GCN input/site study completed and its downloaded artifacts are verified: six hypernetworks selected exact zero updates, matching the 62.891% frozen validation mean. The practice-fixed baseline gained 0.062pp; the other tested baselines regressed. All 420 generated/control cases passed independent replay with zero class mismatches. The broader three-architecture/method/seed comparison is running; final scoring has not started.
+
+## Real-graph research workflow (in progress)
+
+Install the optional official OGB dependency in the project environment:
+
+```bash
+python -m pip install -e '.[dev,ogb,perf]'
+```
+
+The native Arxiv loader preserves directed citation edges, raw features, paper IDs, years and official splits. Experiment configurations explicitly choose symmetric graph views. Labels remain separate from model inputs. No dataset or checkpoint belongs in Git.
+
+```bash
+python examples/train_arxiv_source.py --help
+python examples/prepare_arxiv_bank.py --config configs/arxiv_research_v1.json --data-root /path/to/ogb --output-dir runs/arxiv-bank-v1
+python examples/run_arxiv_experiments.py --bank runs/arxiv-bank-v1 --data-root /path/to/ogb --output-dir runs/arxiv-study-v1
+```
+
+The ordered runner selects generator inputs (Experiment 1), update sites (Experiment 2), then fits hypernetwork, teacher-matched hypernetwork and five-candidate diffusion configurations (Experiment 3). It saves a frozen validation design. Only the separately gated final runner can score official 2019–2020 labels:
+
+```bash
+python examples/evaluate_real_generalization.py --bank runs/arxiv-bank-v1 --data-root /path/to/ogb --output-dir runs/arxiv-study-v1 --final-evaluation --measure-memory
+python examples/diagnose_real_adaptation.py --bank runs/arxiv-bank-v1 --data-root /path/to/ogb --output-dir runs/arxiv-study-v1
+python examples/summarize_real_study.py --bank runs/arxiv-bank-v1 --study runs/arxiv-study-v1
+```
+
+Natural temporal/country banks use their separate JSON configurations. Their generators are trained with `--natural-design /path/to/arxiv-study/FROZEN_DESIGN.json`, using the selected design with fresh dataset-specific fitting. Temporal contexts include only arrived papers. Pair-Align country artifacts have a new documented country/node-split protocol; they are not native heterogeneous ogbn-mag. See [decisions](docs/DECISIONS.md) and [current execution state](docs/PROJECT_STATE.md). Output directories refuse accidental overwrites. These commands describe implemented workflows; consult project state before treating any study as executed or complete.
 
 ## Setup
 

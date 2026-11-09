@@ -1,0 +1,7 @@
+name,conditioning,update,method,seed,validation_cases,selected_epoch,frozen_accuracy,selected_accuracy,gain_pp,all_recorded_delta_norms_zero,fit_seconds,adaptation_parameters,generator_parameters
+gcn-A-head-hypernetwork-202801,A,head,hypernetwork,202801,42,0,0.6289073299040077,0.6289073299040077,0.0,True,355.59229543499987,1320,205352
+gcn-A-lora-hypernetwork-202801,A,lora,hypernetwork,202801,42,0,0.6289073299040077,0.6289073299040077,0.0,True,351.615401591,928,154784
+gcn-B-lora-hypernetwork-202801,B,lora,hypernetwork,202801,42,0,0.6289073299040077,0.6289073299040077,0.0,True,399.957337123,928,167712
+gcn-C-lora-hypernetwork-202801,C,lora,hypernetwork,202801,42,0,0.6289073299040077,0.6289073299040077,0.0,True,418.221386014,928,173728
+gcn-D-head-hypernetwork-202801,D,head,hypernetwork,202801,42,0,0.6289073299040077,0.6289073299040077,0.0,True,413.29844012500007,1320,225832
+gcn-D-lora-hypernetwork-202801,D,lora,hypernetwork,202801,42,0,0.6289073299040077,0.6289073299040077,0.0,True,421.428838433,928,175264

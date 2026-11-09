@@ -1,0 +1,2531 @@
+{
+  "status": "complete",
+  "cases": 420,
+  "rows": [
+    {
+      "artifact": "gcn-A-head-hypernetwork-202801/gcn-group3-49--validation-control.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-A-head-hypernetwork-202801/gcn-group3-50--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-A-head-hypernetwork-202801/gcn-group3-51--validation-control.pt",
+      "max_abs_logit_difference": 7.62939453125e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-A-head-hypernetwork-202801/gcn-group3-52--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-A-head-hypernetwork-202801/gcn-group3-53--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-A-head-hypernetwork-202801/gcn-group3-54--validation-control.pt",
+      "max_abs_logit_difference": 5.7220458984375e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-A-head-hypernetwork-202801/gcn-group3-49--validation-attribute-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-A-head-hypernetwork-202801/gcn-group3-50--validation-attribute-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-A-head-hypernetwork-202801/gcn-group3-51--validation-attribute-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-A-head-hypernetwork-202801/gcn-group3-52--validation-attribute-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-A-head-hypernetwork-202801/gcn-group3-53--validation-attribute-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-A-head-hypernetwork-202801/gcn-group3-54--validation-attribute-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-A-head-hypernetwork-202801/gcn-group3-49--validation-structural-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-A-head-hypernetwork-202801/gcn-group3-50--validation-structural-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-A-head-hypernetwork-202801/gcn-group3-51--validation-structural-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-A-head-hypernetwork-202801/gcn-group3-52--validation-structural-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-A-head-hypernetwork-202801/gcn-group3-53--validation-structural-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-A-head-hypernetwork-202801/gcn-group3-54--validation-structural-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-A-head-hypernetwork-202801/gcn-group3-49--validation-combined-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-A-head-hypernetwork-202801/gcn-group3-50--validation-combined-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-A-head-hypernetwork-202801/gcn-group3-51--validation-combined-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-A-head-hypernetwork-202801/gcn-group3-52--validation-combined-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-A-head-hypernetwork-202801/gcn-group3-53--validation-combined-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-A-head-hypernetwork-202801/gcn-group3-54--validation-combined-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-A-head-hypernetwork-202801/gcn-group3-49--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-A-head-hypernetwork-202801/gcn-group3-50--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-A-head-hypernetwork-202801/gcn-group3-51--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-A-head-hypernetwork-202801/gcn-group3-52--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-A-head-hypernetwork-202801/gcn-group3-53--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-A-head-hypernetwork-202801/gcn-group3-54--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-A-head-hypernetwork-202801/gcn-group3-49--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-A-head-hypernetwork-202801/gcn-group3-50--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-A-head-hypernetwork-202801/gcn-group3-51--validation-structural-1.pt",
+      "max_abs_logit_difference": 7.62939453125e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-A-head-hypernetwork-202801/gcn-group3-52--validation-structural-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-A-head-hypernetwork-202801/gcn-group3-53--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-A-head-hypernetwork-202801/gcn-group3-54--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-A-head-hypernetwork-202801/gcn-group3-49--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-A-head-hypernetwork-202801/gcn-group3-50--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-A-head-hypernetwork-202801/gcn-group3-51--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-A-head-hypernetwork-202801/gcn-group3-52--validation-combined-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-A-head-hypernetwork-202801/gcn-group3-53--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-A-head-hypernetwork-202801/gcn-group3-54--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-A-lora-hypernetwork-202801/gcn-group3-49--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-A-lora-hypernetwork-202801/gcn-group3-50--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-A-lora-hypernetwork-202801/gcn-group3-51--validation-control.pt",
+      "max_abs_logit_difference": 5.7220458984375e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-A-lora-hypernetwork-202801/gcn-group3-52--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-A-lora-hypernetwork-202801/gcn-group3-53--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-A-lora-hypernetwork-202801/gcn-group3-54--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-A-lora-hypernetwork-202801/gcn-group3-49--validation-attribute-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-A-lora-hypernetwork-202801/gcn-group3-50--validation-attribute-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-A-lora-hypernetwork-202801/gcn-group3-51--validation-attribute-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-A-lora-hypernetwork-202801/gcn-group3-52--validation-attribute-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-A-lora-hypernetwork-202801/gcn-group3-53--validation-attribute-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-A-lora-hypernetwork-202801/gcn-group3-54--validation-attribute-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-A-lora-hypernetwork-202801/gcn-group3-49--validation-structural-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-A-lora-hypernetwork-202801/gcn-group3-50--validation-structural-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-A-lora-hypernetwork-202801/gcn-group3-51--validation-structural-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-A-lora-hypernetwork-202801/gcn-group3-52--validation-structural-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-A-lora-hypernetwork-202801/gcn-group3-53--validation-structural-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-A-lora-hypernetwork-202801/gcn-group3-54--validation-structural-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-A-lora-hypernetwork-202801/gcn-group3-49--validation-combined-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-A-lora-hypernetwork-202801/gcn-group3-50--validation-combined-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-A-lora-hypernetwork-202801/gcn-group3-51--validation-combined-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-A-lora-hypernetwork-202801/gcn-group3-52--validation-combined-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-A-lora-hypernetwork-202801/gcn-group3-53--validation-combined-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-A-lora-hypernetwork-202801/gcn-group3-54--validation-combined-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-A-lora-hypernetwork-202801/gcn-group3-49--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-A-lora-hypernetwork-202801/gcn-group3-50--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-A-lora-hypernetwork-202801/gcn-group3-51--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-A-lora-hypernetwork-202801/gcn-group3-52--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-A-lora-hypernetwork-202801/gcn-group3-53--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-A-lora-hypernetwork-202801/gcn-group3-54--validation-attribute-1.pt",
+      "max_abs_logit_difference": 2.86102294921875e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-A-lora-hypernetwork-202801/gcn-group3-49--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-A-lora-hypernetwork-202801/gcn-group3-50--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-A-lora-hypernetwork-202801/gcn-group3-51--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-A-lora-hypernetwork-202801/gcn-group3-52--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-A-lora-hypernetwork-202801/gcn-group3-53--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-A-lora-hypernetwork-202801/gcn-group3-54--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-A-lora-hypernetwork-202801/gcn-group3-49--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-A-lora-hypernetwork-202801/gcn-group3-50--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-A-lora-hypernetwork-202801/gcn-group3-51--validation-combined-1.pt",
+      "max_abs_logit_difference": 9.5367431640625e-07,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-A-lora-hypernetwork-202801/gcn-group3-52--validation-combined-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-A-lora-hypernetwork-202801/gcn-group3-53--validation-combined-1.pt",
+      "max_abs_logit_difference": 2.86102294921875e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-A-lora-hypernetwork-202801/gcn-group3-54--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-B-lora-hypernetwork-202801/gcn-group3-49--validation-control.pt",
+      "max_abs_logit_difference": 5.7220458984375e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-B-lora-hypernetwork-202801/gcn-group3-50--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-B-lora-hypernetwork-202801/gcn-group3-51--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-B-lora-hypernetwork-202801/gcn-group3-52--validation-control.pt",
+      "max_abs_logit_difference": 5.7220458984375e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-B-lora-hypernetwork-202801/gcn-group3-53--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-B-lora-hypernetwork-202801/gcn-group3-54--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-B-lora-hypernetwork-202801/gcn-group3-49--validation-attribute-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-B-lora-hypernetwork-202801/gcn-group3-50--validation-attribute-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-B-lora-hypernetwork-202801/gcn-group3-51--validation-attribute-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-B-lora-hypernetwork-202801/gcn-group3-52--validation-attribute-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-B-lora-hypernetwork-202801/gcn-group3-53--validation-attribute-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-B-lora-hypernetwork-202801/gcn-group3-54--validation-attribute-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-B-lora-hypernetwork-202801/gcn-group3-49--validation-structural-0.pt",
+      "max_abs_logit_difference": 7.62939453125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-B-lora-hypernetwork-202801/gcn-group3-50--validation-structural-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-B-lora-hypernetwork-202801/gcn-group3-51--validation-structural-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-B-lora-hypernetwork-202801/gcn-group3-52--validation-structural-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-B-lora-hypernetwork-202801/gcn-group3-53--validation-structural-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-B-lora-hypernetwork-202801/gcn-group3-54--validation-structural-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-B-lora-hypernetwork-202801/gcn-group3-49--validation-combined-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-B-lora-hypernetwork-202801/gcn-group3-50--validation-combined-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-B-lora-hypernetwork-202801/gcn-group3-51--validation-combined-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-B-lora-hypernetwork-202801/gcn-group3-52--validation-combined-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-B-lora-hypernetwork-202801/gcn-group3-53--validation-combined-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-B-lora-hypernetwork-202801/gcn-group3-54--validation-combined-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-B-lora-hypernetwork-202801/gcn-group3-49--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-B-lora-hypernetwork-202801/gcn-group3-50--validation-attribute-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-B-lora-hypernetwork-202801/gcn-group3-51--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-B-lora-hypernetwork-202801/gcn-group3-52--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-B-lora-hypernetwork-202801/gcn-group3-53--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-B-lora-hypernetwork-202801/gcn-group3-54--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-B-lora-hypernetwork-202801/gcn-group3-49--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-B-lora-hypernetwork-202801/gcn-group3-50--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-B-lora-hypernetwork-202801/gcn-group3-51--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-B-lora-hypernetwork-202801/gcn-group3-52--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-B-lora-hypernetwork-202801/gcn-group3-53--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-B-lora-hypernetwork-202801/gcn-group3-54--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-B-lora-hypernetwork-202801/gcn-group3-49--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-B-lora-hypernetwork-202801/gcn-group3-50--validation-combined-1.pt",
+      "max_abs_logit_difference": 9.5367431640625e-07,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-B-lora-hypernetwork-202801/gcn-group3-51--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-B-lora-hypernetwork-202801/gcn-group3-52--validation-combined-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-B-lora-hypernetwork-202801/gcn-group3-53--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-B-lora-hypernetwork-202801/gcn-group3-54--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-C-lora-hypernetwork-202801/gcn-group3-49--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-C-lora-hypernetwork-202801/gcn-group3-50--validation-control.pt",
+      "max_abs_logit_difference": 5.7220458984375e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-C-lora-hypernetwork-202801/gcn-group3-51--validation-control.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-C-lora-hypernetwork-202801/gcn-group3-52--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-C-lora-hypernetwork-202801/gcn-group3-53--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-C-lora-hypernetwork-202801/gcn-group3-54--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-C-lora-hypernetwork-202801/gcn-group3-49--validation-attribute-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-C-lora-hypernetwork-202801/gcn-group3-50--validation-attribute-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-C-lora-hypernetwork-202801/gcn-group3-51--validation-attribute-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-C-lora-hypernetwork-202801/gcn-group3-52--validation-attribute-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-C-lora-hypernetwork-202801/gcn-group3-53--validation-attribute-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-C-lora-hypernetwork-202801/gcn-group3-54--validation-attribute-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-C-lora-hypernetwork-202801/gcn-group3-49--validation-structural-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-C-lora-hypernetwork-202801/gcn-group3-50--validation-structural-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-C-lora-hypernetwork-202801/gcn-group3-51--validation-structural-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-C-lora-hypernetwork-202801/gcn-group3-52--validation-structural-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-C-lora-hypernetwork-202801/gcn-group3-53--validation-structural-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-C-lora-hypernetwork-202801/gcn-group3-54--validation-structural-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-C-lora-hypernetwork-202801/gcn-group3-49--validation-combined-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-C-lora-hypernetwork-202801/gcn-group3-50--validation-combined-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-C-lora-hypernetwork-202801/gcn-group3-51--validation-combined-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-C-lora-hypernetwork-202801/gcn-group3-52--validation-combined-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-C-lora-hypernetwork-202801/gcn-group3-53--validation-combined-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-C-lora-hypernetwork-202801/gcn-group3-54--validation-combined-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-C-lora-hypernetwork-202801/gcn-group3-49--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-C-lora-hypernetwork-202801/gcn-group3-50--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-C-lora-hypernetwork-202801/gcn-group3-51--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-C-lora-hypernetwork-202801/gcn-group3-52--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-C-lora-hypernetwork-202801/gcn-group3-53--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-C-lora-hypernetwork-202801/gcn-group3-54--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-C-lora-hypernetwork-202801/gcn-group3-49--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-C-lora-hypernetwork-202801/gcn-group3-50--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-C-lora-hypernetwork-202801/gcn-group3-51--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-C-lora-hypernetwork-202801/gcn-group3-52--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-C-lora-hypernetwork-202801/gcn-group3-53--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-C-lora-hypernetwork-202801/gcn-group3-54--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-C-lora-hypernetwork-202801/gcn-group3-49--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-C-lora-hypernetwork-202801/gcn-group3-50--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-C-lora-hypernetwork-202801/gcn-group3-51--validation-combined-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-C-lora-hypernetwork-202801/gcn-group3-52--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-C-lora-hypernetwork-202801/gcn-group3-53--validation-combined-1.pt",
+      "max_abs_logit_difference": 2.86102294921875e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-C-lora-hypernetwork-202801/gcn-group3-54--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-D-head-hypernetwork-202801/gcn-group3-49--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-D-head-hypernetwork-202801/gcn-group3-50--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-D-head-hypernetwork-202801/gcn-group3-51--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-D-head-hypernetwork-202801/gcn-group3-52--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-D-head-hypernetwork-202801/gcn-group3-53--validation-control.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-D-head-hypernetwork-202801/gcn-group3-54--validation-control.pt",
+      "max_abs_logit_difference": 7.62939453125e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-D-head-hypernetwork-202801/gcn-group3-49--validation-attribute-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-D-head-hypernetwork-202801/gcn-group3-50--validation-attribute-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-D-head-hypernetwork-202801/gcn-group3-51--validation-attribute-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-D-head-hypernetwork-202801/gcn-group3-52--validation-attribute-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-D-head-hypernetwork-202801/gcn-group3-53--validation-attribute-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-D-head-hypernetwork-202801/gcn-group3-54--validation-attribute-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-D-head-hypernetwork-202801/gcn-group3-49--validation-structural-0.pt",
+      "max_abs_logit_difference": 7.62939453125e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-D-head-hypernetwork-202801/gcn-group3-50--validation-structural-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-D-head-hypernetwork-202801/gcn-group3-51--validation-structural-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-D-head-hypernetwork-202801/gcn-group3-52--validation-structural-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-D-head-hypernetwork-202801/gcn-group3-53--validation-structural-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-D-head-hypernetwork-202801/gcn-group3-54--validation-structural-0.pt",
+      "max_abs_logit_difference": 2.86102294921875e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-D-head-hypernetwork-202801/gcn-group3-49--validation-combined-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-D-head-hypernetwork-202801/gcn-group3-50--validation-combined-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-D-head-hypernetwork-202801/gcn-group3-51--validation-combined-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-D-head-hypernetwork-202801/gcn-group3-52--validation-combined-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-D-head-hypernetwork-202801/gcn-group3-53--validation-combined-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-D-head-hypernetwork-202801/gcn-group3-54--validation-combined-0.pt",
+      "max_abs_logit_difference": 5.7220458984375e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-D-head-hypernetwork-202801/gcn-group3-49--validation-attribute-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-D-head-hypernetwork-202801/gcn-group3-50--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-D-head-hypernetwork-202801/gcn-group3-51--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-D-head-hypernetwork-202801/gcn-group3-52--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-D-head-hypernetwork-202801/gcn-group3-53--validation-attribute-1.pt",
+      "max_abs_logit_difference": 9.5367431640625e-07,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-D-head-hypernetwork-202801/gcn-group3-54--validation-attribute-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-D-head-hypernetwork-202801/gcn-group3-49--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-D-head-hypernetwork-202801/gcn-group3-50--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-D-head-hypernetwork-202801/gcn-group3-51--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-D-head-hypernetwork-202801/gcn-group3-52--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-D-head-hypernetwork-202801/gcn-group3-53--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-D-head-hypernetwork-202801/gcn-group3-54--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-D-head-hypernetwork-202801/gcn-group3-49--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.430511474609375e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-D-head-hypernetwork-202801/gcn-group3-50--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-D-head-hypernetwork-202801/gcn-group3-51--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-D-head-hypernetwork-202801/gcn-group3-52--validation-combined-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-D-head-hypernetwork-202801/gcn-group3-53--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-D-head-hypernetwork-202801/gcn-group3-54--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": false
+    },
+    {
+      "artifact": "gcn-D-lora-hypernetwork-202801/gcn-group3-49--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-D-lora-hypernetwork-202801/gcn-group3-50--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-D-lora-hypernetwork-202801/gcn-group3-51--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-D-lora-hypernetwork-202801/gcn-group3-52--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-D-lora-hypernetwork-202801/gcn-group3-53--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-D-lora-hypernetwork-202801/gcn-group3-54--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-D-lora-hypernetwork-202801/gcn-group3-49--validation-attribute-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-D-lora-hypernetwork-202801/gcn-group3-50--validation-attribute-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-D-lora-hypernetwork-202801/gcn-group3-51--validation-attribute-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-D-lora-hypernetwork-202801/gcn-group3-52--validation-attribute-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-D-lora-hypernetwork-202801/gcn-group3-53--validation-attribute-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-D-lora-hypernetwork-202801/gcn-group3-54--validation-attribute-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-D-lora-hypernetwork-202801/gcn-group3-49--validation-structural-0.pt",
+      "max_abs_logit_difference": 7.62939453125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-D-lora-hypernetwork-202801/gcn-group3-50--validation-structural-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-D-lora-hypernetwork-202801/gcn-group3-51--validation-structural-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-D-lora-hypernetwork-202801/gcn-group3-52--validation-structural-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-D-lora-hypernetwork-202801/gcn-group3-53--validation-structural-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-D-lora-hypernetwork-202801/gcn-group3-54--validation-structural-0.pt",
+      "max_abs_logit_difference": 2.86102294921875e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-D-lora-hypernetwork-202801/gcn-group3-49--validation-combined-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-D-lora-hypernetwork-202801/gcn-group3-50--validation-combined-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-D-lora-hypernetwork-202801/gcn-group3-51--validation-combined-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-D-lora-hypernetwork-202801/gcn-group3-52--validation-combined-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-D-lora-hypernetwork-202801/gcn-group3-53--validation-combined-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-D-lora-hypernetwork-202801/gcn-group3-54--validation-combined-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-D-lora-hypernetwork-202801/gcn-group3-49--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.430511474609375e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-D-lora-hypernetwork-202801/gcn-group3-50--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-D-lora-hypernetwork-202801/gcn-group3-51--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-D-lora-hypernetwork-202801/gcn-group3-52--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.430511474609375e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-D-lora-hypernetwork-202801/gcn-group3-53--validation-attribute-1.pt",
+      "max_abs_logit_difference": 9.5367431640625e-07,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-D-lora-hypernetwork-202801/gcn-group3-54--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-D-lora-hypernetwork-202801/gcn-group3-49--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-D-lora-hypernetwork-202801/gcn-group3-50--validation-structural-1.pt",
+      "max_abs_logit_difference": 7.62939453125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-D-lora-hypernetwork-202801/gcn-group3-51--validation-structural-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-D-lora-hypernetwork-202801/gcn-group3-52--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-D-lora-hypernetwork-202801/gcn-group3-53--validation-structural-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-D-lora-hypernetwork-202801/gcn-group3-54--validation-structural-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-D-lora-hypernetwork-202801/gcn-group3-49--validation-combined-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-D-lora-hypernetwork-202801/gcn-group3-50--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-D-lora-hypernetwork-202801/gcn-group3-51--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-D-lora-hypernetwork-202801/gcn-group3-52--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-D-lora-hypernetwork-202801/gcn-group3-53--validation-combined-1.pt",
+      "max_abs_logit_difference": 2.86102294921875e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "gcn-D-lora-hypernetwork-202801/gcn-group3-54--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-A-lora-hypernetwork-202801--gcn-group3-49--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-A-lora-hypernetwork-202801--gcn-group3-50--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-A-lora-hypernetwork-202801--gcn-group3-51--validation-control.pt",
+      "max_abs_logit_difference": 7.62939453125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-A-lora-hypernetwork-202801--gcn-group3-52--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-A-lora-hypernetwork-202801--gcn-group3-53--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-A-lora-hypernetwork-202801--gcn-group3-54--validation-control.pt",
+      "max_abs_logit_difference": 2.86102294921875e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-A-lora-hypernetwork-202801--gcn-group3-49--validation-attribute-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-A-lora-hypernetwork-202801--gcn-group3-50--validation-attribute-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-A-lora-hypernetwork-202801--gcn-group3-51--validation-attribute-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-A-lora-hypernetwork-202801--gcn-group3-52--validation-attribute-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-A-lora-hypernetwork-202801--gcn-group3-53--validation-attribute-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-A-lora-hypernetwork-202801--gcn-group3-54--validation-attribute-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-A-lora-hypernetwork-202801--gcn-group3-49--validation-structural-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-A-lora-hypernetwork-202801--gcn-group3-50--validation-structural-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-A-lora-hypernetwork-202801--gcn-group3-51--validation-structural-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-A-lora-hypernetwork-202801--gcn-group3-52--validation-structural-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-A-lora-hypernetwork-202801--gcn-group3-53--validation-structural-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-A-lora-hypernetwork-202801--gcn-group3-54--validation-structural-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-A-lora-hypernetwork-202801--gcn-group3-49--validation-combined-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-A-lora-hypernetwork-202801--gcn-group3-50--validation-combined-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-A-lora-hypernetwork-202801--gcn-group3-51--validation-combined-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-A-lora-hypernetwork-202801--gcn-group3-52--validation-combined-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-A-lora-hypernetwork-202801--gcn-group3-53--validation-combined-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-A-lora-hypernetwork-202801--gcn-group3-54--validation-combined-0.pt",
+      "max_abs_logit_difference": 2.86102294921875e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-A-lora-hypernetwork-202801--gcn-group3-49--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-A-lora-hypernetwork-202801--gcn-group3-50--validation-attribute-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-A-lora-hypernetwork-202801--gcn-group3-51--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-A-lora-hypernetwork-202801--gcn-group3-52--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-A-lora-hypernetwork-202801--gcn-group3-53--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-A-lora-hypernetwork-202801--gcn-group3-54--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-A-lora-hypernetwork-202801--gcn-group3-49--validation-structural-1.pt",
+      "max_abs_logit_difference": 5.7220458984375e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-A-lora-hypernetwork-202801--gcn-group3-50--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-A-lora-hypernetwork-202801--gcn-group3-51--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-A-lora-hypernetwork-202801--gcn-group3-52--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-A-lora-hypernetwork-202801--gcn-group3-53--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-A-lora-hypernetwork-202801--gcn-group3-54--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-A-lora-hypernetwork-202801--gcn-group3-49--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-A-lora-hypernetwork-202801--gcn-group3-50--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-A-lora-hypernetwork-202801--gcn-group3-51--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-A-lora-hypernetwork-202801--gcn-group3-52--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-A-lora-hypernetwork-202801--gcn-group3-53--validation-combined-1.pt",
+      "max_abs_logit_difference": 9.5367431640625e-07,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-A-lora-hypernetwork-202801--gcn-group3-54--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-B-lora-hypernetwork-202801--gcn-group3-49--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-B-lora-hypernetwork-202801--gcn-group3-50--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-B-lora-hypernetwork-202801--gcn-group3-51--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-B-lora-hypernetwork-202801--gcn-group3-52--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-B-lora-hypernetwork-202801--gcn-group3-53--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-B-lora-hypernetwork-202801--gcn-group3-54--validation-control.pt",
+      "max_abs_logit_difference": 1.1444091796875e-05,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-B-lora-hypernetwork-202801--gcn-group3-49--validation-attribute-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-B-lora-hypernetwork-202801--gcn-group3-50--validation-attribute-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-B-lora-hypernetwork-202801--gcn-group3-51--validation-attribute-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-B-lora-hypernetwork-202801--gcn-group3-52--validation-attribute-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-B-lora-hypernetwork-202801--gcn-group3-53--validation-attribute-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-B-lora-hypernetwork-202801--gcn-group3-54--validation-attribute-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-B-lora-hypernetwork-202801--gcn-group3-49--validation-structural-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-B-lora-hypernetwork-202801--gcn-group3-50--validation-structural-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-B-lora-hypernetwork-202801--gcn-group3-51--validation-structural-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-B-lora-hypernetwork-202801--gcn-group3-52--validation-structural-0.pt",
+      "max_abs_logit_difference": 7.62939453125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-B-lora-hypernetwork-202801--gcn-group3-53--validation-structural-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-B-lora-hypernetwork-202801--gcn-group3-54--validation-structural-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-B-lora-hypernetwork-202801--gcn-group3-49--validation-combined-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-B-lora-hypernetwork-202801--gcn-group3-50--validation-combined-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-B-lora-hypernetwork-202801--gcn-group3-51--validation-combined-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-B-lora-hypernetwork-202801--gcn-group3-52--validation-combined-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-B-lora-hypernetwork-202801--gcn-group3-53--validation-combined-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-B-lora-hypernetwork-202801--gcn-group3-54--validation-combined-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-B-lora-hypernetwork-202801--gcn-group3-49--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.430511474609375e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-B-lora-hypernetwork-202801--gcn-group3-50--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-B-lora-hypernetwork-202801--gcn-group3-51--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-B-lora-hypernetwork-202801--gcn-group3-52--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-B-lora-hypernetwork-202801--gcn-group3-53--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-B-lora-hypernetwork-202801--gcn-group3-54--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-B-lora-hypernetwork-202801--gcn-group3-49--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-B-lora-hypernetwork-202801--gcn-group3-50--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-B-lora-hypernetwork-202801--gcn-group3-51--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-B-lora-hypernetwork-202801--gcn-group3-52--validation-structural-1.pt",
+      "max_abs_logit_difference": 5.7220458984375e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-B-lora-hypernetwork-202801--gcn-group3-53--validation-structural-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-B-lora-hypernetwork-202801--gcn-group3-54--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-B-lora-hypernetwork-202801--gcn-group3-49--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-B-lora-hypernetwork-202801--gcn-group3-50--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-B-lora-hypernetwork-202801--gcn-group3-51--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-B-lora-hypernetwork-202801--gcn-group3-52--validation-combined-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-B-lora-hypernetwork-202801--gcn-group3-53--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-B-lora-hypernetwork-202801--gcn-group3-54--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-C-lora-hypernetwork-202801--gcn-group3-49--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-C-lora-hypernetwork-202801--gcn-group3-50--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-C-lora-hypernetwork-202801--gcn-group3-51--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-C-lora-hypernetwork-202801--gcn-group3-52--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-C-lora-hypernetwork-202801--gcn-group3-53--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-C-lora-hypernetwork-202801--gcn-group3-54--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-C-lora-hypernetwork-202801--gcn-group3-49--validation-attribute-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-C-lora-hypernetwork-202801--gcn-group3-50--validation-attribute-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-C-lora-hypernetwork-202801--gcn-group3-51--validation-attribute-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-C-lora-hypernetwork-202801--gcn-group3-52--validation-attribute-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-C-lora-hypernetwork-202801--gcn-group3-53--validation-attribute-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-C-lora-hypernetwork-202801--gcn-group3-54--validation-attribute-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-C-lora-hypernetwork-202801--gcn-group3-49--validation-structural-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-C-lora-hypernetwork-202801--gcn-group3-50--validation-structural-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-C-lora-hypernetwork-202801--gcn-group3-51--validation-structural-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-C-lora-hypernetwork-202801--gcn-group3-52--validation-structural-0.pt",
+      "max_abs_logit_difference": 7.62939453125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-C-lora-hypernetwork-202801--gcn-group3-53--validation-structural-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-C-lora-hypernetwork-202801--gcn-group3-54--validation-structural-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-C-lora-hypernetwork-202801--gcn-group3-49--validation-combined-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-C-lora-hypernetwork-202801--gcn-group3-50--validation-combined-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-C-lora-hypernetwork-202801--gcn-group3-51--validation-combined-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-C-lora-hypernetwork-202801--gcn-group3-52--validation-combined-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-C-lora-hypernetwork-202801--gcn-group3-53--validation-combined-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-C-lora-hypernetwork-202801--gcn-group3-54--validation-combined-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-C-lora-hypernetwork-202801--gcn-group3-49--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-C-lora-hypernetwork-202801--gcn-group3-50--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-C-lora-hypernetwork-202801--gcn-group3-51--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-C-lora-hypernetwork-202801--gcn-group3-52--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-C-lora-hypernetwork-202801--gcn-group3-53--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-C-lora-hypernetwork-202801--gcn-group3-54--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-C-lora-hypernetwork-202801--gcn-group3-49--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-C-lora-hypernetwork-202801--gcn-group3-50--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-C-lora-hypernetwork-202801--gcn-group3-51--validation-structural-1.pt",
+      "max_abs_logit_difference": 5.7220458984375e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-C-lora-hypernetwork-202801--gcn-group3-52--validation-structural-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-C-lora-hypernetwork-202801--gcn-group3-53--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-C-lora-hypernetwork-202801--gcn-group3-54--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-C-lora-hypernetwork-202801--gcn-group3-49--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-C-lora-hypernetwork-202801--gcn-group3-50--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-C-lora-hypernetwork-202801--gcn-group3-51--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-C-lora-hypernetwork-202801--gcn-group3-52--validation-combined-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-C-lora-hypernetwork-202801--gcn-group3-53--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-C-lora-hypernetwork-202801--gcn-group3-54--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-D-lora-hypernetwork-202801--gcn-group3-49--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-D-lora-hypernetwork-202801--gcn-group3-50--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-D-lora-hypernetwork-202801--gcn-group3-51--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-D-lora-hypernetwork-202801--gcn-group3-52--validation-control.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-D-lora-hypernetwork-202801--gcn-group3-53--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-D-lora-hypernetwork-202801--gcn-group3-54--validation-control.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-D-lora-hypernetwork-202801--gcn-group3-49--validation-attribute-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-D-lora-hypernetwork-202801--gcn-group3-50--validation-attribute-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-D-lora-hypernetwork-202801--gcn-group3-51--validation-attribute-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-D-lora-hypernetwork-202801--gcn-group3-52--validation-attribute-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-D-lora-hypernetwork-202801--gcn-group3-53--validation-attribute-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-D-lora-hypernetwork-202801--gcn-group3-54--validation-attribute-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-D-lora-hypernetwork-202801--gcn-group3-49--validation-structural-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-D-lora-hypernetwork-202801--gcn-group3-50--validation-structural-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-D-lora-hypernetwork-202801--gcn-group3-51--validation-structural-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-D-lora-hypernetwork-202801--gcn-group3-52--validation-structural-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-D-lora-hypernetwork-202801--gcn-group3-53--validation-structural-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-D-lora-hypernetwork-202801--gcn-group3-54--validation-structural-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-D-lora-hypernetwork-202801--gcn-group3-49--validation-combined-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-D-lora-hypernetwork-202801--gcn-group3-50--validation-combined-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-D-lora-hypernetwork-202801--gcn-group3-51--validation-combined-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-D-lora-hypernetwork-202801--gcn-group3-52--validation-combined-0.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-D-lora-hypernetwork-202801--gcn-group3-53--validation-combined-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-D-lora-hypernetwork-202801--gcn-group3-54--validation-combined-0.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-D-lora-hypernetwork-202801--gcn-group3-49--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-D-lora-hypernetwork-202801--gcn-group3-50--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-D-lora-hypernetwork-202801--gcn-group3-51--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-D-lora-hypernetwork-202801--gcn-group3-52--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-D-lora-hypernetwork-202801--gcn-group3-53--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-D-lora-hypernetwork-202801--gcn-group3-54--validation-attribute-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-D-lora-hypernetwork-202801--gcn-group3-49--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-D-lora-hypernetwork-202801--gcn-group3-50--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-D-lora-hypernetwork-202801--gcn-group3-51--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-D-lora-hypernetwork-202801--gcn-group3-52--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-D-lora-hypernetwork-202801--gcn-group3-53--validation-structural-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-D-lora-hypernetwork-202801--gcn-group3-54--validation-structural-1.pt",
+      "max_abs_logit_difference": 3.814697265625e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-D-lora-hypernetwork-202801--gcn-group3-49--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-D-lora-hypernetwork-202801--gcn-group3-50--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-D-lora-hypernetwork-202801--gcn-group3-51--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-D-lora-hypernetwork-202801--gcn-group3-52--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-D-lora-hypernetwork-202801--gcn-group3-53--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    },
+    {
+      "artifact": "CONDITIONING_CONTROL/gcn-D-lora-hypernetwork-202801--gcn-group3-54--validation-combined-1.pt",
+      "max_abs_logit_difference": 1.9073486328125e-06,
+      "class_differences": 0,
+      "factors_verified": true
+    }
+  ],
+  "rtol": 0.0001,
+  "atol": 1e-05,
+  "prediction_class_differences": 0,
+  "final_test_scored": false,
+  "description": "Independent dense-delta/prediction replay; actual saved factors only; no regenerated conditioning"
+}

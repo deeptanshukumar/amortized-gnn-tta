@@ -1,0 +1,37 @@
+[
+  {
+    "name": "dependencies",
+    "seconds": 5.858574312000002,
+    "returncode": 0
+  },
+  {
+    "name": "cuda-components",
+    "seconds": 14.91548835399999,
+    "returncode": 0
+  },
+  {
+    "name": "experiments-1-2",
+    "seconds": 2523.6491012059996,
+    "returncode": 0
+  },
+  {
+    "name": "conditioning-control",
+    "seconds": 517.9060790200001,
+    "returncode": 0
+  },
+  {
+    "name": "gcn-baselines",
+    "seconds": 1153.772674921,
+    "returncode": 0
+  },
+  {
+    "name": "independent-replay",
+    "seconds": 40.87695283699941,
+    "returncode": 0
+  },
+  {
+    "name": "report",
+    "seconds": 0.07811689300069702,
+    "returncode": 0
+  }
+]

@@ -1,0 +1,200 @@
+{
+  "status": "verified",
+  "study_source_sha256": "26a40737a7c86e6a0d6d117e4ac5b2ee5c8fc6b21b96c81a3ac0c14dd3fbea56",
+  "frozen_mean_accuracy": 0.6289073299040077,
+  "selected_inputs": "A",
+  "selected_update": "head",
+  "generator_fits": [
+    {
+      "name": "gcn-A-head-hypernetwork-202801",
+      "conditioning": "A",
+      "update": "head",
+      "method": "hypernetwork",
+      "seed": 202801,
+      "validation_cases": 42,
+      "selected_epoch": 0,
+      "frozen_accuracy": 0.6289073299040077,
+      "selected_accuracy": 0.6289073299040077,
+      "gain_pp": 0.0,
+      "all_recorded_delta_norms_zero": true,
+      "fit_seconds": 355.59229543499987,
+      "adaptation_parameters": 1320,
+      "generator_parameters": 205352
+    },
+    {
+      "name": "gcn-A-lora-hypernetwork-202801",
+      "conditioning": "A",
+      "update": "lora",
+      "method": "hypernetwork",
+      "seed": 202801,
+      "validation_cases": 42,
+      "selected_epoch": 0,
+      "frozen_accuracy": 0.6289073299040077,
+      "selected_accuracy": 0.6289073299040077,
+      "gain_pp": 0.0,
+      "all_recorded_delta_norms_zero": true,
+      "fit_seconds": 351.615401591,
+      "adaptation_parameters": 928,
+      "generator_parameters": 154784
+    },
+    {
+      "name": "gcn-B-lora-hypernetwork-202801",
+      "conditioning": "B",
+      "update": "lora",
+      "method": "hypernetwork",
+      "seed": 202801,
+      "validation_cases": 42,
+      "selected_epoch": 0,
+      "frozen_accuracy": 0.6289073299040077,
+      "selected_accuracy": 0.6289073299040077,
+      "gain_pp": 0.0,
+      "all_recorded_delta_norms_zero": true,
+      "fit_seconds": 399.957337123,
+      "adaptation_parameters": 928,
+      "generator_parameters": 167712
+    },
+    {
+      "name": "gcn-C-lora-hypernetwork-202801",
+      "conditioning": "C",
+      "update": "lora",
+      "method": "hypernetwork",
+      "seed": 202801,
+      "validation_cases": 42,
+      "selected_epoch": 0,
+      "frozen_accuracy": 0.6289073299040077,
+      "selected_accuracy": 0.6289073299040077,
+      "gain_pp": 0.0,
+      "all_recorded_delta_norms_zero": true,
+      "fit_seconds": 418.221386014,
+      "adaptation_parameters": 928,
+      "generator_parameters": 173728
+    },
+    {
+      "name": "gcn-D-head-hypernetwork-202801",
+      "conditioning": "D",
+      "update": "head",
+      "method": "hypernetwork",
+      "seed": 202801,
+      "validation_cases": 42,
+      "selected_epoch": 0,
+      "frozen_accuracy": 0.6289073299040077,
+      "selected_accuracy": 0.6289073299040077,
+      "gain_pp": 0.0,
+      "all_recorded_delta_norms_zero": true,
+      "fit_seconds": 413.29844012500007,
+      "adaptation_parameters": 1320,
+      "generator_parameters": 225832
+    },
+    {
+      "name": "gcn-D-lora-hypernetwork-202801",
+      "conditioning": "D",
+      "update": "lora",
+      "method": "hypernetwork",
+      "seed": 202801,
+      "validation_cases": 42,
+      "selected_epoch": 0,
+      "frozen_accuracy": 0.6289073299040077,
+      "selected_accuracy": 0.6289073299040077,
+      "gain_pp": 0.0,
+      "all_recorded_delta_norms_zero": true,
+      "fit_seconds": 421.428838433,
+      "adaptation_parameters": 928,
+      "generator_parameters": 175264
+    }
+  ],
+  "baselines": [
+    {
+      "method": "constant_teacher",
+      "cases": 42,
+      "mean_accuracy": 0.6265246996144006,
+      "mean_gain_pp": -0.2382630289607028,
+      "harm_fraction": 0.8333333333333334,
+      "offline_practice_labels": true
+    },
+    {
+      "method": "frozen",
+      "cases": 42,
+      "mean_accuracy": 0.6289073299040077,
+      "mean_gain_pp": 0.0,
+      "harm_fraction": 0,
+      "offline_practice_labels": false
+    },
+    {
+      "method": "gtrans_feature_only",
+      "cases": 42,
+      "mean_accuracy": 0.6115345832953806,
+      "mean_gain_pp": -1.737274660862702,
+      "harm_fraction": 1,
+      "offline_practice_labels": false
+    },
+    {
+      "method": "iterative_im_head",
+      "cases": 42,
+      "mean_accuracy": 0.6067421565760436,
+      "mean_gain_pp": -2.216517332796403,
+      "harm_fraction": 1,
+      "offline_practice_labels": false
+    },
+    {
+      "method": "iterative_im_lora",
+      "cases": 42,
+      "mean_accuracy": 0.5722954909001421,
+      "mean_gain_pp": -5.6611839003865585,
+      "harm_fraction": 1,
+      "offline_practice_labels": false
+    },
+    {
+      "method": "practice_fixed",
+      "cases": 42,
+      "mean_accuracy": 0.6295297541144718,
+      "mean_gain_pp": 0.062242421046407974,
+      "harm_fraction": 0.09523809523809523,
+      "offline_practice_labels": true
+    }
+  ],
+  "offline_label_audit": "Constant teacher and practice-fixed baselines both use permitted offline practice labels. The original raw baseline flag marks only practice_fixed; this derived report corrects that incomplete label annotation without changing scores or fitting.",
+  "independent_replay_cases": 420,
+  "prediction_class_differences": 0,
+  "total_recorded_generator_fit_seconds": 2360.113698721,
+  "final_test_scored": false,
+  "source": "/home/deeptanshukumar/Downloads/AFML PROJECT/compute-tools/kaggle-gcn-study-20261108/download-version-1/evidence/controlled-study",
+  "worker_elapsed_seconds": 4443.417199850082,
+  "recorded_subprocess_stages": [
+    {
+      "name": "dependencies",
+      "seconds": 5.858574312000002,
+      "returncode": 0
+    },
+    {
+      "name": "cuda-components",
+      "seconds": 14.91548835399999,
+      "returncode": 0
+    },
+    {
+      "name": "experiments-1-2",
+      "seconds": 2523.6491012059996,
+      "returncode": 0
+    },
+    {
+      "name": "conditioning-control",
+      "seconds": 517.9060790200001,
+      "returncode": 0
+    },
+    {
+      "name": "gcn-baselines",
+      "seconds": 1153.772674921,
+      "returncode": 0
+    },
+    {
+      "name": "independent-replay",
+      "seconds": 40.87695283699941,
+      "returncode": 0
+    },
+    {
+      "name": "report",
+      "seconds": 0.07811689300069702,
+      "returncode": 0
+    }
+  ],
+  "cost_boundary": "Worker elapsed excludes service publication and local downloading. Generator fitting is a subset of experiment-stage elapsed; do not sum it twice."
+}

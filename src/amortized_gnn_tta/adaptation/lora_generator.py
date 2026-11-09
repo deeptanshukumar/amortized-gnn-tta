@@ -141,3 +141,23 @@ class LoRAGenerator(nn.Module):
 
     def diffusion_loss(self, descriptor, weights, target_factors):
         return self.core.diffusion_loss(descriptor, None, target_factors)
+
+
+@torch.no_grad()
+def replayable_factor_vector(model, graph, descriptor, generator, *, sampling_seed=None):
+    """Reconstruct exact chosen factors for offline artifact export, not timing.
+
+    A selected diffusion candidate requires its actual selected sampling seed.
+    Factor vectors and their dense products can then be checked independently.
+    """
+    from ._validation import source_state
+    if not isinstance(generator,LoRAGenerator):return None
+    with source_state(model),source_state(generator):
+        graph=graph.clone().to(next(model.parameters()).device)
+        conditioning=descriptor(model,graph)
+        core=generator.core
+        if hasattr(core,'sample'):
+            if sampling_seed is None:raise ValueError('Chosen diffusion sampling seed is required')
+            return core.sample(conditioning,seed=sampling_seed).detach().cpu()
+        if sampling_seed is not None:raise ValueError('Hypernetwork has no sampling seed')
+        return core(conditioning).detach().cpu()

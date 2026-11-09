@@ -1,0 +1,2239 @@
+{
+  "rows": [
+    {
+      "model_id": "gcn-group3-49",
+      "environment_id": "validation-control",
+      "method": "frozen",
+      "accuracy": 0.6451223195409241,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-49",
+      "environment_id": "validation-control",
+      "method": "constant_teacher",
+      "accuracy": 0.6411624551159435,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-49",
+      "environment_id": "validation-control",
+      "method": "practice_fixed",
+      "accuracy": 0.6451223195409241,
+      "online_labels": false,
+      "offline_practice_labels": true
+    },
+    {
+      "model_id": "gcn-group3-49",
+      "environment_id": "validation-control",
+      "method": "gtrans_feature_only",
+      "accuracy": 0.630792979630189,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-49",
+      "environment_id": "validation-control",
+      "method": "iterative_im_head",
+      "accuracy": 0.6241820195308567,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-49",
+      "environment_id": "validation-control",
+      "method": "iterative_im_lora",
+      "accuracy": 0.5801872546058593,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-49",
+      "environment_id": "validation-attribute-0",
+      "method": "frozen",
+      "accuracy": 0.6334776334776335,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-49",
+      "environment_id": "validation-attribute-0",
+      "method": "constant_teacher",
+      "accuracy": 0.6277056277056277,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-49",
+      "environment_id": "validation-attribute-0",
+      "method": "practice_fixed",
+      "accuracy": 0.6334776334776335,
+      "online_labels": false,
+      "offline_practice_labels": true
+    },
+    {
+      "model_id": "gcn-group3-49",
+      "environment_id": "validation-attribute-0",
+      "method": "gtrans_feature_only",
+      "accuracy": 0.6176046176046176,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-49",
+      "environment_id": "validation-attribute-0",
+      "method": "iterative_im_head",
+      "accuracy": 0.6120339608711701,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-49",
+      "environment_id": "validation-attribute-0",
+      "method": "iterative_im_lora",
+      "accuracy": 0.5388100271821202,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-49",
+      "environment_id": "validation-structural-0",
+      "method": "frozen",
+      "accuracy": 0.637336823383335,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-49",
+      "environment_id": "validation-structural-0",
+      "method": "constant_teacher",
+      "accuracy": 0.6333769589583543,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-49",
+      "environment_id": "validation-structural-0",
+      "method": "practice_fixed",
+      "accuracy": 0.637336823383335,
+      "online_labels": false,
+      "offline_practice_labels": true
+    },
+    {
+      "model_id": "gcn-group3-49",
+      "environment_id": "validation-structural-0",
+      "method": "gtrans_feature_only",
+      "accuracy": 0.6230745998187859,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-49",
+      "environment_id": "validation-structural-0",
+      "method": "iterative_im_head",
+      "accuracy": 0.6145843820262424,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-49",
+      "environment_id": "validation-structural-0",
+      "method": "iterative_im_lora",
+      "accuracy": 0.5867982147051914,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-49",
+      "environment_id": "validation-combined-0",
+      "method": "frozen",
+      "accuracy": 0.6239806704922984,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-49",
+      "environment_id": "validation-combined-0",
+      "method": "constant_teacher",
+      "accuracy": 0.6189469445283399,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-49",
+      "environment_id": "validation-combined-0",
+      "method": "practice_fixed",
+      "accuracy": 0.6239806704922984,
+      "online_labels": false,
+      "offline_practice_labels": true
+    },
+    {
+      "model_id": "gcn-group3-49",
+      "environment_id": "validation-combined-0",
+      "method": "gtrans_feature_only",
+      "accuracy": 0.6061612805798853,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-49",
+      "environment_id": "validation-combined-0",
+      "method": "iterative_im_head",
+      "accuracy": 0.6044498137521394,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-49",
+      "environment_id": "validation-combined-0",
+      "method": "iterative_im_lora",
+      "accuracy": 0.5293130641967851,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-49",
+      "environment_id": "validation-attribute-1",
+      "method": "frozen",
+      "accuracy": 0.6162622906808953,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-49",
+      "environment_id": "validation-attribute-1",
+      "method": "constant_teacher",
+      "accuracy": 0.6087117017349576,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-49",
+      "environment_id": "validation-attribute-1",
+      "method": "practice_fixed",
+      "accuracy": 0.6162622906808953,
+      "online_labels": false,
+      "offline_practice_labels": true
+    },
+    {
+      "model_id": "gcn-group3-49",
+      "environment_id": "validation-attribute-1",
+      "method": "gtrans_feature_only",
+      "accuracy": 0.5944159199973154,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-49",
+      "environment_id": "validation-attribute-1",
+      "method": "iterative_im_head",
+      "accuracy": 0.583576630088258,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-49",
+      "environment_id": "validation-attribute-1",
+      "method": "iterative_im_lora",
+      "accuracy": 0.52629282861841,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-49",
+      "environment_id": "validation-structural-1",
+      "method": "frozen",
+      "accuracy": 0.6302224906876069,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-49",
+      "environment_id": "validation-structural-1",
+      "method": "constant_teacher",
+      "accuracy": 0.6261619517433471,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-49",
+      "environment_id": "validation-structural-1",
+      "method": "practice_fixed",
+      "accuracy": 0.6302224906876069,
+      "online_labels": false,
+      "offline_practice_labels": true
+    },
+    {
+      "model_id": "gcn-group3-49",
+      "environment_id": "validation-structural-1",
+      "method": "gtrans_feature_only",
+      "accuracy": 0.613745427698916,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-49",
+      "environment_id": "validation-structural-1",
+      "method": "iterative_im_head",
+      "accuracy": 0.6058256988489547,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-49",
+      "environment_id": "validation-structural-1",
+      "method": "iterative_im_lora",
+      "accuracy": 0.590657404610893,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-49",
+      "environment_id": "validation-combined-1",
+      "method": "frozen",
+      "accuracy": 0.5907245209570791,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-49",
+      "environment_id": "validation-combined-1",
+      "method": "constant_teacher",
+      "accuracy": 0.5850196315312595,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-49",
+      "environment_id": "validation-combined-1",
+      "method": "practice_fixed",
+      "accuracy": 0.5907245209570791,
+      "online_labels": false,
+      "offline_practice_labels": true
+    },
+    {
+      "model_id": "gcn-group3-49",
+      "environment_id": "validation-combined-1",
+      "method": "gtrans_feature_only",
+      "accuracy": 0.5674687070035908,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-49",
+      "environment_id": "validation-combined-1",
+      "method": "iterative_im_head",
+      "accuracy": 0.5665961945031712,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-49",
+      "environment_id": "validation-combined-1",
+      "method": "iterative_im_lora",
+      "accuracy": 0.5070975536091815,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-50",
+      "environment_id": "validation-control",
+      "method": "frozen",
+      "accuracy": 0.6555253531997718,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-50",
+      "environment_id": "validation-control",
+      "method": "constant_teacher",
+      "accuracy": 0.6553240041612135,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-50",
+      "environment_id": "validation-control",
+      "method": "practice_fixed",
+      "accuracy": 0.6553240041612135,
+      "online_labels": false,
+      "offline_practice_labels": true
+    },
+    {
+      "model_id": "gcn-group3-50",
+      "environment_id": "validation-control",
+      "method": "gtrans_feature_only",
+      "accuracy": 0.6399208027115004,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-50",
+      "environment_id": "validation-control",
+      "method": "iterative_im_head",
+      "accuracy": 0.6337125406892848,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-50",
+      "environment_id": "validation-control",
+      "method": "iterative_im_lora",
+      "accuracy": 0.61247021712138,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-50",
+      "environment_id": "validation-attribute-0",
+      "method": "frozen",
+      "accuracy": 0.6425383402127588,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-50",
+      "environment_id": "validation-attribute-0",
+      "method": "constant_teacher",
+      "accuracy": 0.640860431558106,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-50",
+      "environment_id": "validation-attribute-0",
+      "method": "practice_fixed",
+      "accuracy": 0.6444847142521561,
+      "online_labels": false,
+      "offline_practice_labels": true
+    },
+    {
+      "model_id": "gcn-group3-50",
+      "environment_id": "validation-attribute-0",
+      "method": "gtrans_feature_only",
+      "accuracy": 0.6267659988590221,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-50",
+      "environment_id": "validation-attribute-0",
+      "method": "iterative_im_head",
+      "accuracy": 0.6261283935702541,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-50",
+      "environment_id": "validation-attribute-0",
+      "method": "iterative_im_lora",
+      "accuracy": 0.5907245209570791,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-50",
+      "environment_id": "validation-structural-0",
+      "method": "frozen",
+      "accuracy": 0.6474378334843451,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-50",
+      "environment_id": "validation-structural-0",
+      "method": "constant_teacher",
+      "accuracy": 0.6472700426188799,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-50",
+      "environment_id": "validation-structural-0",
+      "method": "practice_fixed",
+      "accuracy": 0.6480418806000201,
+      "online_labels": false,
+      "offline_practice_labels": true
+    },
+    {
+      "model_id": "gcn-group3-50",
+      "environment_id": "validation-structural-0",
+      "method": "gtrans_feature_only",
+      "accuracy": 0.6323030974193765,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-50",
+      "environment_id": "validation-structural-0",
+      "method": "iterative_im_head",
+      "accuracy": 0.6250209738581831,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-50",
+      "environment_id": "validation-structural-0",
+      "method": "iterative_im_lora",
+      "accuracy": 0.5958924796134099,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-50",
+      "environment_id": "validation-combined-0",
+      "method": "frozen",
+      "accuracy": 0.6338467733816571,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-50",
+      "environment_id": "validation-combined-0",
+      "method": "constant_teacher",
+      "accuracy": 0.6310278868418403,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-50",
+      "environment_id": "validation-combined-0",
+      "method": "practice_fixed",
+      "accuracy": 0.6341487969394947,
+      "online_labels": false,
+      "offline_practice_labels": true
+    },
+    {
+      "model_id": "gcn-group3-50",
+      "environment_id": "validation-combined-0",
+      "method": "gtrans_feature_only",
+      "accuracy": 0.616698546931105,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-50",
+      "environment_id": "validation-combined-0",
+      "method": "iterative_im_head",
+      "accuracy": 0.6157253599114064,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-50",
+      "environment_id": "validation-combined-0",
+      "method": "iterative_im_lora",
+      "accuracy": 0.5781402060471827,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-50",
+      "environment_id": "validation-attribute-1",
+      "method": "frozen",
+      "accuracy": 0.624316252223229,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-50",
+      "environment_id": "validation-attribute-1",
+      "method": "constant_teacher",
+      "accuracy": 0.619550991644015,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-50",
+      "environment_id": "validation-attribute-1",
+      "method": "practice_fixed",
+      "accuracy": 0.6249874156850901,
+      "online_labels": false,
+      "offline_practice_labels": true
+    },
+    {
+      "model_id": "gcn-group3-50",
+      "environment_id": "validation-attribute-1",
+      "method": "gtrans_feature_only",
+      "accuracy": 0.6046176046176046,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-50",
+      "environment_id": "validation-attribute-1",
+      "method": "iterative_im_head",
+      "accuracy": 0.5993825296150878,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-50",
+      "environment_id": "validation-attribute-1",
+      "method": "iterative_im_lora",
+      "accuracy": 0.523306151213128,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-50",
+      "environment_id": "validation-structural-1",
+      "method": "frozen",
+      "accuracy": 0.6394845464612906,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-50",
+      "environment_id": "validation-structural-1",
+      "method": "constant_teacher",
+      "accuracy": 0.6382764522299406,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-50",
+      "environment_id": "validation-structural-1",
+      "method": "practice_fixed",
+      "accuracy": 0.6394845464612906,
+      "online_labels": false,
+      "offline_practice_labels": true
+    },
+    {
+      "model_id": "gcn-group3-50",
+      "environment_id": "validation-structural-1",
+      "method": "gtrans_feature_only",
+      "accuracy": 0.6228061344340414,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-50",
+      "environment_id": "validation-structural-1",
+      "method": "iterative_im_head",
+      "accuracy": 0.6116312627940534,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-50",
+      "environment_id": "validation-structural-1",
+      "method": "iterative_im_lora",
+      "accuracy": 0.5946172690358736,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-50",
+      "environment_id": "validation-combined-1",
+      "method": "frozen",
+      "accuracy": 0.5980402026913655,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-50",
+      "environment_id": "validation-combined-1",
+      "method": "constant_teacher",
+      "accuracy": 0.5937111983623612,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-50",
+      "environment_id": "validation-combined-1",
+      "method": "practice_fixed",
+      "accuracy": 0.5993489714419947,
+      "online_labels": false,
+      "offline_practice_labels": true
+    },
+    {
+      "model_id": "gcn-group3-50",
+      "environment_id": "validation-combined-1",
+      "method": "gtrans_feature_only",
+      "accuracy": 0.577703949796973,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-50",
+      "environment_id": "validation-combined-1",
+      "method": "iterative_im_head",
+      "accuracy": 0.5781066478740897,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-50",
+      "environment_id": "validation-combined-1",
+      "method": "iterative_im_lora",
+      "accuracy": 0.5113594415919998,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-51",
+      "environment_id": "validation-control",
+      "method": "frozen",
+      "accuracy": 0.6500889291586966,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-51",
+      "environment_id": "validation-control",
+      "method": "constant_teacher",
+      "accuracy": 0.645558575791134,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-51",
+      "environment_id": "validation-control",
+      "method": "practice_fixed",
+      "accuracy": 0.6499546964663244,
+      "online_labels": false,
+      "offline_practice_labels": true
+    },
+    {
+      "model_id": "gcn-group3-51",
+      "environment_id": "validation-control",
+      "method": "gtrans_feature_only",
+      "accuracy": 0.6329071445350515,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-51",
+      "environment_id": "validation-control",
+      "method": "iterative_im_head",
+      "accuracy": 0.6304909560723514,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-51",
+      "environment_id": "validation-control",
+      "method": "iterative_im_lora",
+      "accuracy": 0.6158260344306856,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-51",
+      "environment_id": "validation-attribute-0",
+      "method": "frozen",
+      "accuracy": 0.6375381724218934,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-51",
+      "environment_id": "validation-attribute-0",
+      "method": "constant_teacher",
+      "accuracy": 0.6323366555924695,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-51",
+      "environment_id": "validation-attribute-0",
+      "method": "practice_fixed",
+      "accuracy": 0.6382093358837545,
+      "online_labels": false,
+      "offline_practice_labels": true
+    },
+    {
+      "model_id": "gcn-group3-51",
+      "environment_id": "validation-attribute-0",
+      "method": "gtrans_feature_only",
+      "accuracy": 0.6210946676062955,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-51",
+      "environment_id": "validation-attribute-0",
+      "method": "iterative_im_head",
+      "accuracy": 0.6169670123158495,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-51",
+      "environment_id": "validation-attribute-0",
+      "method": "iterative_im_lora",
+      "accuracy": 0.6068324440417464,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-51",
+      "environment_id": "validation-structural-0",
+      "method": "frozen",
+      "accuracy": 0.6415651531930602,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-51",
+      "environment_id": "validation-structural-0",
+      "method": "constant_teacher",
+      "accuracy": 0.6380751031913823,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-51",
+      "environment_id": "validation-structural-0",
+      "method": "practice_fixed",
+      "accuracy": 0.6418336185778046,
+      "online_labels": false,
+      "offline_practice_labels": true
+    },
+    {
+      "model_id": "gcn-group3-51",
+      "environment_id": "validation-structural-0",
+      "method": "gtrans_feature_only",
+      "accuracy": 0.6244504849156012,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-51",
+      "environment_id": "validation-structural-0",
+      "method": "iterative_im_head",
+      "accuracy": 0.6197523406825732,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-51",
+      "environment_id": "validation-structural-0",
+      "method": "iterative_im_lora",
+      "accuracy": 0.6103224940434243,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-51",
+      "environment_id": "validation-combined-0",
+      "method": "frozen",
+      "accuracy": 0.6276385113594416,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-51",
+      "environment_id": "validation-combined-0",
+      "method": "constant_teacher",
+      "accuracy": 0.6241484613577637,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-51",
+      "environment_id": "validation-combined-0",
+      "method": "practice_fixed",
+      "accuracy": 0.6283432329943958,
+      "online_labels": false,
+      "offline_practice_labels": true
+    },
+    {
+      "model_id": "gcn-group3-51",
+      "environment_id": "validation-combined-0",
+      "method": "gtrans_feature_only",
+      "accuracy": 0.6074700493305144,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-51",
+      "environment_id": "validation-combined-0",
+      "method": "iterative_im_head",
+      "accuracy": 0.6076713983690728,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-51",
+      "environment_id": "validation-combined-0",
+      "method": "iterative_im_lora",
+      "accuracy": 0.5907916373032652,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-51",
+      "environment_id": "validation-attribute-1",
+      "method": "frozen",
+      "accuracy": 0.6195174334709218,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-51",
+      "environment_id": "validation-attribute-1",
+      "method": "constant_teacher",
+      "accuracy": 0.6127722406792174,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-51",
+      "environment_id": "validation-attribute-1",
+      "method": "practice_fixed",
+      "accuracy": 0.621396691164133,
+      "online_labels": false,
+      "offline_practice_labels": true
+    },
+    {
+      "model_id": "gcn-group3-51",
+      "environment_id": "validation-attribute-1",
+      "method": "gtrans_feature_only",
+      "accuracy": 0.599583878653646,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-51",
+      "environment_id": "validation-attribute-1",
+      "method": "iterative_im_head",
+      "accuracy": 0.585959260377865,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-51",
+      "environment_id": "validation-attribute-1",
+      "method": "iterative_im_lora",
+      "accuracy": 0.4918957011980268,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-51",
+      "environment_id": "validation-structural-1",
+      "method": "frozen",
+      "accuracy": 0.632638679150307,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-51",
+      "environment_id": "validation-structural-1",
+      "method": "constant_teacher",
+      "accuracy": 0.6303567233799792,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-51",
+      "environment_id": "validation-structural-1",
+      "method": "practice_fixed",
+      "accuracy": 0.6336789825161918,
+      "online_labels": false,
+      "offline_practice_labels": true
+    },
+    {
+      "model_id": "gcn-group3-51",
+      "environment_id": "validation-structural-1",
+      "method": "gtrans_feature_only",
+      "accuracy": 0.6151213127957313,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-51",
+      "environment_id": "validation-structural-1",
+      "method": "iterative_im_head",
+      "accuracy": 0.6093828651968187,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-51",
+      "environment_id": "validation-structural-1",
+      "method": "iterative_im_lora",
+      "accuracy": 0.602436323366556,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-51",
+      "environment_id": "validation-combined-1",
+      "method": "frozen",
+      "accuracy": 0.5919997315346153,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-51",
+      "environment_id": "validation-combined-1",
+      "method": "constant_teacher",
+      "accuracy": 0.5866975401859122,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-51",
+      "environment_id": "validation-combined-1",
+      "method": "practice_fixed",
+      "accuracy": 0.593644082016175,
+      "online_labels": false,
+      "offline_practice_labels": true
+    },
+    {
+      "model_id": "gcn-group3-51",
+      "environment_id": "validation-combined-1",
+      "method": "gtrans_feature_only",
+      "accuracy": 0.5696499882546394,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-51",
+      "environment_id": "validation-combined-1",
+      "method": "iterative_im_head",
+      "accuracy": 0.5692472901775227,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-51",
+      "environment_id": "validation-combined-1",
+      "method": "iterative_im_lora",
+      "accuracy": 0.48229806369341255,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-52",
+      "environment_id": "validation-control",
+      "method": "frozen",
+      "accuracy": 0.6516997214671634,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-52",
+      "environment_id": "validation-control",
+      "method": "constant_teacher",
+      "accuracy": 0.6516326051209772,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-52",
+      "environment_id": "validation-control",
+      "method": "practice_fixed",
+      "accuracy": 0.6537803281989328,
+      "online_labels": false,
+      "offline_practice_labels": true
+    },
+    {
+      "model_id": "gcn-group3-52",
+      "environment_id": "validation-control",
+      "method": "gtrans_feature_only",
+      "accuracy": 0.6376052887680794,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-52",
+      "environment_id": "validation-control",
+      "method": "iterative_im_head",
+      "accuracy": 0.6361958454981711,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-52",
+      "environment_id": "validation-control",
+      "method": "iterative_im_lora",
+      "accuracy": 0.6195174334709218,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-52",
+      "environment_id": "validation-attribute-0",
+      "method": "frozen",
+      "accuracy": 0.6390482902110809,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-52",
+      "environment_id": "validation-attribute-0",
+      "method": "constant_teacher",
+      "accuracy": 0.6372361488640559,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-52",
+      "environment_id": "validation-attribute-0",
+      "method": "practice_fixed",
+      "accuracy": 0.6409275479042921,
+      "online_labels": false,
+      "offline_practice_labels": true
+    },
+    {
+      "model_id": "gcn-group3-52",
+      "environment_id": "validation-attribute-0",
+      "method": "gtrans_feature_only",
+      "accuracy": 0.6229068089533206,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-52",
+      "environment_id": "validation-attribute-0",
+      "method": "iterative_im_head",
+      "accuracy": 0.6274707204939763,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-52",
+      "environment_id": "validation-attribute-0",
+      "method": "iterative_im_lora",
+      "accuracy": 0.6040471156750227,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-52",
+      "environment_id": "validation-structural-0",
+      "method": "frozen",
+      "accuracy": 0.6446860632907144,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-52",
+      "environment_id": "validation-structural-0",
+      "method": "constant_teacher",
+      "accuracy": 0.6437799926172019,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-52",
+      "environment_id": "validation-structural-0",
+      "method": "practice_fixed",
+      "accuracy": 0.645558575791134,
+      "online_labels": false,
+      "offline_practice_labels": true
+    },
+    {
+      "model_id": "gcn-group3-52",
+      "environment_id": "validation-structural-0",
+      "method": "gtrans_feature_only",
+      "accuracy": 0.6280412094365583,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-52",
+      "environment_id": "validation-structural-0",
+      "method": "iterative_im_head",
+      "accuracy": 0.6271686969361387,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-52",
+      "environment_id": "validation-structural-0",
+      "method": "iterative_im_lora",
+      "accuracy": 0.6174032685660593,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-52",
+      "environment_id": "validation-combined-0",
+      "method": "frozen",
+      "accuracy": 0.6283096748213027,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-52",
+      "environment_id": "validation-combined-0",
+      "method": "constant_teacher",
+      "accuracy": 0.6266317661666498,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-52",
+      "environment_id": "validation-combined-0",
+      "method": "practice_fixed",
+      "accuracy": 0.6305916305916306,
+      "online_labels": false,
+      "offline_practice_labels": true
+    },
+    {
+      "model_id": "gcn-group3-52",
+      "environment_id": "validation-combined-0",
+      "method": "gtrans_feature_only",
+      "accuracy": 0.61247021712138,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-52",
+      "environment_id": "validation-combined-0",
+      "method": "iterative_im_head",
+      "accuracy": 0.6191147353938051,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-52",
+      "environment_id": "validation-combined-0",
+      "method": "iterative_im_lora",
+      "accuracy": 0.5957582469210376,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-52",
+      "environment_id": "validation-attribute-1",
+      "method": "frozen",
+      "accuracy": 0.6228061344340414,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-52",
+      "environment_id": "validation-attribute-1",
+      "method": "constant_teacher",
+      "accuracy": 0.6190476190476191,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-52",
+      "environment_id": "validation-attribute-1",
+      "method": "practice_fixed",
+      "accuracy": 0.6236450887613678,
+      "online_labels": false,
+      "offline_practice_labels": true
+    },
+    {
+      "model_id": "gcn-group3-52",
+      "environment_id": "validation-attribute-1",
+      "method": "gtrans_feature_only",
+      "accuracy": 0.600758414711903,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-52",
+      "environment_id": "validation-attribute-1",
+      "method": "iterative_im_head",
+      "accuracy": 0.5953219906708279,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-52",
+      "environment_id": "validation-attribute-1",
+      "method": "iterative_im_lora",
+      "accuracy": 0.5480720829558039,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-52",
+      "environment_id": "validation-structural-1",
+      "method": "frozen",
+      "accuracy": 0.6345850531897044,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-52",
+      "environment_id": "validation-structural-1",
+      "method": "constant_teacher",
+      "accuracy": 0.6336789825161918,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-52",
+      "environment_id": "validation-structural-1",
+      "method": "practice_fixed",
+      "accuracy": 0.6365985435752878,
+      "online_labels": false,
+      "offline_practice_labels": true
+    },
+    {
+      "model_id": "gcn-group3-52",
+      "environment_id": "validation-structural-1",
+      "method": "gtrans_feature_only",
+      "accuracy": 0.6198530152018524,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-52",
+      "environment_id": "validation-structural-1",
+      "method": "iterative_im_head",
+      "accuracy": 0.61367831135273,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-52",
+      "environment_id": "validation-structural-1",
+      "method": "iterative_im_lora",
+      "accuracy": 0.6063961877915366,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-52",
+      "environment_id": "validation-combined-1",
+      "method": "frozen",
+      "accuracy": 0.5945501526896876,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-52",
+      "environment_id": "validation-combined-1",
+      "method": "constant_teacher",
+      "accuracy": 0.5919326151884291,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-52",
+      "environment_id": "validation-combined-1",
+      "method": "practice_fixed",
+      "accuracy": 0.5967985502869224,
+      "online_labels": false,
+      "offline_practice_labels": true
+    },
+    {
+      "model_id": "gcn-group3-52",
+      "environment_id": "validation-combined-1",
+      "method": "gtrans_feature_only",
+      "accuracy": 0.5727708983522937,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-52",
+      "environment_id": "validation-combined-1",
+      "method": "iterative_im_head",
+      "accuracy": 0.575891808449948,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-52",
+      "environment_id": "validation-combined-1",
+      "method": "iterative_im_lora",
+      "accuracy": 0.5480049666096177,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-53",
+      "environment_id": "validation-control",
+      "method": "frozen",
+      "accuracy": 0.6475720661767174,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-53",
+      "environment_id": "validation-control",
+      "method": "constant_teacher",
+      "accuracy": 0.6477062988690896,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-53",
+      "environment_id": "validation-control",
+      "method": "practice_fixed",
+      "accuracy": 0.6463639719453673,
+      "online_labels": false,
+      "offline_practice_labels": true
+    },
+    {
+      "model_id": "gcn-group3-53",
+      "environment_id": "validation-control",
+      "method": "gtrans_feature_only",
+      "accuracy": 0.6325044464579348,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-53",
+      "environment_id": "validation-control",
+      "method": "iterative_im_head",
+      "accuracy": 0.6342159132856807,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-53",
+      "environment_id": "validation-control",
+      "method": "iterative_im_lora",
+      "accuracy": 0.6159602671230578,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-53",
+      "environment_id": "validation-attribute-0",
+      "method": "frozen",
+      "accuracy": 0.6347528440551696,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-53",
+      "environment_id": "validation-attribute-0",
+      "method": "constant_teacher",
+      "accuracy": 0.6348199604013558,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-53",
+      "environment_id": "validation-attribute-0",
+      "method": "practice_fixed",
+      "accuracy": 0.6353568911708447,
+      "online_labels": false,
+      "offline_practice_labels": true
+    },
+    {
+      "model_id": "gcn-group3-53",
+      "environment_id": "validation-attribute-0",
+      "method": "gtrans_feature_only",
+      "accuracy": 0.6193832007785496,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-53",
+      "environment_id": "validation-attribute-0",
+      "method": "iterative_im_head",
+      "accuracy": 0.6197187825094802,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-53",
+      "environment_id": "validation-attribute-0",
+      "method": "iterative_im_lora",
+      "accuracy": 0.5858585858585859,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-53",
+      "environment_id": "validation-structural-0",
+      "method": "frozen",
+      "accuracy": 0.6383100104030337,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-53",
+      "environment_id": "validation-structural-0",
+      "method": "constant_teacher",
+      "accuracy": 0.6403906171348032,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-53",
+      "environment_id": "validation-structural-0",
+      "method": "practice_fixed",
+      "accuracy": 0.6378737541528239,
+      "online_labels": false,
+      "offline_practice_labels": true
+    },
+    {
+      "model_id": "gcn-group3-53",
+      "environment_id": "validation-structural-0",
+      "method": "gtrans_feature_only",
+      "accuracy": 0.6246853921272526,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-53",
+      "environment_id": "validation-structural-0",
+      "method": "iterative_im_head",
+      "accuracy": 0.6255914628007652,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-53",
+      "environment_id": "validation-structural-0",
+      "method": "iterative_im_lora",
+      "accuracy": 0.6081747709654687,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-53",
+      "environment_id": "validation-combined-0",
+      "method": "frozen",
+      "accuracy": 0.6250209738581831,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-53",
+      "environment_id": "validation-combined-0",
+      "method": "constant_teacher",
+      "accuracy": 0.6245847176079734,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-53",
+      "environment_id": "validation-combined-0",
+      "method": "practice_fixed",
+      "accuracy": 0.625557904627672,
+      "online_labels": false,
+      "offline_practice_labels": true
+    },
+    {
+      "model_id": "gcn-group3-53",
+      "environment_id": "validation-combined-0",
+      "method": "gtrans_feature_only",
+      "accuracy": 0.6092150743313534,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-53",
+      "environment_id": "validation-combined-0",
+      "method": "iterative_im_head",
+      "accuracy": 0.6105238430819826,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-53",
+      "environment_id": "validation-combined-0",
+      "method": "iterative_im_lora",
+      "accuracy": 0.5802208127789523,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-53",
+      "environment_id": "validation-attribute-1",
+      "method": "frozen",
+      "accuracy": 0.6170341286620357,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-53",
+      "environment_id": "validation-attribute-1",
+      "method": "constant_teacher",
+      "accuracy": 0.6142152421222189,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-53",
+      "environment_id": "validation-attribute-1",
+      "method": "practice_fixed",
+      "accuracy": 0.6183428974126649,
+      "online_labels": false,
+      "offline_practice_labels": true
+    },
+    {
+      "model_id": "gcn-group3-53",
+      "environment_id": "validation-attribute-1",
+      "method": "gtrans_feature_only",
+      "accuracy": 0.5948521762475251,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-53",
+      "environment_id": "validation-attribute-1",
+      "method": "iterative_im_head",
+      "accuracy": 0.580589952682976,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-53",
+      "environment_id": "validation-attribute-1",
+      "method": "iterative_im_lora",
+      "accuracy": 0.5054196449545286,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-53",
+      "environment_id": "validation-structural-1",
+      "method": "frozen",
+      "accuracy": 0.6300211416490487,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-53",
+      "environment_id": "validation-structural-1",
+      "method": "constant_teacher",
+      "accuracy": 0.6318668411691668,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-53",
+      "environment_id": "validation-structural-1",
+      "method": "practice_fixed",
+      "accuracy": 0.6310614450149334,
+      "online_labels": false,
+      "offline_practice_labels": true
+    },
+    {
+      "model_id": "gcn-group3-53",
+      "environment_id": "validation-structural-1",
+      "method": "gtrans_feature_only",
+      "accuracy": 0.6147186147186147,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-53",
+      "environment_id": "validation-structural-1",
+      "method": "iterative_im_head",
+      "accuracy": 0.614282358468405,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-53",
+      "environment_id": "validation-structural-1",
+      "method": "iterative_im_lora",
+      "accuracy": 0.5910601026880097,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-53",
+      "environment_id": "validation-combined-1",
+      "method": "frozen",
+      "accuracy": 0.5909594281687305,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-53",
+      "environment_id": "validation-combined-1",
+      "method": "constant_teacher",
+      "accuracy": 0.5900197993221249,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-53",
+      "environment_id": "validation-combined-1",
+      "method": "practice_fixed",
+      "accuracy": 0.5923353132655458,
+      "online_labels": false,
+      "offline_practice_labels": true
+    },
+    {
+      "model_id": "gcn-group3-53",
+      "environment_id": "validation-combined-1",
+      "method": "gtrans_feature_only",
+      "accuracy": 0.5680056377730797,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-53",
+      "environment_id": "validation-combined-1",
+      "method": "iterative_im_head",
+      "accuracy": 0.5638444243095406,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-53",
+      "environment_id": "validation-combined-1",
+      "method": "iterative_im_lora",
+      "accuracy": 0.5270311084264573,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-54",
+      "environment_id": "validation-control",
+      "method": "frozen",
+      "accuracy": 0.6482096714654855,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-54",
+      "environment_id": "validation-control",
+      "method": "constant_teacher",
+      "accuracy": 0.6486794858887882,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-54",
+      "environment_id": "validation-control",
+      "method": "practice_fixed",
+      "accuracy": 0.6482096714654855,
+      "online_labels": false,
+      "offline_practice_labels": true
+    },
+    {
+      "model_id": "gcn-group3-54",
+      "environment_id": "validation-control",
+      "method": "gtrans_feature_only",
+      "accuracy": 0.6339810060740293,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-54",
+      "environment_id": "validation-control",
+      "method": "iterative_im_head",
+      "accuracy": 0.6242155777039498,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-54",
+      "environment_id": "validation-control",
+      "method": "iterative_im_lora",
+      "accuracy": 0.5947515017282459,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-54",
+      "environment_id": "validation-attribute-0",
+      "method": "frozen",
+      "accuracy": 0.6375046142488003,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-54",
+      "environment_id": "validation-attribute-0",
+      "method": "constant_teacher",
+      "accuracy": 0.6354911238632169,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-54",
+      "environment_id": "validation-attribute-0",
+      "method": "practice_fixed",
+      "accuracy": 0.6375046142488003,
+      "online_labels": false,
+      "offline_practice_labels": true
+    },
+    {
+      "model_id": "gcn-group3-54",
+      "environment_id": "validation-attribute-0",
+      "method": "gtrans_feature_only",
+      "accuracy": 0.6216651565488774,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-54",
+      "environment_id": "validation-attribute-0",
+      "method": "iterative_im_head",
+      "accuracy": 0.6132084969294271,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-54",
+      "environment_id": "validation-attribute-0",
+      "method": "iterative_im_lora",
+      "accuracy": 0.5899191248028457,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-54",
+      "environment_id": "validation-structural-0",
+      "method": "frozen",
+      "accuracy": 0.6398201281922212,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-54",
+      "environment_id": "validation-structural-0",
+      "method": "constant_teacher",
+      "accuracy": 0.6410282224235713,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-54",
+      "environment_id": "validation-structural-0",
+      "method": "practice_fixed",
+      "accuracy": 0.6398201281922212,
+      "online_labels": false,
+      "offline_practice_labels": true
+    },
+    {
+      "model_id": "gcn-group3-54",
+      "environment_id": "validation-structural-0",
+      "method": "gtrans_feature_only",
+      "accuracy": 0.6254236719352998,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-54",
+      "environment_id": "validation-structural-0",
+      "method": "iterative_im_head",
+      "accuracy": 0.616597872411826,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-54",
+      "environment_id": "validation-structural-0",
+      "method": "iterative_im_lora",
+      "accuracy": 0.5970334574985737,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-54",
+      "environment_id": "validation-combined-0",
+      "method": "frozen",
+      "accuracy": 0.6265310916473708,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-54",
+      "environment_id": "validation-combined-0",
+      "method": "constant_teacher",
+      "accuracy": 0.6258599281855096,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-54",
+      "environment_id": "validation-combined-0",
+      "method": "practice_fixed",
+      "accuracy": 0.6265310916473708,
+      "online_labels": false,
+      "offline_practice_labels": true
+    },
+    {
+      "model_id": "gcn-group3-54",
+      "environment_id": "validation-combined-0",
+      "method": "gtrans_feature_only",
+      "accuracy": 0.6110943320245645,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-54",
+      "environment_id": "validation-combined-0",
+      "method": "iterative_im_head",
+      "accuracy": 0.6016980435585086,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-54",
+      "environment_id": "validation-combined-0",
+      "method": "iterative_im_lora",
+      "accuracy": 0.5820665122990705,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-54",
+      "environment_id": "validation-attribute-1",
+      "method": "frozen",
+      "accuracy": 0.619584549817108,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-54",
+      "environment_id": "validation-attribute-1",
+      "method": "constant_teacher",
+      "accuracy": 0.6159267089499648,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-54",
+      "environment_id": "validation-attribute-1",
+      "method": "practice_fixed",
+      "accuracy": 0.619584549817108,
+      "online_labels": false,
+      "offline_practice_labels": true
+    },
+    {
+      "model_id": "gcn-group3-54",
+      "environment_id": "validation-attribute-1",
+      "method": "gtrans_feature_only",
+      "accuracy": 0.6014966945199504,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-54",
+      "environment_id": "validation-attribute-1",
+      "method": "iterative_im_head",
+      "accuracy": 0.5772341353736703,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-54",
+      "environment_id": "validation-attribute-1",
+      "method": "iterative_im_lora",
+      "accuracy": 0.5102184637068358,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-54",
+      "environment_id": "validation-structural-1",
+      "method": "frozen",
+      "accuracy": 0.6323702137655626,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-54",
+      "environment_id": "validation-structural-1",
+      "method": "constant_teacher",
+      "accuracy": 0.6331420517467029,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-54",
+      "environment_id": "validation-structural-1",
+      "method": "practice_fixed",
+      "accuracy": 0.6323702137655626,
+      "online_labels": false,
+      "offline_practice_labels": true
+    },
+    {
+      "model_id": "gcn-group3-54",
+      "environment_id": "validation-structural-1",
+      "method": "gtrans_feature_only",
+      "accuracy": 0.6171012450082217,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-54",
+      "environment_id": "validation-structural-1",
+      "method": "iterative_im_head",
+      "accuracy": 0.606027047887513,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-54",
+      "environment_id": "validation-structural-1",
+      "method": "iterative_im_lora",
+      "accuracy": 0.5893486358602638,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-54",
+      "environment_id": "validation-combined-1",
+      "method": "frozen",
+      "accuracy": 0.5914292425920333,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-54",
+      "environment_id": "validation-combined-1",
+      "method": "constant_teacher",
+      "accuracy": 0.5893150776871707,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-54",
+      "environment_id": "validation-combined-1",
+      "method": "practice_fixed",
+      "accuracy": 0.5914292425920333,
+      "online_labels": false,
+      "offline_practice_labels": true
+    },
+    {
+      "model_id": "gcn-group3-54",
+      "environment_id": "validation-combined-1",
+      "method": "gtrans_feature_only",
+      "accuracy": 0.5715628041209436,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-54",
+      "environment_id": "validation-combined-1",
+      "method": "iterative_im_head",
+      "accuracy": 0.5601530252693043,
+      "online_labels": false,
+      "offline_practice_labels": false
+    },
+    {
+      "model_id": "gcn-group3-54",
+      "environment_id": "validation-combined-1",
+      "method": "iterative_im_lora",
+      "accuracy": 0.5540789959394611,
+      "online_labels": false,
+      "offline_practice_labels": false
+    }
+  ],
+  "practice_offline_cost": {
+    "gcn-group3-49": {
+      "history": [
+        {
+          "epoch": 0,
+          "validation_accuracy": 0.6253038213171103
+        },
+        {
+          "epoch": 1,
+          "validation_accuracy": 0.6243450163715945,
+          "train_loss": 1.5413534811564855
+        },
+        {
+          "epoch": 2,
+          "validation_accuracy": 0.6234533277722647,
+          "train_loss": 1.538131628717695
+        },
+        {
+          "epoch": 3,
+          "validation_accuracy": 0.6236355007119126,
+          "train_loss": 1.5334621327263969
+        },
+        {
+          "epoch": 4,
+          "validation_accuracy": 0.6245080132123322,
+          "train_loss": 1.5308361394064767
+        },
+        {
+          "epoch": 5,
+          "validation_accuracy": 0.6246086877316114,
+          "train_loss": 1.5265165226800101
+        }
+      ],
+      "selected_epoch": 0,
+      "optimizer_steps": 35,
+      "fit_seconds": 106.0023913189998
+    },
+    "gcn-group3-50": {
+      "history": [
+        {
+          "epoch": 0,
+          "validation_accuracy": 0.6344556145220597
+        },
+        {
+          "epoch": 1,
+          "validation_accuracy": 0.6344124682995115,
+          "train_loss": 1.4999829360416956
+        },
+        {
+          "epoch": 2,
+          "validation_accuracy": 0.6330845234499719,
+          "train_loss": 1.4954428502491541
+        },
+        {
+          "epoch": 3,
+          "validation_accuracy": 0.6346905217337111,
+          "train_loss": 1.4909157412392753
+        },
+        {
+          "epoch": 4,
+          "validation_accuracy": 0.6351171899344656,
+          "train_loss": 1.4889186791011266
+        },
+        {
+          "epoch": 5,
+          "validation_accuracy": 0.6341392088900395,
+          "train_loss": 1.4861167158399309
+        }
+      ],
+      "selected_epoch": 4,
+      "optimizer_steps": 35,
+      "fit_seconds": 103.64093795000008
+    },
+    "gcn-group3-51": {
+      "history": [
+        {
+          "epoch": 0,
+          "validation_accuracy": 0.6287123728984193
+        },
+        {
+          "epoch": 1,
+          "validation_accuracy": 0.6286452565522334,
+          "train_loss": 1.5268932921545846
+        },
+        {
+          "epoch": 2,
+          "validation_accuracy": 0.6284247314147647,
+          "train_loss": 1.521447045462472
+        },
+        {
+          "epoch": 3,
+          "validation_accuracy": 0.6290143964562569,
+          "train_loss": 1.5162227494376046
+        },
+        {
+          "epoch": 4,
+          "validation_accuracy": 0.6295800913741113,
+          "train_loss": 1.5124282666615076
+        },
+        {
+          "epoch": 5,
+          "validation_accuracy": 0.629354772211915,
+          "train_loss": 1.508829150881086
+        }
+      ],
+      "selected_epoch": 4,
+      "optimizer_steps": 35,
+      "fit_seconds": 103.84302976699973
+    },
+    "gcn-group3-52": {
+      "history": [
+        {
+          "epoch": 0,
+          "validation_accuracy": 0.6308121557290993
+        },
+        {
+          "epoch": 1,
+          "validation_accuracy": 0.6325571807299382,
+          "train_loss": 1.501894576208932
+        },
+        {
+          "epoch": 2,
+          "validation_accuracy": 0.6300738759210519,
+          "train_loss": 1.4951413699558802
+        },
+        {
+          "epoch": 3,
+          "validation_accuracy": 0.6317182264026118,
+          "train_loss": 1.4923147303717477
+        },
+        {
+          "epoch": 4,
+          "validation_accuracy": 0.6313874386964089,
+          "train_loss": 1.4866328409739904
+        },
+        {
+          "epoch": 5,
+          "validation_accuracy": 0.6314257908942295,
+          "train_loss": 1.4856113536017281
+        }
+      ],
+      "selected_epoch": 1,
+      "optimizer_steps": 35,
+      "fit_seconds": 103.57525862900002
+    },
+    "gcn-group3-53": {
+      "history": [
+        {
+          "epoch": 0,
+          "validation_accuracy": 0.6262386561389883
+        },
+        {
+          "epoch": 1,
+          "validation_accuracy": 0.626698882512836,
+          "train_loss": 1.5450870990753174
+        },
+        {
+          "epoch": 2,
+          "validation_accuracy": 0.6249922097098176,
+          "train_loss": 1.5423017399651664
+        },
+        {
+          "epoch": 3,
+          "validation_accuracy": 0.6257400775673201,
+          "train_loss": 1.5380555561610632
+        },
+        {
+          "epoch": 4,
+          "validation_accuracy": 0.6264112410291812,
+          "train_loss": 1.5332632064819336
+        },
+        {
+          "epoch": 5,
+          "validation_accuracy": 0.6261763338175298,
+          "train_loss": 1.5319215740476335
+        }
+      ],
+      "selected_epoch": 1,
+      "optimizer_steps": 35,
+      "fit_seconds": 104.61320275399976
+    },
+    "gcn-group3-54": {
+      "history": [
+        {
+          "epoch": 0,
+          "validation_accuracy": 0.6279213588183687
+        },
+        {
+          "epoch": 1,
+          "validation_accuracy": 0.626756410809567,
+          "train_loss": 1.5219746828079224
+        },
+        {
+          "epoch": 2,
+          "validation_accuracy": 0.6258791042844198,
+          "train_loss": 1.5190917423793249
+        },
+        {
+          "epoch": 3,
+          "validation_accuracy": 0.6276720695325346,
+          "train_loss": 1.5117541892187936
+        },
+        {
+          "epoch": 4,
+          "validation_accuracy": 0.6275618069638004,
+          "train_loss": 1.5113527263913835
+        },
+        {
+          "epoch": 5,
+          "validation_accuracy": 0.6270152881448563,
+          "train_loss": 1.5054207018443517
+        }
+      ],
+      "selected_epoch": 0,
+      "optimizer_steps": 35,
+      "fit_seconds": 105.55518692399983
+    }
+  },
+  "final_test_scored": false
+}
