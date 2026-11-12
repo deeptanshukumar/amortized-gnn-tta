@@ -1,0 +1,58 @@
+[
+  {
+    "dataset": "controlled",
+    "architecture": "gcn",
+    "reference": "iterative_im_lora",
+    "hypernetwork-202801": 5.605333001586397,
+    "teacher_hypernetwork-202801": 5.609726590427863,
+    "diffusion-202801": 3.6593993336209074
+  },
+  {
+    "dataset": "temporal",
+    "architecture": "gcn",
+    "reference": "iterative_im_lora",
+    "hypernetwork-202801": 11.069578366160231,
+    "teacher_hypernetwork-202801": 11.017397727575762,
+    "diffusion-202801": 5.549788392363719
+  },
+  {
+    "dataset": "temporal",
+    "architecture": "gat",
+    "reference": "iterative_im_head",
+    "hypernetwork-202801": 8.33426652229367,
+    "teacher_hypernetwork-202801": 8.333137496260358,
+    "diffusion-202801": 4.986769458995449
+  },
+  {
+    "dataset": "temporal",
+    "architecture": "graphsage",
+    "reference": "iterative_im_head",
+    "hypernetwork-202801": 3.0367283186098746,
+    "teacher_hypernetwork-202801": 3.026162157100406,
+    "diffusion-202801": 1.9800935173874339
+  },
+  {
+    "dataset": "country",
+    "architecture": "gcn",
+    "reference": "iterative_im_lora",
+    "hypernetwork-202801": 10.038828925353407,
+    "teacher_hypernetwork-202801": 10.061857150637014,
+    "diffusion-202801": 2.789633990811663
+  },
+  {
+    "dataset": "country",
+    "architecture": "gat",
+    "reference": "iterative_im_head",
+    "hypernetwork-202801": 7.986330082385367,
+    "teacher_hypernetwork-202801": 7.9310932724828,
+    "diffusion-202801": 2.3594829747510735
+  },
+  {
+    "dataset": "country",
+    "architecture": "graphsage",
+    "reference": "iterative_im_head",
+    "hypernetwork-202801": 5.4946665122006735,
+    "teacher_hypernetwork-202801": 5.469630767780544,
+    "diffusion-202801": 1.597696698305426
+  }
+]
