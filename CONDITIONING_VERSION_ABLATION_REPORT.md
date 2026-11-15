@@ -1,8 +1,38 @@
-> **Historical contributor report.** Commit `c137e28` subsequently published the experiment scripts and JSON results under `scratch/`. Their arithmetic checks passed, including the original approximately 45× screenshot. These are component timing ratios: adapted prediction is outside the generator timers, and the compact full-comparison script also reuses conditioning outside diffusion timing. Exact checkpoint replay still needs the matching artifacts and recorded seeds/hardware. Preserve these tables; use the repaired complete-pipeline benchmark for current performance claims.
->
-> These viewed test scores are development evidence. Input/scope rankings are provisional, direct all-weight updates are not LoRA, and the historical spectral ratio is not a condition number.
+# Conditioning version ablation
 
-# Conditioning Version Ablation Report: Amortized TTA vs. Fine-Tuning
+## Current final submission results
+
+The authoritative final source is **Arvind's `AFML Research Project.pdf`, page 16**, as selected by the project owner. The tables below reproduce its Experiment 1 validation and test conditioning comparisons. These are PDF-reported values; the newer artifacts have not been independently replayed here. Gains and reported ± dispersion are **percentage points**; frozen accuracy is a percentage. The dispersion definition is not independently verified.
+
+### Validation
+
+| Model | Frozen accuracy % | IM-LoRA gain pp | A gain pp | B gain pp | C gain pp | D gain pp |
+|---|---:|---:|---:|---:|---:|---:|
+| GCN | 62.891 | −5.895 ± 0.460 | +0.118 ± 0.044 | +0.156 ± 0.042 | +0.157 ± 0.012 | +0.157 ± 0.025 |
+| GraphSAGE | 62.112 | −6.351 ± 0.491 | +0.086 ± 0.004 | +0.076 ± 0.011 | +0.110 ± 0.032 | +0.089 ± 0.024 |
+| GAT | 64.421 | −14.164 ± 1.324 | −0.057 ± 0.008 | −0.063 ± 0.048 | −0.062 ± 0.032 | −0.060 ± 0.014 |
+
+### Final test
+
+| Model | Frozen accuracy % | IM-LoRA gain pp | A gain pp | B gain pp | C gain pp | D gain pp |
+|---|---:|---:|---:|---:|---:|---:|
+| GCN | 60.198 | −8.393 ± 0.534 | +0.412 ± 0.105 | +0.411 ± 0.058 | +0.419 ± 0.059 | +0.452 ± 0.046 |
+| GraphSAGE | 58.499 | −8.601 ± 0.267 | +0.210 ± 0.019 | +0.112 ± 0.127 | +0.198 ± 0.053 | +0.132 ± 0.105 |
+| GAT | 60.845 | −14.820 ± 0.876 | −0.018 ± 0.035 | +0.016 ± 0.026 | −0.018 ± 0.014 | −0.010 ± 0.027 |
+
+### What these results establish
+
+There is no universal winning descriptor. Validation gains are small and architecture dependent: GCN C/D tie at the reported precision, GraphSAGE C has the largest mean, and all GAT means are negative. The test table is descriptive evidence, not permission to choose a different input after inspecting final labels. Small mean differences and the reported dispersion do not establish statistical significance without paired run-level analysis.
+
+The older CSBM dimensions and descriptor details below belong to their original configuration, not a universal input schema for Arxiv or the newer runner. Verify the exact checkpoint/configuration before applying those descriptions to the final experiments. The final E4/E5 and E6 results are summarized in [README](README.md); E6 efficiency figures must remain separate from E1 input comparisons.
+
+## Historical evidence retained below
+
+Commit `c137e28` published the original scripts and JSON under `scratch/`. Arithmetic checks passed, including the roughly 45× screenshot. Those ratios measure components: adapted prediction is outside generator timers, and the compact comparison reuses conditioning outside diffusion timing. Exact replay requires matching checkpoints, seeds and hardware. These viewed CSBM scores are development evidence. Direct all-weight updates are not LoRA; the historical spectral ratio is not a condition number. Preserve the old measurements without treating them as final real-data conclusions.
+
+---
+
+# Historical CSBM conditioning ablation
 
 **Date:** 2026-11-07  
 **Benchmark:** Full Unconstrained CSBM Distribution-Shift Benchmark (612 evaluation pairs across GCN, GAT, and GraphSAGE)  
@@ -79,15 +109,15 @@ Evaluated across all **204 held-out test pairs per architecture** (6 models $\ti
 
 ---
 
-## 3. Scientific Insights & Analysis
+## 3. Historical development observations and hypotheses
 
 ### 1. Does each additional input help in this order?
-* **Version B (Target Graph + Hidden Representation) is the Sweet Spot for Hypernetworks:**
+* **Version B performed well in some historical development comparisons:**
   * Going from Version A (target graph only) to Version B (+ hidden representation) produced substantial accuracy improvements:
     * GraphSAGE jumped from **+0.39 pp $\to$ +1.05 pp** (surpassing regular fine-tuning's +0.77 pp!).
     * On GCN Diffusion, Version B delivered the peak performance (**+0.51 pp** with a **71.1% win rate**).
   * *Why:* The raw graph (Version A) tells the generator what the data looks like, but the hidden representations (Version B) reveal how the *specific pretrained model* aggregates features under the shift.
-* **Predictive Uncertainty (Version C) is Essential for GAT and Diffusion:**
+* **Version C helped some historical diffusion comparisons:**
   * On GAT, Versions A, B, and D all triggered the "do-no-harm" fallback ($\Delta = 0$). **Version C (+ predictive uncertainty) was the only version that successfully adapted GAT (+0.20 pp, 56.4% win rate)** while Fine-Tuning degraded it (-0.17 pp).
   * On GraphSAGE Diffusion, Version C turned a negative gain (-0.80 pp) into a solid positive gain (**+0.68 pp**).
 * **Compact Pretrained Weights (Version D) add Marginally Diminishing Returns:**
@@ -95,11 +125,11 @@ Evaluated across all **204 held-out test pairs per architecture** (6 models $\ti
 
 ### 2. TTA Latency & Speedup Analysis Across Versions
 * **Version A is the Fastest (44× to 85× Faster than Fine-Tuning):**
-  * Because Version A does not require passing the graph through the model to extract hidden states or predictions, total adaptation takes only **0.68 – 0.77 ms**.
+  * Because Version A does not require passing the graph through the model to extract hidden states or predictions, the recorded component timer is **0.68 – 0.77 ms**.
 * **Version B achieves 20× to 53× Speedups:**
-  * Running `model.encode(x, edge_index)` adds ~0.5 ms, resulting in a total TTA time of **1.2 – 1.9 ms**.
+  * Running `model.encode(x, edge_index)` adds ~0.5 ms, resulting in a recorded component time of **1.2 – 1.9 ms**.
 * **Versions C & D achieve 9× to 28× Speedups:**
-  * Computing softmax predictions, entropy, and SVD singular values adds ~1.0 – 1.5 ms, bringing total TTA time to **2.1 – 4.7 ms** (still **10× to 25× faster** than the 30–65 ms required for gradient fine-tuning).
+  * Computing softmax predictions, entropy, and SVD singular values adds ~1.0 – 1.5 ms, bringing recorded component time to **2.1 – 4.7 ms** (still **10× to 25× faster** than the 30–65 ms required for gradient fine-tuning).
 
 ```
 TTA Inference Latency by Conditioning Version (GCN):
@@ -112,7 +142,6 @@ TTA Inference Latency by Conditioning Version (GCN):
 
 ---
 
-## 4. Summary Recommendation
+## 4. Historical recommendations and their limits
 
-1. **For Hypernetworks:** **Version B** (`--conditioning B`) is optimal. It captures both graph shift and model representation distortion with an **optimal trade-off between accuracy (+1.05 pp on GraphSAGE) and speed (20×–53× speedup)**.
-2. **For Diffusion:** **Version C** (`--conditioning C`) is optimal. It provides the score-based denoiser with predictive uncertainty signals, preventing negative transfer on sensitive architectures like GAT (+0.20 pp vs -0.17 pp for fine-tuning).
+The original report favored B for hypernetworks and C for diffusion in this CSBM development study. These are provisional observations, not optimality claims or evidence that predictive uncertainty prevents negative transfer. Component timings exclude required prediction work; they cannot establish complete adaptation speedups. The final real-data conditioning comparison above supersedes these recommendations for the submission.
