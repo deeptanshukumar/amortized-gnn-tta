@@ -1,12 +1,46 @@
 # AFML learning handbook: from graph data to our research experiment
 
-**Current focus: CSBM only.** CSBM means *Contextual Stochastic Block Model*: a recipe for generating random graphs together with informative node features. Other datasets appear here so you can understand the research documents. We are not implementing them now.
+**Current scope:** controlled and temporal ogbn-arxiv, MAG country graphs, and earlier synthetic CSBM development. We implemented GCN, GAT and GraphSAGE, offline-trained hypernetworks and diffusion generators, head and LoRA updates, and comparisons with frozen and iterative adaptation baselines.
 
-This handbook is for learning, explaining the project to a research committee, and preparing for interviews. Start with the examples; return to the formulas after the ideas make sense. It covers our current questions and likely follow-ups, and will grow when the work exposes new ones.
+This handbook explains the project for learning, reviews and interviews. **The dated sections below preserve earlier development milestones; their statements about pending work, CSBM-only scope, sealed tests and unverified GPU execution are historical.** Use the current overview here and the repository README for the final submission snapshot.
 
-**Status, 2026-10-30:** CSBM loading, all three source GNNs/banks, controlled shifts, head/LoRA adaptation and delta artifacts are implemented. All 213 CPU tests and 2,052 independent delta audits passed. Development gains and regressions are recorded in Section 30. Generator training and held-out research evaluation remain future work; Colab setup exists but CUDA execution is unverified.
+**Final submission source:** Arvind's `AFML Research Project.pdf`, pages 16–25, selected by the project owner. Its E4/E5 results supersede the older November 12 campaign figures. These newer figures are PDF-reported; their raw run artifacts have not been independently replayed here. Experiments-analysis commit `3a11f71` was merged into main as `27125d7`; the added scripts do not establish independent verification of every PDF result.
 
-The assistant previously recorded “real benchmark first” as your preference. That was a misinterpretation and has been corrected. Your instruction is to use CSBM now.
+### Current final results
+
+Frozen accuracy is a percentage; gains and reported dispersion are percentage points. For example, temporal GCN diffusion gives 59.406 − 21.444 = **37.962%** implied adapted accuracy. A gain of 2 points is not a relative improvement of 2 percent. The ± values below are reproduced as reported, without independently establishing their statistical definition.
+
+| Evaluation | Architecture | Frozen accuracy % | Hypernetwork gain pp | Diffusion gain pp |
+|---|---|---:|---:|---:|
+| Controlled Arxiv all cases | GCN | 60.198 | +0.419 ± 0.059 | +0.245 ± 0.279 |
+| Controlled Arxiv all cases | GraphSAGE | 58.499 | +0.198 ± 0.053 | +0.175 ± 0.180 |
+| Controlled Arxiv all cases | GAT | 60.845 | −0.018 ± 0.035 | −0.335 ± 0.135 |
+| Temporal Arxiv final test | GCN | 59.406 | −0.535 ± 2.150 | −21.444 ± 1.069 |
+| Temporal Arxiv final test | GraphSAGE | 59.965 | +1.684 ± 0.126 | −34.946 ± 4.190 |
+| Temporal Arxiv final test | GAT | 62.196 | +0.922 ± 0.159 | −2.575 ± 0.765 |
+| MAG country final test | GCN | 65.195 | +2.142 ± 0.617 | +3.626 ± 2.978 |
+| MAG country final test | GraphSAGE | 65.199 | +1.282 ± 1.126 | +2.453 ± 3.996 |
+| MAG country final test | GAT | 62.834 | +1.671 ± 1.217 | +4.602 ± 2.674 |
+
+The final PDF reports controlled E4 for all three architectures. Earlier local reports missing GAT/GraphSAGE describe the older archive, not missing rows in the current submission. Country diffusion gains do not imply temporal robustness: temporal GCN and GraphSAGE regress sharply. The cause remains unresolved; neither a conditioning defect nor an architectural limitation has been established by these scores alone.
+
+### How the current pipeline works
+
+A target graph provides node features and edges. The pretrained source GNN supplies representations and predictions. A descriptor summarizes permitted graph/model information without target labels. An offline-trained generator predicts a head update or low-rank factors; LoRA applies an effective correction formed from their product. The adapted GNN then predicts node classes. The direct hypernetwork produces an update in one generator call; diffusion performs iterative denoising and candidate selection, so its complete online path is not a single forward pass.
+
+The original source banks contain 30 models per architecture and protocol, grouped 18/6/6 for generator training, validation and final evaluation. Controlled Arxiv corrupts features and/or edges. Temporal Arxiv uses source data through 2014, practice arrivals in 2015–2017, validation in 2018 and final arrivals in 2019–2020. Country graphs use US source, CN/DE practice, FR validation and JP/RU final evaluation. These are separate generator-training protocols; synthetic CSBM gains are not evidence of transfer from CSBM-trained generators to Arxiv.
+
+### Efficiency and interpretation
+
+PDF pages 23–25 compare against **40-step IM-LoRA**. Hypernetwork speedups span 7.4–16.3× on controlled Arxiv, 8.8–27.3× on temporal Arxiv and 12.3–24.0× on country graphs. Diffusion spans 4.3–6.1×, 4.6–8.1× and 2.9–3.9× respectively. The efficiency study has different accuracy tables from E4/E5; do not mix them into one matched accuracy–latency claim without its manifests. Offline training cost is separate from online adaptation cost.
+
+### What Arvind added and what remains uncertain
+
+The `failure_analysis/` scripts add RMS descriptor scaling, input and head/LoRA comparisons, CE/KL loss experiments, Modal runners and reporting helpers. Their four small CPU compatibility tests passed after merging; this checks software behavior, not the scientific validity of all reported runs. Some inspected reporters force the best trained epoch when identity originally won. That is a different reporting rule from allowing a no-change fallback and must be disclosed. Its presence does not establish that it caused the newer diffusion failure.
+
+A useful next investigation would check teacher quality, actual conditioning use, normalization across training/sampling/reload, and candidate-selection quality on development cases before changing architecture. Compression must preserve teacher accuracy before latent diffusion is justified. These are proposals, not completed experiments. New research runs are paused until requested. Final target labels must remain outside adaptation and selection; already viewed final results cannot become a fresh untouched holdout through renaming.
+
+**Reading the older chapters:** historical phrases such as “not implemented,” “five epochs,” “CSBM only” and “final labels remain sealed” describe the date and experiment discussed. They must not be quoted as today's project status. Their numerical audits remain evidence for those original artifacts only.
 
 ## Reading map
 
@@ -71,16 +105,16 @@ A broken data pipeline could produce an apparently successful adaptation method 
 
 You own GCN experiments; teammates handle GAT and GraphSAGE. You later asked for all three shared model implementations, which are now present. This coding extension does not silently reassign team experiment ownership. The data representation remains shared.
 
-| Stage | What it means | Current status |
-| --- | --- | --- |
-| Data pipeline | Generate/load graphs and keep labels, splits, and environments organized | Implemented and CPU-tested; CSBM only |
-| Source GCN | Train a GCN using permitted source labels | Implemented and CPU-tested; Section 24 |
-| Other source architectures | Use the same pipeline with GAT or GraphSAGE | Implemented and CPU-tested; Section 28 |
-| Weight bank | Save multiple source-trained GCN parameter sets | Full-budget thirty-model bank audited, grouped, and compared; Sections 26–27 |
-| Controlled environments | Make related shifted graphs and separate their uses | Implemented and CPU-audited; Section 29 |
-| Small adaptations | Change only the classifier or a small structured part of the weights | Head/LoRA implemented and CPU-tested; Section 30 |
-| Adaptation generator | Learn to predict those changes | Later |
-| Evaluation | Score a frozen model on source-test and target labels | Development adaptation/delta audits implemented; final held-out evaluation remains |
+| Stage                      | What it means                                                            | Current status                                                                                          |
+| -------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------- |
+| Data pipeline              | Generate/load graphs and keep labels, splits, and environments organized | Implemented and CPU-tested; CSBM only                                                                   |
+| Source GCN                 | Train a GCN using permitted source labels                                | Implemented and CPU-tested; Section 24                                                                  |
+| Other source architectures | Use the same pipeline with GAT or GraphSAGE                              | Implemented and CPU-tested; Section 28                                                                  |
+| Weight bank                | Save multiple source-trained GCN parameter sets                          | Full-budget thirty-model bank audited, grouped, and compared; Sections 26–27                            |
+| Controlled environments    | Make related shifted graphs and separate their uses                      | Implemented and CPU-audited; Section 29                                                                 |
+| Small adaptations          | Change only the classifier or a small structured part of the weights     | Head/LoRA implemented and CPU-tested; Section 30 |
+| Adaptation generator       | Learn to predict those changes                                           | Later                                                                                                   |
+| Evaluation                 | Score a frozen model on source-test and target labels                    | Development adaptation/delta audits implemented; final held-out evaluation remains |
 
 The plan suggests 5 labeled-source splits × 6 model seeds = 30 models, then 18/6/6 models for generator training/validation/testing. This bank preparation and model partition are now implemented and verified for GCN/CSBM. The generator has not been trained. A subset manifest alone still does not contain trained models.
 
