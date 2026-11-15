@@ -11,7 +11,7 @@ The code supports **GCN, GAT and GraphSAGE**, with direct hypernetworks, teacher
 | Direct hypernetwork | Practice-label cross-entropy through the GNN, with update regularization. | Predict and apply one parameter update. |
 | Teacher hypernetwork | Regress supervised practice-teacher updates. | Predict and apply one parameter update. |
 | Diffusion | Denoise normalized practice-teacher updates. | Generate five candidates with 10 DDIM steps and select by unlabeled prediction agreement. |
-| Iterative IM | Reuse the pretrained source model. | Optimize an information-maximization objective for 30 steps. |
+| Iterative IM | Reuse the pretrained source model. | Optimize an information-maximization objective; the final PDF compares 1, 5, 20 and 40 steps. |
 
 The final controlled design selects rank-4 LoRA for GCN and head updates for GAT/GraphSAGE. Frozen, constant-teacher, practice-fixed and feature-only GTrans controls are included in the numerical exports.
 
@@ -25,38 +25,52 @@ The final controlled design selects rank-4 LoRA for GCN and head updates for GAT
 
 Controlled and temporal Arxiv experiments use different protocols on the same underlying dataset. Natural-shift generators are fitted separately for each protocol.
 
-## Results
+## Final submission results
 
-Final mean accuracy (%), averaged over the declared held-out source checkpoints and environments. Generator results additionally average three training seeds. These are the final real-data campaign results, reviewed **12 November 2026**; earlier CSBM studies are separate.
+**The final result source is Arvind's `AFML Research Project.pdf`, as selected by the project owner.** The tables below supersede the November 12 campaign summary. E4 values come from PDF page 21 and E5 final-test values from page 22. These are PDF-reported results; the newer run artifacts have not been independently replayed here. The older reports remain historical evidence, not the final submission numbers.
 
-| Evaluation | Model | Frozen | Direct hypernetwork | Teacher hypernetwork | Diffusion | Practice fixed |
-|---|---|---:|---:|---:|---:|---:|
-| Controlled Arxiv* | GCN | 60.20 | 59.25 | 60.38 | 60.20 | 61.20 |
-| Temporal Arxiv | GCN | 59.41 | 54.27 | 59.63 | 59.41 | 63.20 |
-| Temporal Arxiv | GAT | 62.20 | 63.07 | 62.88 | 62.00 | 65.64 |
-| Temporal Arxiv | GraphSAGE | 59.97 | 47.61 | 60.10 | 60.38 | 63.85 |
-| MAG country | GCN | 65.19 | 67.43 | 66.48 | 68.98 | 70.16 |
-| MAG country | GAT | 62.83 | 64.53 | 65.08 | 65.06 | 68.60 |
-| MAG country | GraphSAGE | 65.20 | 67.38 | 70.01 | 69.30 | 70.30 |
+Frozen accuracy is a percentage. Gains and the reported ± dispersion are **percentage points**, not relative percentages. The PDF's dispersion values are reproduced without assuming an independently verified statistical definition.
 
-Diffusion gains on MAG country graphs are **+3.79, +2.23 and +4.10 percentage points** for GCN, GAT and GraphSAGE. Performance varies by shift: direct hypernetworks regress on temporal GCN and GraphSAGE. Practice-fixed models, trained offline on permitted practice labels, outperform all three generator families in the natural-shift final comparisons. Constant-teacher controls explain much of the country GAT/GraphSAGE improvement; their scores are retained in the [full method summary](reports/experiment-summary-20261112/final_method_summary.csv).
+| Evaluation | Model | Frozen accuracy % | Hypernetwork gain pp | Diffusion gain pp |
+|---|---|---:|---:|---:|
+| Controlled Arxiv — all cases | GCN | 60.198 | +0.419 ± 0.059 | +0.245 ± 0.279 |
+| Controlled Arxiv — all cases | GraphSAGE | 58.499 | +0.198 ± 0.053 | +0.175 ± 0.180 |
+| Controlled Arxiv — all cases | GAT | 60.845 | −0.018 ± 0.035 | −0.335 ± 0.135 |
+| Temporal Arxiv — final test | GCN | 59.406 | −0.535 ± 2.150 | −21.444 ± 1.069 |
+| Temporal Arxiv — final test | GraphSAGE | 59.965 | +1.684 ± 0.126 | −34.946 ± 4.190 |
+| Temporal Arxiv — final test | GAT | 62.196 | +0.922 ± 0.159 | −2.575 ± 0.765 |
+| MAG country — final test | GCN | 65.195 | +2.142 ± 0.617 | +3.626 ± 2.978 |
+| MAG country — final test | GraphSAGE | 65.199 | +1.282 ± 1.126 | +2.453 ± 3.996 |
+| MAG country — final test | GAT | 62.834 | +1.671 ± 1.217 | +4.602 ± 2.674 |
 
-Measured online speedups span **3.04–11.07×** for direct hypernetworks and **1.60–5.55×** for diffusion against the corresponding 30-step iterative head/LoRA baseline. Timing includes target preprocessing, required transfer, adaptation and prediction, starting from a CPU graph and resident models. These measurements use generator seed 202801 and exclude offline fitting costs.
+Hypernetworks give modest gains on country graphs and on temporal GAT/GraphSAGE, with a small temporal GCN regression. Diffusion improves the reported country means but fails severely on temporal GCN and GraphSAGE. Controlled gains are small and architecture dependent. The earlier teacher-hypernetwork and practice-fixed scores are not mixed into this revised table because the PDF's final E4/E5 tables do not report those columns.
 
-*Controlled final evaluation covers GCN only: GAT and GraphSAGE E4 results are absent. Original prediction tensors for four of the six GCN models are not fully locally verified. E5 natural-shift results cover all three architectures. See [evidence and limitations](reports/experiment-summary-20261112/README.md).*
+### Efficiency study
+
+PDF pages 23–25 report the following speedup ranges across architectures, relative to **40-step IM-LoRA**. These replace the earlier README's 30-step-baseline ratios.
+
+| Protocol | Hypernetwork speedup | Diffusion speedup |
+|---|---:|---:|
+| Controlled Arxiv | 7.4–16.3× | 4.3–6.1× |
+| Temporal Arxiv | 8.8–27.3× | 4.6–8.1× |
+| MAG countries | 12.3–24.0× | 2.9–3.9× |
+
+E6 has its own accuracy-gain tables, which differ from E4/E5. Do not substitute E6 gains into the final-test table or claim that its speedups and E5 accuracies were measured on identical cases without the corresponding manifests. Speed must be interpreted alongside accuracy, particularly for temporal diffusion. The PDF alone does not establish a complete timing-boundary or offline-cost audit.
 
 ## Experiment Coverage
 
-| Experiment | Question | Status |
+| Experiment | Question | Final submission source |
 |---|---|---|
-| E1 | Which inputs should condition the generator? | GCN input ablation complete. |
-| E2 | Head or LoRA updates? | Design selection complete for all architectures. |
-| E3 | Direct network, teacher network or diffusion? | Controlled validation comparison complete. |
-| E4 | Generalization to held-out controlled shifts? | GCN scores available; verification limits above. GAT/GraphSAGE absent. |
-| E5 | Generalization under temporal and country shifts? | Final evaluation complete for all architectures. |
-| E6 | Can supervised adaptation recover accuracy? | Separate labeled diagnostic complete. |
+| E1 | Which inputs should condition the generator? | PDF pages 16–17 report the input comparison. |
+| E2 | Head or LoRA updates? | PDF pages 18–19 report the update-type comparison. |
+| E3 | Hypernetwork or diffusion? | PDF page 20 reports the diffusion comparison. |
+| E4 | Generalization to held-out controlled shifts? | PDF page 21 reports GCN, GAT and GraphSAGE, including all cases and shift subgroups. |
+| E5 | Generalization under temporal and country shifts? | PDF page 22 reports validation and final-test results for all three architectures. |
+| E6 | Failure analysis and efficiency? | PDF pages 23–25 report iterative-step comparisons, gains and runtimes. |
 
-Each source protocol contains 30 models per architecture, partitioned into 18 generator-training, six validation and six final models by supervision group. E6 uses labels for diagnosis and is reported separately from unlabeled adaptation.
+The older local campaign's missing GAT/GraphSAGE E4 artifacts remain an archival verification limitation; they do not mean the current PDF lacks those results. Reporting from the PDF does not establish independent verification of its newer runs.
+
+Each original source protocol contains 30 models per architecture, partitioned into 18 generator-training, six validation and six final models by supervision group. These describe the original bank protocol; exact newer-run configurations should be checked against Arvind's manifests before reproducing the final submission.
 
 ## Setup
 
@@ -96,7 +110,8 @@ The formal protocols are defined in [`arxiv_formal_v1.json`](configs/arxiv_forma
 
 ## Documentation
 
-- [Results, validation summaries and timing ratios](reports/experiment-summary-20261112/README.md)
+- Final submission results: Arvind's `AFML Research Project.pdf`, pages 16–25 (source document supplied outside Git).
+- [Historical November 12 results, validation summaries and timing ratios](reports/experiment-summary-20261112/README.md)
 - [Design decisions](docs/DECISIONS.md)
 - [Research engineering notes](docs/learning/RESEARCH_ENGINEERING_NOTES.md)
 - [Earlier milestones and development evidence](docs/PROJECT_STATE.md)
